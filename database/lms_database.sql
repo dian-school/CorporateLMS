@@ -75,12 +75,14 @@ CREATE TABLE IF NOT EXISTS `courses` (
   CONSTRAINT `course_pk` PRIMARY KEY (`course_code`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
+-- section table, add foreign key
+
 --
 -- Dumping data for table `courses`
 --
 
 
-INSERT INTO `courses` (`course_code`,`course_title`,`description`,`prerequisites`, `class`,`class_size`,`duration`, `no._lessons`,`trainer`,`vacancies`,`enrolled`,`in_progress`,`completed`) VALUES
+INSERT INTO `courses` (`course_code`,`course_title`,`description`,`prerequisites`, `class_section`,`class_size`,`duration`, `no._lessons`,`trainer`,`vacancies`,`enrolled`,`in_progress`,`completed`) VALUES
 (1001, 'All About Maintenance', 'Basics about how to check and ensure all components of the copier is working well','', 'G1', 35, '3 days', 12, 'Shane Poe', 35, 0,0,0),
 (1002, 'Customer Service:Soft Skills Fundamentals', 'Learning to communicate well with customers', '', 'G1', 35, '3 days', 12, 'Christian Manwaring', 34, 1,0,0),
 (1003, 'Customer Service Mastery: Delight Every Customer', 'Making every customer happy and satisfied with service provided', '', 'G1', 35, '3 days', 12, 'Shane Poe', 34, 0,1,0),
@@ -154,7 +156,8 @@ CREATE TABLE IF NOT EXISTS `trainers` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `trainers`
+-- Dumping data for table `trainers` 
+-- remove teaching n taught
 --
 
 INSERT INTO `trainers` (`trainers_eid`, `trainers_name`, `trainers_email`, `qualifications`,`courses_specialisedin`, `courses_teaching`, `courses_taught`) VALUES
