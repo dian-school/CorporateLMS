@@ -146,6 +146,7 @@ CREATE TABLE IF NOT EXISTS `sections` (
 
 INSERT INTO `sections` (`class_section`, `course_code`, `class_size`, `duration`, `trainer_id`, `vacancies`) VALUES
 ('G1', 1008, 40, 3, 1, 40),
+('G1', 1009, 40, 3, 1, 40),
 ('G2', 1003, 40, 3, 2, 40),
 ('G3', 1005, 40, 3, 3, 40);
 
@@ -162,8 +163,8 @@ CREATE TABLE IF NOT EXISTS `learners` (
   `learners_email` varchar(1000) NOT NULL,
   `learners_qualifications` varchar(1000) NOT NULL,
   `courses_completed` varchar(1000) DEFAULT NULL,
-  `class_section` varchar(2) NOT NULL,
-  `course_code` int(11) NOT NULL,
+  `class_section` varchar(2) DEFAULT NULL,
+  `course_code` int(11) DEFAULT NULL,
 
   PRIMARY KEY (`learners_eid`),
   CONSTRAINT `learners_ibfk_1` FOREIGN KEY (`class_section`) REFERENCES `sections` (`class_section`),
@@ -185,3 +186,21 @@ INSERT INTO `learners` (`learners_eid`, `learners_name`, `learners_email`, `lear
 (8, 'Yong Hao Koh', 'Yong Hao.Koh@gmail.com', "Bachelor's Degree in Electrical Engineering with a Minor in Field Studies",'','G2', 1003),
 (9, 'Jones Low', 'Jones.Low@gmail.com',  "Bachelor's Degree in Electrical Engineering", 'Foundations of how Copiers work','G3', 1005),	
 (10, 'Linda	Teng', 'Linda.Teng@gmail.com', "Bachelor's Degree in Engineering Technology",'','G1', 1008);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `enroling`
+--
+
+DROP TABLE IF EXISTS `enrolling`;
+CREATE TABLE IF NOT EXISTS `enroling` (
+  `learners_eid` int(11) NOT NULL,
+  `course_code` int(11) NOT NULL,
+  `class_section` varchar(2) NOT NULL,
+
+  PRIMARY KEY (`learners_eid`, `course_code`, `class_section`),
+  CONSTRAINT `enroling_ibfk_1` FOREIGN KEY (`learners_eid`) REFERENCES `learners` (`learners_eid`),
+  CONSTRAINT `enroling_ibfk_2` FOREIGN KEY (`course_code`) REFERENCES `courses` (`course_code`),
+  CONSTRAINT `enroling_ibfk_3` FOREIGN KEY (`class_section`) REFERENCES `sections` (`class_section`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
