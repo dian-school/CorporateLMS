@@ -41,7 +41,6 @@ class Sections(db.Model):
     duration = db.Column(db.Integer)
     trainers_eid = db.Column(db.Integer, db.ForeignKey('trainers_eid'))
     vacancies = db.Column(db.Integer)
-    learners_eid = db.Column(db.Integer, db.ForeignKey('learners_eid'))
 
     def to_dict(self):
         """
@@ -82,6 +81,26 @@ class Learners(db.Model):
     learners_email = db.Column(db.String(1000))
     learners_qualifications = db.Column(db.String(1000))
     courses_completed = db.Column(db.String(1000))
+    class_section = db.Column(db.String(2), db.ForeignKey('class_section'))
+    course_code = db.Column(db.Integer, db.ForeignKey('course_code'))
+
+    def to_dict(self):
+        """
+        'to_dict' converts the object into a dictionary,
+        in which the keys correspond to database columns
+        """
+        columns = self.__mapper__.column_attrs.keys()
+        result = {}
+        for column in columns:
+            result[column] = getattr(self, column)
+        return result
+
+class Admins(db.Model):
+    __tablename__ = 'admins'
+
+    admins_eid = db.Column(db.Integer, primary_key=True)
+    admins_name = db.Column(db.String(26))
+    admins_email = db.Column(db.String(1000))
 
     def to_dict(self):
         """
@@ -95,3 +114,4 @@ class Learners(db.Model):
         return result
 
 db.create_all()
+
