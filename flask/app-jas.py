@@ -189,9 +189,7 @@ def add_learner():
     print(learner)
     try:
         db.session.add(learner)
-        print("here")
         db.session.commit()
-        print("hereee")
         return jsonify(learner.to_dict()), 201
     except SQLAlchemyError as e:
         print(str(e))
@@ -201,6 +199,31 @@ def add_learner():
         }), 500
 
 # remove learner from course
+@app.route("/enrols/<int:course_code>/<string:learners_eid>", methods=['DELETE'])
+def delete_book(course_code, learners_eid):
+    learnertoremove = Enrols.query.filter_by(course_code=course_code , learners_eid=learners_eid).first()
+    if learnertoremove:
+        db.session.delete(learnertoremove)
+        db.session.commit()
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "course_code": course_code,
+                    "learners_eid" : learners_eid
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "data": {
+                "course_code": course_code,
+                "learners_eid" : learners_eid
+            },
+            "message": "Learner in this course not found."
+        }
+    ), 404
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
