@@ -20,7 +20,6 @@ class Courses(db.Model):
     course_title = db.Column(db.String(26))
     description = db.Column(db.String(1000))
     prerequisites = db.Column(db.String(1000))
-    class_section = db.Column(db.Integer)
 
     def to_dict(self):
         """
