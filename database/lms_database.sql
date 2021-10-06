@@ -193,7 +193,7 @@ INSERT INTO `learners` (`learners_eid`, `learners_name`, `learners_email`, `lear
 -- Table structure for table `enroling`
 --
 
-DROP TABLE IF EXISTS `enrolling`;
+DROP TABLE IF EXISTS `enroling`;
 CREATE TABLE IF NOT EXISTS `enroling` (
   `learners_eid` int(11) NOT NULL,
   `course_code` int(11) NOT NULL,
