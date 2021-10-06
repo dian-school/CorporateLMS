@@ -119,6 +119,8 @@ class Enrols(db.Model):
     learners_eid = db.Column(db.Integer, db.ForeignKey(Learners.learners_eid), primary_key=True)
     course_code = db.Column(db.Integer, db.ForeignKey(Courses.course_code), primary_key=True)
     class_section = db.Column(db.Integer, db.ForeignKey(Sections.class_section), primary_key=True)
+    #learners_eid = db.Column(db.Integer, db.ForeignKey('learners_eid'), primary_key=True)
+    #course_code = db.Column(db.Integer, db.ForeignKey('course_code'), primary_key=True)
 
     def to_dict(self):
         """
@@ -138,6 +140,89 @@ class Enrols(db.Model):
 
 
 db.create_all()
+
+
+
+#get all courses
+@app.route("/courses")
+def courses():
+    course_list = Courses.query.all()
+    return jsonify(
+        {
+            "data": [courses.to_dict()
+                     for courses in course_list]
+        }
+    ), 200
+
+# get learners by course 
+@app.route("/courses/<int:course_code>")
+def learner_by_course(course_code):
+    learners = Learners.query.filter_by(course_code=course_code).all()
+    if learners:
+        return jsonify({
+            "data": [learner.to_dict() for learner in learners]
+        }), 200
+    else:
+        course_list = Courses.query.all()
+        if course_code not in course_list:
+            return jsonify({
+                "message": "Course does not exist"
+            }), 404
+        return jsonify({
+            "message": "No learners in this course."
+        }), 404
+
+# add learner to course 
+@app.route("/enrols", methods=['POST'])
+@cross_origin()
+def add_learner():
+    data = request.get_json()
+    print(data)
+    if not all(key in data.keys() for
+               key in ('learners_eid', 'course_code',
+                       'class_section')):
+        return jsonify({
+            "message": "Incorrect JSON object provided."
+        }), 500
+    learner = Enrols(**data)
+    print(learner)
+    try:
+        db.session.add(learner)
+        db.session.commit()
+        return jsonify(learner.to_dict()), 201
+    except SQLAlchemyError as e:
+        print(str(e))
+        db.session.rollback()
+        return jsonify({
+            "message": "Unable to commit to database."
+        }), 500
+
+# remove learner from course
+@app.route("/enrols/<int:course_code>/<string:learners_eid>", methods=['DELETE'])
+def delete_book(course_code, learners_eid):
+    learnertoremove = Enrols.query.filter_by(course_code=course_code , learners_eid=learners_eid).first()
+    if learnertoremove:
+        db.session.delete(learnertoremove)
+        db.session.commit()
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "course_code": course_code,
+                    "learners_eid" : learners_eid
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "data": {
+                "course_code": course_code,
+                "learners_eid" : learners_eid
+            },
+            "message": "Learner in this course not found."
+        }
+    ), 404
 
 #get all trainers
 @app.route("/trainers")

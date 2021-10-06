@@ -132,11 +132,11 @@ CREATE TABLE IF NOT EXISTS `sections` (
   `course_code` int(11) NOT NULL,
   `class_size` int(11) NOT NULL,
   `duration` int(11) NOT NULL,
-  `trainer_id` int(11) DEFAULT NULL,
+  `trainers_eid` int(11) DEFAULT NULL,
   `vacancies` int(11) NOT NULL,
   
   PRIMARY KEY (`class_section`, `course_code`),
-  CONSTRAINT `section_ibfk_1` FOREIGN KEY (`trainer_id`) REFERENCES `trainers` (`trainers_eid`),
+  CONSTRAINT `section_ibfk_1` FOREIGN KEY (`trainers_eid`) REFERENCES `trainers` (`trainers_eid`),
   CONSTRAINT `section_ibfk_2` FOREIGN KEY (`course_code`) REFERENCES `courses` (`course_code`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
@@ -144,7 +144,7 @@ CREATE TABLE IF NOT EXISTS `sections` (
 -- Dumping data for table `section` 
 --
 
-INSERT INTO `sections` (`class_section`, `course_code`, `class_size`, `duration`, `trainer_id`, `vacancies`) VALUES
+INSERT INTO `sections` (`class_section`, `course_code`, `class_size`, `duration`, `trainers_eid`, `vacancies`) VALUES
 ('G1', 1008, 40, 3, 1, 40),
 ('G1', 1009, 40, 3, 1, 40),
 ('G2', 1003, 40, 3, 2, 40),
