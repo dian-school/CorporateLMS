@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS `courses` (
   `course_title` char(26) NOT NULL,
   `description` varchar(1000) NOT NULL,
   `prerequisites`  varchar(1000) NULL,
-  `class` int(11) NOT NULL,
+  `class_section` varchar(2) NOT NULL,
   `class_size` int(11) NOT NULL,
   `duration` int(11) NOT NULL,
   `no._lessons` int(11) NOT NULL,
