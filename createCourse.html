@@ -182,8 +182,8 @@
   </head>
 
   <body>
-    <div class="testbox">
-      <form action="/">
+    <div id="app">
+      <form>
         <div class="banner">
           <h1>Create Course</h1>
         </div>
@@ -191,56 +191,36 @@
         <div class="item">
           <p>Course Name</p>
           <div class="name-item">
-            <input type="text" name="courseName" placeholder="Course Title"/>
+            <input v-model="newCourseName" type="text" name="courseName" placeholder="Course Title"/>
           </div>
         </div>
         <div class="item">
           <p>Course Code</p>
-          <input type="number" name="code"/>
+          <input v-model="newCode" type="number" name="code"/>
         </div>
         <div class="item">
           <p>Description</p>
-          <input type="text" name="description"/>
+          <input v-model="newDescription" type="text" name="description"/>
         </div>
         <div class="item">
           <p>Prerequisites</p>
-          <input type="text" name="prerequisites"/>
+          <input v-model="newPrerequisites" type="text" name="prerequisites"/>
         </div>
-        <div class="item">
-          <p>Class</p>
-          <input type="text" name="name"/>
-        </div>
-        
-        <div class="item">
-            <p>Class Size</p>
-            <input type="number" name="size"/>
-        </div>
-        <div class="item">
-            <p>Duration</p>
-            <input type="number" name="duration"/>
-        </div>
-        <div class="item">
-            <p>No. of Lessons</p>
-            <input type="number" name="no.lessons"/>
-        </div>
-        <div class="item">
-            <p>Vacancies</p>
-            <input type="number" name="vacancies"/>
-        </div>
+       
      
-        <button @click="createCourse" type="submit" href="/">Create Course</button>
+        <button @click="addCourse" type="submit" v-on:submit.prevent="onSubmit">Create Course</button>
 
         <!-- Status messages about adding and deleting-->
         <div class="row mt-4 justify-content-center">
-            <div class="text-success" v-if="courseCreated">
+            <div class="text-success" v-if="courseAdded">
               {{ statusMessage }} <br>
             </div>
         </div>
 
         <div class="row justify-content-center">
-            <div class="text-danger" v-if="createCourseError!=''">
+            <div class="text-danger" v-if="addCourseError!=''">
               {{ statusMessage }}<br>
-              {{ createCourseError}}
+              {{ addCourseError}}
               <br>
             </div>
           </div>

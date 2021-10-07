@@ -34,7 +34,7 @@
     </ul>
 
     <section class="wow fadeInUp mt-2"> <!-- Availability search bar and tables START-->
-      <div style="float:left" class="container"> <!-- container START-->
+      <div id="app" style="float:left" class="container"> <!-- container START-->
         <div v-show="!edit"> <!-- v-show: !edit START-->
           <!-- Search -->
           <div class="input-group">
@@ -43,7 +43,7 @@
               aria-label="courses"
               aria-describedby="basic-addon2" style="margin-right:5px;">
             <div class="input-group-append">
-              <button @click="filterCourses()" class="btn btn-info" type="button">Search</button>
+              <button @click="findCourse()" class="btn btn-info" type="button">Search</button>
               <button @click="pageRefresh()" class="btn btn-outline-info" type="button">Clear All</button>
             </div>
           </div> <!-- End Search-->
