@@ -160,7 +160,7 @@ def courses():
         }
     ), 200
 
-#get all sections -> check materials in sections 
+#get all sections -> check materials in specific sections 
 @app.route("/sections")
 def get_sections():
     section_list = Sections.query.all()
@@ -185,22 +185,22 @@ def get_trainers():
         }
     ), 200
 
-#get learners by course  -> send notifications
-@app.route("/courses/<int:course_code>")
-def learner_by_course(course_code):
-    learners = Learners.query.filter_by(course_code=course_code).all()
+#get learners by sections  -> send notifications
+@app.route("/sections/<string:class_section>/<int:course_code>")
+def learner_by_section(class_section, course_code):
+    learners = Learners.query.filter_by(class_section=class_section, course_code=course_code).first()
     if learners:
         return jsonify({
             "data": [learner.to_dict() for learner in learners]
         }), 200
     else:
-        course_list = Courses.query.all()
-        if course_code not in course_list:
+        section_list = Sections.query.all()
+        if class_section not in section_list:
             return jsonify({
-                "message": "Course does not exist"
+                "message": "Section does not exist"
             }), 404
         return jsonify({
-            "message": "No learners in this course."
+            "message": "No learners in this section."
         }), 404
 
 #update course materials
