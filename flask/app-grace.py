@@ -2,6 +2,16 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
+# notifications
+# from flask_notifications.filters.before_date import BeforeDate
+
+# event_hub.filter_by(Not(BeforeDate(now)))
+
+# event = Event(None, "system", "This event will not pass the filter",
+#               "This is the body of the test", sender="system")
+# notifications.send(event.to_json())
+
+
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root' + \
                                         '@localhost:3306/lms_database'
@@ -131,5 +141,92 @@ class Enrols(db.Model):
             result[column] = getattr(self, column)
         return result
 
+    def __init__(self, course_code, learners_eid, class_section):
+        self.course_code = course_code
+        self.learners_eid = learners_eid
+        self.class_section = class_section
+
 db.create_all()
 
+
+#get all courses
+@app.route("/courses")
+def courses():
+    course_list = Courses.query.all()
+    return jsonify(
+        {
+            "data": [courses.to_dict()
+                     for courses in course_list]
+        }
+    ), 200
+
+#get all sections -> check materials in sections 
+@app.route("/sections")
+def get_sections():
+    section_list = Sections.query.all()
+    return jsonify(
+        {
+            "data": [sections.to_dict()
+                     for sections in section_list]
+        }
+    ), 200
+
+#get all trainers -> view, upload, delete materials
+@app.route("/trainers")
+def get_trainers():
+    search_name = request.args.get('trainers_name')
+    if search_name:
+        trainers_list = Trainers.query.filter(Trainers.trainers_name.contains(search_name))
+    else:
+        trainers_list = Trainers.query.all()
+    return jsonify(
+        {
+            "data": [trainer.to_dict() for trainer in trainers_list]
+        }
+    ), 200
+
+#get learners by course  -> send notifications
+@app.route("/courses/<int:course_code>")
+def learner_by_course(course_code):
+    learners = Learners.query.filter_by(course_code=course_code).all()
+    if learners:
+        return jsonify({
+            "data": [learner.to_dict() for learner in learners]
+        }), 200
+    else:
+        course_list = Courses.query.all()
+        if course_code not in course_list:
+            return jsonify({
+                "message": "Course does not exist"
+            }), 404
+        return jsonify({
+            "message": "No learners in this course."
+        }), 404
+
+#update course materials
+@app.route("/courses/<int:course_code>", methods=['PUT'])
+def update_course(class_section, course_code):
+    courses = Courses.query.filter_by(course_code=course_code).first() 
+    if courses:
+        data = request.get_json()
+        courses.course_code = data['course_code']
+        db.session.commit()
+        return jsonify(
+            {
+                "code": 200,
+                "data": courses.to_dict()
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "data": {
+                "class_section": class_section,
+                "course_code": course_code
+            },
+            "message": "Course not found."
+        }
+    ), 404
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)
