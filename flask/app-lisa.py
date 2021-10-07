@@ -130,6 +130,54 @@ class Enrols(db.Model):
         for column in columns:
             result[column] = getattr(self, column)
         return result
+    
+    def __init__(self, course_code, learners_eid, class_section):
+        self.course_code = course_code
+        self.learners_eid = learners_eid
+        self.class_section = class_section
+
 
 db.create_all()
 
+#get all courses
+@app.route("/courses")
+def courses():
+    course_list = Courses.query.all()
+    return jsonify(
+        {
+            "data": [courses.to_dict()
+                     for courses in course_list]
+        }
+    ), 200
+
+#get all sections
+@app.route("/sections")
+def get_sections():
+    section_list = Sections.query.all()
+    return jsonify(
+        {
+            "data": [sections.to_dict()
+                     for sections in section_list]
+        }
+    ), 200
+
+#get all trainers
+@app.route("/trainers")
+def get_trainers():
+    search_name = request.args.get('trainers_name')
+    if search_name:
+        trainers_list = Trainers.query.filter(Trainers.trainers_name.contains(search_name))
+    else:
+        trainers_list = Trainers.query.all()
+    return jsonify(
+        {
+            "data": [trainer.to_dict() for trainer in trainers_list]
+        }
+    ), 200
+
+#get notification 
+
+#get all course materials
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)
