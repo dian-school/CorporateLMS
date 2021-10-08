@@ -175,9 +175,28 @@ def get_trainers():
         }
     ), 200
 
-#get notification 
+#get notification after succesfully enrolled 
 
-#get all course materials
+#get all course materials and quizzes
+
+#get course pre requisites 
+@app.route("/courses/<string:course_code>/prerequisites")
+def get_prerequisites(prerequisites, course_code):
+    courses = Courses.query.filter_by(course_code=course_code)
+    search_course = request.args.get('course_code')
+    if search_course:
+        course_list = Courses.query.filter(Courses.course_code.contains(search_course))
+    else:
+        course_list = Courses.query.all()
+    return jsonify(
+        {
+            "data": []
+        }
+    )
+
+#get learners completed courses
+
+#check if learner has completed pre requisites
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
