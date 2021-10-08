@@ -67,6 +67,7 @@ var app = new Vue({
                         this.searchError = "";
                     }
                 })
+
                 // handle error - try,catch,error,finally
                 .catch(error => {
                     // print out error message 
