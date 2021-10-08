@@ -2,15 +2,9 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
-# notifications
-# from flask_notifications.filters.before_date import BeforeDate
-
-# event_hub.filter_by(Not(BeforeDate(now)))
-
-# event = Event(None, "system", "This event will not pass the filter",
-#               "This is the body of the test", sender="system")
-# notifications.send(event.to_json())
-
+import json
+from flask import Flask
+from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root' + \
@@ -51,6 +45,8 @@ class Sections(db.Model):
     duration = db.Column(db.Integer)
     trainers_eid = db.Column(db.Integer, db.ForeignKey('trainers_eid'))
     vacancies = db.Column(db.Integer)
+    #file no datatype hence chose date of upload
+    materials = db.Column(db.Date) 
 
     def to_dict(self):
         """
@@ -140,6 +136,43 @@ class Enrols(db.Model):
         for column in columns:
             result[column] = getattr(self, column)
         return result
+        
+    def __init__(self, course_code, learners_eid, class_section):
+        self.course_code = course_code
+        self.learners_eid = learners_eid
+        self.class_section = class_section
+
+class Subscriber(db.Model):   #notification subscription model  
+    __tablename__ = 'subscriber'
+
+    course_code = db.Column(db.Integer, db.ForeignKey('course_code'), primary_key=True)
+    class_section = db.Column(db.Integer, db.ForeignKey('class_section'), primary_key=True)
+    learners_eid = db.Column(db.Integer, db.ForeignKey('learners_eid'), primary_key=True)
+
+    # id = Column(Integer(), primary_key=True, default=None)
+    # created = Column(DateTime())
+    # modified = Column(DateTime())
+    subscription_info = Column(Text())
+    is_active = Column(Boolean(), default=True)
+
+    def to_dict(self):
+            """
+            'to_dict' converts the object into a dictionary,
+            in which the keys correspond to database columns
+            """
+            columns = self.__mapper__.column_attrs.keys()
+            result = {}
+            for column in columns:
+                result[column] = getattr(self, column)
+            return result
+    #getter & setter - extend usability of class 
+    @property
+    def subscription_info_json(self):
+        return json.loads(self.subscription_info)
+
+    @subscription_info_json.setter
+    def subscription_info_json(self, value):
+        self.subscription_info = json.dumps(value)
 
     def __init__(self, course_code, learners_eid, class_section):
         self.course_code = course_code
@@ -148,85 +181,88 @@ class Enrols(db.Model):
 
 db.create_all()
 
+#get specific sections, including materials
+@app.route("/sections/<int:course_code>/<string:class_section>")
+def get_specific_sections(class_section, course_code):
+    #filter by sections
+    section_list = Sections.query.filter_by(class_section=class_section,course_code=course_code).first()
+    #return filtered sections
+    return jsonify({
+        "data": [sections.to_dict()
+                    for sections in section_list]
+    }), 200
 
-#get all courses
-@app.route("/courses")
-def courses():
-    course_list = Courses.query.all()
-    return jsonify(
-        {
-            "data": [courses.to_dict()
-                     for courses in course_list]
-        }
-    ), 200
+#get specific trainers -> view, upload, delete materials
+@app.route("/sections/<int:course_code>/<string:class_section>/<int:trainers_eid>")
+def get_specific_trainers(class_section, course_code, trainers_eid):
+    #filter by trainers
+    trainers_list = Sections.query.filter_by(class_section=class_section,course_code=course_code, trainers_eid=trainers_eid).first()
+    #return filtered trainers
+    return jsonify({
+        "data": [trainer.to_dict() for trainer in trainers_list]
+    }), 200
 
-#get all sections -> check materials in specific sections 
-@app.route("/sections")
-def get_sections():
-    section_list = Sections.query.all()
-    return jsonify(
-        {
-            "data": [sections.to_dict()
-                     for sections in section_list]
-        }
-    ), 200
+#get specific learners -> send notifications
+@app.route('/notify/<string:class_section>/<string:learners_eid>')
+def notify():
+    from pywebpush import webpush, WebPushException
+    import logging
+    WEBPUSH_VAPID_PRIVATE_KEY = 'xxx'
+    #get all active subscribers
+    items = Subscriber.query.filter(Subscriber.is_active == True).all()
+    #count number of notifications
+    count = 0
+    #notify subscriber
+    for item in items:
+        try:
+            webpush(
+                subscription_info=item.subscription_info_json,
+                data="Test 123",
+                vapid_private_key=WEBPUSH_VAPID_PRIVATE_KEY,
+                vapid_claims={
+                    #“audience” -> destination URL of the push service
+                    "aud": "",
+                    #“expiration” date -> UTC time in seconds when the claim should expire (max 24h)
+                    "exp": "",
+                    #“subscriber” -> primary contact email for subscription
+                    #generic email alias -> alerts multiple people or assign new person without changing code
+                    "sub": "mailto:learner@example.com"
+                }
+            )
+            #increase notification counter 
+            count += 1
+        #incase notification fails
+        except WebPushException as ex:
+            logging.exception("message: notification/webpush fail")
+    #print notfication counter
+    return "{} notification(s) sent".format(count)
 
-#get all trainers -> view, upload, delete materials
-@app.route("/trainers")
-def get_trainers():
-    search_name = request.args.get('trainers_name')
-    if search_name:
-        trainers_list = Trainers.query.filter(Trainers.trainers_name.contains(search_name))
-    else:
-        trainers_list = Trainers.query.all()
-    return jsonify(
-        {
-            "data": [trainer.to_dict() for trainer in trainers_list]
-        }
-    ), 200
 
-#get learners by sections  -> send notifications
-@app.route("/sections/<string:class_section>/<int:course_code>")
-def learner_by_section(class_section, course_code):
-    learners = Learners.query.filter_by(class_section=class_section, course_code=course_code).first()
-    if learners:
-        return jsonify({
-            "data": [learner.to_dict() for learner in learners]
-        }), 200
-    else:
-        section_list = Sections.query.all()
-        if class_section not in section_list:
-            return jsonify({
-                "message": "Section does not exist"
-            }), 404
-        return jsonify({
-            "message": "No learners in this section."
-        }), 404
+# #add section materials 
+# @app.route("/sections/<int:course_code>/<string:class_section>", methods=['POST'])
 
-#update course materials  ??????
-@app.route("/courses/<int:course_code>", methods=['PUT'])
-def update_course(class_section, course_code):
-    courses = Courses.query.filter_by(course_code=course_code).first() 
-    if courses:
-        data = request.get_json()
-        courses.course_code = data['course_code']
-        db.session.commit()
-        return jsonify(
-            {
-                "code": 200,
-                "data": courses.to_dict()
-            }
-        )
-    return jsonify(
-        {
-            "code": 404,
-            "data": {
-                "class_section": class_section,
-                "course_code": course_code
-            },
-            "message": "Course not found."
-        }
-    ), 404
+
+#remove section materials 
+
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+
+#get learners by sections  -> send notifications
+# @app.route("/sections/<string:class_section>/<int:course_code>")
+# def learner_by_section(class_section, course_code):
+#     learners = Learners.query.filter_by(class_section=class_section, course_code=course_code).first()
+#     if learners:
+#         return jsonify({
+#             "data": [learner.to_dict() for learner in learners]
+#         }), 200
+#     else:
+#         section_list = Sections.query.all()
+#         if class_section not in section_list:
+#             return jsonify({
+#                 "message": "Section does not exist"
+#             }), 404
+#         return jsonify({
+#             "message": "No learners in this section."
+#         }), 404
