@@ -204,3 +204,67 @@ CREATE TABLE IF NOT EXISTS `enroling` (
   CONSTRAINT `enroling_ibfk_2` FOREIGN KEY (`course_code`) REFERENCES `courses` (`course_code`),
   CONSTRAINT `enroling_ibfk_3` FOREIGN KEY (`class_section`) REFERENCES `sections` (`class_section`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `quizzes`
+--
+
+DROP TABLE IF EXISTS `quizzes`;
+CREATE TABLE IF NOT EXISTS `quizzes` (
+  `quizid` int(11) NOT NULL AUTO_INCREMENT,
+  `course_code` int(11) NOT NULL,
+  `class_section` varchar(2) NOT NULL,
+  `time` int(11) NOT NULL,
+  `graded` varchar(1) NOT NULL,
+  
+
+  PRIMARY KEY (`quizid`, `course_code`, `class_section`),
+  CONSTRAINT `quizzes_ibfk_1` FOREIGN KEY (`course_code`) REFERENCES `courses` (`course_code`),
+  CONSTRAINT `quizzes_ibfk_2` FOREIGN KEY (`class_section`) REFERENCES `sections` (`class_section`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `quizquestions`
+--
+
+DROP TABLE IF EXISTS `quizquestions`;
+CREATE TABLE IF NOT EXISTS `quizquestions` (
+  `questionid` int(11) NOT NULL AUTO_INCREMENT,
+  `course_code` int(11) NOT NULL,
+  `class_section` varchar(2) NOT NULL,
+  `quizid` int(11) NOT NULL,
+  `questiontext` varchar(1000) NOT NULL,
+  `questiontype` varchar(4) NOT NULL,
+  `questionoptions` varchar(1000) NOT NULL,
+  
+  PRIMARY KEY (`questionid`,`course_code`, `class_section`, `quizid`),
+  CONSTRAINT `quizquestions_ibfk_1` FOREIGN KEY (`course_code`) REFERENCES `courses` (`course_code`),
+  CONSTRAINT `quizquestions_ibfk_2` FOREIGN KEY (`class_section`) REFERENCES `sections` (`class_section`),
+  CONSTRAINT `quizquestions_ibfk_3` FOREIGN KEY (`quizid`) REFERENCES `quizzes` (`quizid`)
+
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `quizanswers`
+--
+
+DROP TABLE IF EXISTS `quizanswers`;
+CREATE TABLE IF NOT EXISTS `quizanswers` (
+  `course_code` int(11) NOT NULL,
+  `class_section` varchar(2) NOT NULL,
+  `quizid` int(11) NOT NULL,
+  `questionid` int(11) NOT NULL,
+  `answertext` varchar(1000) NOT NULL,
+  
+  PRIMARY KEY (`course_code`, `class_section`, `quizid`, `questionid`),
+  CONSTRAINT `quizanswers_ibfk_1` FOREIGN KEY (`course_code`) REFERENCES `courses` (`course_code`),
+  CONSTRAINT `quizanswers_ibfk_2` FOREIGN KEY (`class_section`) REFERENCES `sections` (`class_section`),
+  CONSTRAINT `quizanswers_ibfk_3` FOREIGN KEY (`quizid`) REFERENCES `quizzes` (`quizid`)
+
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
