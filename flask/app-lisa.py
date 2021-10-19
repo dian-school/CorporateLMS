@@ -4,7 +4,7 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root' + \
-                                        '@localhost:3306/lms_database'
+                                        '@localhost:8889/lms_database'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_size': 100,
                                            'pool_recycle': 280}
@@ -139,6 +139,49 @@ class Enrols(db.Model):
 
 db.create_all()
 
+#get eligible courses
+@app.route("/courses/learners/<int:learners_eid>")
+def eligible_courses(learners_eid):
+    prerequisites = request.args.get('prerequisites')
+    if prerequisites:
+        eligible = Learners.query.filter(Learners.courses_completed.contains(prerequisites))
+    # eligible_courses = Courses.query.filter_by(prerequisites=prerequisites)
+        return jsonify(
+            {
+                "data": [course.to_dict() for course in eligible]
+            }
+        ), 200
+    return jsonify(
+        {
+            "code": 404,
+            "message": "not eligible"
+        },
+    ), 404
+    
+# get learners by course 
+@app.route("/courses/<int:course_code>")
+def learner_by_course(course_code):
+    learners = Learners.query.filter_by(course_code=course_code).all()
+    if learners:
+        return jsonify({
+            "data": [learner.to_dict() for learner in learners]
+        }), 200
+    else:
+        course_list = Courses.query.all()
+        if course_code not in course_list:
+            return jsonify({
+                "message": "Course does not exist"
+            }), 404
+        return jsonify({
+            "message": "No learners in this course."
+        }), 404
+
+#get signed up courses
+# @app.route("/enrols/courses")
+
+
+#get trainers by course and section
+
 #get all courses
 @app.route("/courses")
 def courses():
@@ -174,29 +217,6 @@ def get_trainers():
             "data": [trainer.to_dict() for trainer in trainers_list]
         }
     ), 200
-
-#get notification after succesfully enrolled 
-
-#get all course materials and quizzes
-
-#get course pre requisites 
-@app.route("/courses/<string:course_code>/prerequisites")
-def get_prerequisites(prerequisites, course_code):
-    courses = Courses.query.filter_by(course_code=course_code)
-    search_course = request.args.get('course_code')
-    if search_course:
-        course_list = Courses.query.filter(Courses.course_code.contains(search_course))
-    else:
-        course_list = Courses.query.all()
-    return jsonify(
-        {
-            "data": []
-        }
-    )
-
-#get learners completed courses
-
-#check if learner has completed pre requisites
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
