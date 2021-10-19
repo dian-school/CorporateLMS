@@ -12,61 +12,156 @@
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="css/styles.css" rel="stylesheet" />
 
+  <!-- Vue JS-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.18/vue.min.js"></script>
+
 </head>
+
 <body>
-    <nav class="navbar">
-        <div class="container-fluid">
-          <span class="navbar-brand mb-0 h1">G1T6 Learning Management System</span>
-        </div>
-    </nav>
-
-    <ul class="nav">
-      <li class="nav-item">
-        <a class="nav-link active" aria-current="page" href="#">Courses</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="admin-trainers.html">Trainers</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="admin-learners.html">Learners</a>
-      </li>
-
-    </ul>
-
-    <section class="wow fadeInUp mt-2"> <!-- Availability search bar and tables START-->
-      <div id="app" style="float:left" class="container"> <!-- container START-->
-        <div v-show="!edit"> <!-- v-show: !edit START-->
+  <div id = "app">
+    <section class="wow fadeInUp mt-2"> 
+      <div style="display:center" class="container"> <!-- container START-->
+        <div> 
+          <nav class="navbar" style="margin-left: 0;">
+            <div class="container-fluid">
+              <span class="navbar-brand mb-0 h1">G1T6 Learning Management System</span>
+            </div>
+          </nav>
+    
+          <ul class="nav">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="#">Courses</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="admin-trainers.html">Trainers</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="admin-learners.html">Learners</a>
+            </li>
+          </ul>
           <!-- Search -->
           <div class="input-group">
             <input v-model="searchStr" type="text" class="form-control"
               placeholder="Search for courses e.g 1001 or All About Maintenance"
               aria-label="courses"
-              aria-describedby="basic-addon2" style="margin-right:5px;">
+              aria-describedby="basic-addon2" >
             <div class="input-group-append">
               <button @click="findCourse()" class="btn btn-info" type="button">Search</button>
               <button @click="pageRefresh()" class="btn btn-outline-info" type="button">Clear All</button>
+              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+                Create Course
+              </button>
             </div>
+
           </div> <!-- End Search-->
 
-          <span class="text-danger" v-if="searchError!=''">
-            {{ searchError}}
-          
-          </span>
-          <br>
-          <br>
-        </div>
-      </div>
-        
-      <a href="createCourse.html" style="float:right; margin-right: 10px;" class="btn btn-primary" href="createCourse.html">Create Course</button></a>
-      <div v-for="courses in courses" class="card" style="margin:15px; width: 15rem;background-color: lavender;">
-        <img src="{{ courseImg }}" class="card-img-center">
-        <div class="card-body">
-          <h3 class="card-text" href="{{ courseLink }}"> {{ courseName }} </h3>
-          <p class="card-text"> Course ID: {{ courseId }} </p>
-        </div>
-      </div>
-    </section>
+          <div class="text-danger" v-if="searchError!=''">
+            {{ searchError }}
+          </div>
 
+          <!-- Modal -->
+          <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+  
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLongTitle">Add Course</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+  
+                <div class="modal-body">
+                  <form > 
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <td class="form-group">
+                          <label for="courseTitle" class="cta-text">Course Title</label> <span class="text-danger"> *Required</span>
+                          <input required name="cname" v-model="newCourseTitle" type="text" class="form-control" id="courseTitle" placeholder="Enter Course Title">
+                        </td>
+                      </tr>
+  
+                      <tr>
+                        <td class="form-group">
+                          <label for="courseCode" class="cta-text">Course Code</label> <span class="text-danger"> *Required</span>
+                          <input required name="ccode" v-model="newCode" type="text" class="form-control" id="newCode" placeholder="Enter Course Code">
+                        </td>
+                      </tr>
+  
+                      <tr>
+                        <td class="form-group">
+                          <label for="description" class="cta-text">Description</label><span class="text-danger"> *Required</span>
+                          <input required name="description" v-model="newDescription" type="text" class="form-control" id="description"
+                            placeholder="Enter description">
+                        </td>
+                      </tr>
+  
+                      <tr>
+                        <td class="form-group">
+                          <label for="prerequisites" class="cta-text">Prerequisites</label>
+                          <input v-model="newPrerequisites" type="text" class="form-control" id="prerequisites" 
+                            placeholder="Prerequisites">
+                        </td>
+                      </tr>
+
+
+                    </thead>
+                  </table>
+                
+                </div>
+  
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <!-- onclick = "return addCourse()" -->
+                  <button @click="addCourse()" class="btn btn-primary" v-on:submit.prevent="onSubmit"  >Create Course</button>
+                
+  
+                  <div class="row mt-4 justify-content-center">
+                    <div class="text-success" v-if="courseAdded">
+                      {{ statusMessage }} <br>
+                    </div>
+                  </div>
+                
+                  <div class="row mt-4 justify-content-center">
+                    <div class="text-danger" v-if="msg != ''">
+                      {{ msg }} <br>
+                    </div>
+                  </div>
+
+                  <div class="row justify-content-center">
+                    <div class="text-danger" v-if="addCourseError!=''">
+                      {{ addCourseError }}
+                    </div>
+                  </div> 
+                </div>
+
+              </div>
+            </form>
+          </div>
+        </div>
+  
+      </div>
+    </div>
+      <!-- Button trigger modal -->
+      
+    <br> <br>
+    <div class="container" style="display:center">
+      <div class="row">
+          <div v-for="course in courses"  class="card col-sm-3" style="margin:10px; width: 15rem;background-color: lavender;">
+            <!-- <img src="{{ courseImg }}" class="card-img-center"> -->
+            <div class="card-body">
+              <h3 class="card-text"> {{ course.course_title }} </h3>
+              <p class="card-text"> Course ID: {{ course.course_code }} </p>
+            </div>
+          </div>
+      </div>
+    </div>
+
+    </section>
+  </div>
+
+  <script type="text/javascript" src="js/admin.js"></script>
 
   <!-- Optional JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->

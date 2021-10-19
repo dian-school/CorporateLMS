@@ -52,6 +52,7 @@ class Trainers(db.Model):
         for column in columns:
             result[column] = getattr(self, column)
         return result
+        
 class Sections(db.Model):
     __tablename__ = 'sections'
 
