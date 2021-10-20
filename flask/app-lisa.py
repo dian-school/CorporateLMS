@@ -139,24 +139,74 @@ class Enrols(db.Model):
 
 db.create_all()
 
-#get eligible courses
-@app.route("/courses/learners/<int:learners_eid>")
-def eligible_courses(learners_eid):
-    prerequisites = request.args.get('prerequisites')
-    if prerequisites:
-        eligible = Learners.query.filter(Learners.courses_completed.contains(prerequisites))
-    # eligible_courses = Courses.query.filter_by(prerequisites=prerequisites)
+#get prerequisites
+@app.route("/courses/<int:course_code>/prerequisites")
+def prerequisites_by_course(course_code):
+    course = Courses.query.filter_by(course_code=course_code).all()
+    if course:
+        prerequisites = request.args.get('prerequisites')
         return jsonify(
             {
-                "data": [course.to_dict() for course in eligible]
+                "code": 200,
+                "data": {
+                    "course_code": course_code,
+                    "prerequisites": prerequisites
+                }
             }
-        ), 200
+        )
     return jsonify(
         {
             "code": 404,
-            "message": "not eligible"
-        },
-    ), 404
+            "data": {
+                "course_code": course_code
+            },
+            "message": "Course is not found."
+        }
+    )
+
+#get completed courses
+@app.route("/<int:learners_eid>/completed")
+def completed_courses(learners_eid):
+    learner = Learners.query.filter_by(learners_eid=learners_eid).all()
+    if learner:
+        courses_completed = request.args.get('courses_completed', default=None, type=str)
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "learner_eid": learners_eid,
+                    "courses_completed": courses_completed
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "data": {
+                "learner_eid": learners_eid
+            },
+            "message": "No eligible courses found."
+        }
+    )
+
+# #get eligible courses
+# @app.route("/courses/learners/<int:learners_eid>")
+# def eligible_courses(learners_eid):
+#     prerequisites = request.args.get('prerequisites')
+#     if prerequisites:
+#         eligible = Learners.query.filter(Learners.courses_completed.contains(prerequisites))
+#     # eligible_courses = Courses.query.filter_by(prerequisites=prerequisites)
+#         return jsonify(
+#             {
+#                 "data": [course.to_dict() for course in eligible]
+#             }
+#         ), 200
+#     return jsonify(
+#         {
+#             "code": 404,
+#             "message": "not eligible"
+#         },
+#     ), 404
     
 # get learners by course 
 @app.route("/courses/<int:course_code>")
@@ -175,12 +225,6 @@ def learner_by_course(course_code):
         return jsonify({
             "message": "No learners in this course."
         }), 404
-
-#get signed up courses
-# @app.route("/enrols/courses")
-
-
-#get trainers by course and section
 
 #get all courses
 @app.route("/courses")
