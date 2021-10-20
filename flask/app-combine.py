@@ -139,6 +139,64 @@ class Enrols(db.Model):
         self.learners_eid = learners_eid
         self.class_section = class_section
 
+class Quizzes(db.Model):
+    __tablename__ = 'quizzes'
+    quizid= db.Column(db.Integer, primary_key=True, autoincrement=True)
+    class_section = db.Column(db.String(2), db.ForeignKey(Sections.class_section), primary_key=True)
+    course_code = db.Column(db.Integer, db.ForeignKey(Courses.course_code), primary_key=True)
+    time = db.Column(db.Integer)
+    graded = db.Column(db.String(2))
+
+    def to_dict(self):
+        """
+        'to_dict' converts the object into a dictionary,
+        in which the keys correspond to database columns
+        """
+        columns = self.__mapper__.column_attrs.keys()
+        result = {}
+        for column in columns:
+            result[column] = getattr(self, column)
+        return result
+
+class Quizquestions(db.Model):
+    __tablename__ = 'quizquestions'
+    questionid= db.Column(db.Integer, primary_key=True, autoincrement=True)
+    quizid= db.Column(db.Integer, db.ForeignKey(Quizzes.quizid), primary_key=True)
+    class_section = db.Column(db.String(2), db.ForeignKey(Sections.class_section), primary_key=True)
+    course_code = db.Column(db.Integer, db.ForeignKey(Courses.course_code), primary_key=True)
+    questiontext = db.Column(db.String(1000))
+    questiontype = db.Column(db.String(4))
+    questionoptions = db.Column(db.String(1000))
+
+    def to_dict(self):
+        """
+        'to_dict' converts the object into a dictionary,
+        in which the keys correspond to database columns
+        """
+        columns = self.__mapper__.column_attrs.keys()
+        result = {}
+        for column in columns:
+            result[column] = getattr(self, column)
+        return result
+
+class Quizanswers(db.Model):
+    __tablename__ = 'quizanswers'
+    questionid= db.Column(db.Integer, db.ForeignKey(Quizquestions.questionid) ,primary_key=True)
+    quizid= db.Column(db.Integer, db.ForeignKey(Quizzes.quizid), primary_key=True)
+    class_section = db.Column(db.String(2), db.ForeignKey(Sections.class_section), primary_key=True)
+    course_code = db.Column(db.Integer, db.ForeignKey(Courses.course_code), primary_key=True)
+    answertext = db.Column(db.String(1000))
+
+    def to_dict(self):
+        """
+        'to_dict' converts the object into a dictionary,
+        in which the keys correspond to database columns
+        """
+        columns = self.__mapper__.column_attrs.keys()
+        result = {}
+        for column in columns:
+            result[column] = getattr(self, column)
+        return result
 
 db.create_all()
 
@@ -274,6 +332,72 @@ def update_section(class_section, course_code):
             "message": "Class not found."
         }
     ), 404
+
+#add quiz
+#step 1 create quiz 
+@app.route("/quizzes", methods=['POST'])
+def add_quiz():
+    data = request.get_json()
+    if not all(key in data.keys() for
+               key in ('class_section', 'course_code',
+                       'time', 'graded')):
+        return jsonify({
+            "message": "Incorrect JSON object provided."
+        }), 500
+    quiz = Quizzes(**data)
+    try:
+        db.session.add(quiz)
+        db.session.commit()
+        return jsonify(quiz.to_dict()), 201
+    except SQLAlchemyError as e:
+        print(str(e))
+        db.session.rollback()
+        return jsonify({
+            "message": "Unable to commit to database."
+        }), 500
+
+#step2 add questions
+@app.route("/quizzes/<int:quizid>", methods=['POST'])
+def add_questions(quizid):
+    data = request.get_json()
+    if not all(key in data.keys() for
+               key in ('quizid', 'class_section', 'course_code',
+                       'questiontext', 'questiontype', 'questionoptions')):
+        return jsonify({
+            "message": "Incorrect JSON object provided."
+        }), 500
+    quizquestion = Quizquestions(**data)
+    try:
+        db.session.add(quizquestion)
+        db.session.commit()
+        return jsonify(quizquestion.to_dict()), 201
+    except SQLAlchemyError as e:
+        print(str(e))
+        db.session.rollback()
+        return jsonify({
+            "message": "Unable to commit to database."
+        }), 500
+# step 3 add answer
+@app.route("/quizzes/<int:quizid>/<int:questionid>", methods=['POST'])
+def add_answers(quizid, questionid):
+    data = request.get_json()
+    if not all(key in data.keys() for
+               key in ('questionid', 'quizid', 'class_section', 'course_code',
+                       'answertext')):
+        return jsonify({
+            "message": "Incorrect JSON object provided."
+        }), 500
+    quizquestion = Quizanswers(**data)
+    try:
+        db.session.add(quizquestion)
+        db.session.commit()
+        return jsonify(quizquestion.to_dict()), 201
+    except SQLAlchemyError as e:
+        print(str(e))
+        db.session.rollback()
+        return jsonify({
+            "message": "Unable to commit to database."
+        }), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

@@ -4,7 +4,7 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root' + \
-                                        '@localhost:3306/lms_database'
+                                        '@localhost:8889/lms_database'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_size': 100,
                                            'pool_recycle': 280}
@@ -130,6 +130,93 @@ class Enrols(db.Model):
         for column in columns:
             result[column] = getattr(self, column)
         return result
+    
+    def __init__(self, course_code, learners_eid, class_section):
+        self.course_code = course_code
+        self.learners_eid = learners_eid
+        self.class_section = class_section
+
 
 db.create_all()
 
+#get eligible courses
+@app.route("/courses/learners/<int:learners_eid>")
+def eligible_courses(learners_eid):
+    prerequisites = request.args.get('prerequisites')
+    if prerequisites:
+        eligible = Learners.query.filter(Learners.courses_completed.contains(prerequisites))
+    # eligible_courses = Courses.query.filter_by(prerequisites=prerequisites)
+        return jsonify(
+            {
+                "data": [course.to_dict() for course in eligible]
+            }
+        ), 200
+    return jsonify(
+        {
+            "code": 404,
+            "message": "not eligible"
+        },
+    ), 404
+    
+# get learners by course 
+@app.route("/courses/<int:course_code>")
+def learner_by_course(course_code):
+    learners = Learners.query.filter_by(course_code=course_code).all()
+    if learners:
+        return jsonify({
+            "data": [learner.to_dict() for learner in learners]
+        }), 200
+    else:
+        course_list = Courses.query.all()
+        if course_code not in course_list:
+            return jsonify({
+                "message": "Course does not exist"
+            }), 404
+        return jsonify({
+            "message": "No learners in this course."
+        }), 404
+
+#get signed up courses
+# @app.route("/enrols/courses")
+
+
+#get trainers by course and section
+
+#get all courses
+@app.route("/courses")
+def courses():
+    course_list = Courses.query.all()
+    return jsonify(
+        {
+            "data": [courses.to_dict()
+                     for courses in course_list]
+        }
+    ), 200
+
+#get all sections
+@app.route("/sections")
+def get_sections():
+    section_list = Sections.query.all()
+    return jsonify(
+        {
+            "data": [sections.to_dict()
+                     for sections in section_list]
+        }
+    ), 200
+
+#get all trainers
+@app.route("/trainers")
+def get_trainers():
+    search_name = request.args.get('trainers_name')
+    if search_name:
+        trainers_list = Trainers.query.filter(Trainers.trainers_name.contains(search_name))
+    else:
+        trainers_list = Trainers.query.all()
+    return jsonify(
+        {
+            "data": [trainer.to_dict() for trainer in trainers_list]
+        }
+    ), 200
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)
