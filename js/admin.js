@@ -307,6 +307,9 @@ var app = new Vue({
             this.getAllCourses();
             this.searchError = "";
             this.searchStr = "";
+        },
+        storeCourseInfo: function () {
+            pass
         }
     },
     created: function () {

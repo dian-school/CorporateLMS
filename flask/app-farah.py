@@ -136,6 +136,27 @@ class Enrols(db.Model):
         self.learners_eid = learners_eid
         self.class_section = class_section
 
+class Materials(db.Model):
+    __tablename__ = 'materials'
+
+    class_section = db.Column(db.String(2), db.ForeignKey(Sections.class_section), primary_key=True)
+    course_code = db.Column(db.Integer, db.ForeignKey(Courses.course_code), primary_key=True)
+    material_id= db.Column(db.Integer ,primary_key=True)
+    material_name= db.Column(db.String(100))
+    material_type = db.Column(db.String(100))
+    material_link = db.Column(db.String(1000))
+
+    def to_dict(self):
+        """
+        'to_dict' converts the object into a dictionary,
+        in which the keys correspond to database columns
+        """
+        columns = self.__mapper__.column_attrs.keys()
+        result = {}
+        for column in columns:
+            result[column] = getattr(self, column)
+        return result
+
 
 db.create_all()
 
@@ -188,6 +209,42 @@ def update_section(class_section, course_code):
             "message": "Class not found."
         }
     ), 404
+
+#get all class materials related to the course
+@app.route("/materials/<string:class_section>/<int:course_code>")
+def get_class_material(class_section, course_code):
+    material_list = Materials.query.filter_by(class_section=class_section, course_code=course_code).all()
+    return jsonify(
+        {
+            "data": [material.to_dict()
+                     for material in material_list]
+        }
+    ), 200
+
+#add course material
+@app.route("/materials", methods=['POST'])
+@cross_origin()
+def add_material():
+    data = request.get_json()
+    print(data)
+    if not all(key in data.keys() for
+               key in ('material_id', 'course_code',
+                       'class_section')):
+        return jsonify({
+            "message": "Incorrect JSON object provided."
+        }), 500
+    material = Materials(**data)
+    print(material)
+    try:
+        db.session.add(material)
+        db.session.commit()
+        return jsonify(material.to_dict()), 201
+    except SQLAlchemyError as e:
+        print(str(e))
+        db.session.rollback()
+        return jsonify({
+            "message": "Unable to commit to database."
+        }), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
