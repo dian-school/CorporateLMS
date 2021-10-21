@@ -235,7 +235,7 @@ def courses():
     ), 200
 
 # get learners by course 
-@app.route("/courses/<int:course_code>")
+@app.route("/learners/<int:course_code>")
 def learner_by_course(course_code):
     learners = Learners.query.filter_by(course_code=course_code).all()
     if learners:
@@ -454,6 +454,95 @@ def add_material():
         db.session.rollback()
         return jsonify({
             "message": "Unable to commit to database."
+        }), 500
+
+#search course by course code
+@app.route("/courses/search/<int:course_code>")
+def find_by_course_code(course_code):
+    courseByCourseCode = Courses.query.filter_by(course_code=course_code).first()
+    if courseByCourseCode:
+        return jsonify(
+            {
+                "code": 200,
+                "data": [courseByCourseCode.to_dict()]
+            }
+        ), 200
+    return jsonify(
+        {
+            "code": 404,
+            "message": "Course code not found."
+        }
+    ), 404
+
+#search course by course title
+@app.route("/courses/searchTitle/<string:course_title>")
+def find_by_course_title(course_title):
+    coursebyTitle = Courses.query.filter_by(course_title=course_title).first()
+    if coursebyTitle:
+        return jsonify(
+            {
+                "code": 200,
+                "data": [coursebyTitle.to_dict()]
+            }
+        ), 200
+    return jsonify(
+        {
+            "code": 404,
+            "message": "Course title not found."
+        }
+    ), 404
+
+#get courses by course code
+@app.route("/courses/<int:course_code>")
+def courses_by_code(course_code):
+    course_by_code = Courses.query.filter_by(course_code=course_code).first()
+    if course_by_code:
+        return jsonify(
+            {
+                "data": [course_by_code.to_dict()]
+            }
+        ), 200
+    else: 
+        return jsonify(
+            {
+                "code": 404,
+                "message": "Course code not found."
+            }
+        ), 404
+
+#course creation
+@app.route("/courses", methods=['POST'])
+@cross_origin()
+def addCourse():
+    data = request.get_json()
+    print(data)
+    if not all(key in data.keys() for
+               key in ('course_title', 'course_code',
+                       'description', 'prerequisites')):
+        return jsonify({
+            "code": 500,
+            "message": "Required fields not provided."
+        }), 500
+    course = Courses(**data)
+    print(course)
+    try:
+        db.session.add(course)
+        db.session.commit()
+        return jsonify(
+            {
+                "code": 201,
+                "message": "Course has been added successfully.",
+                "data": [course.to_dict()]
+            }
+            ), 201
+
+    except SQLAlchemyError as e:
+        print(str(e))
+        db.session.rollback()
+        return jsonify(
+            {
+            "code": 500,
+            "message": "Unable to add course to database."
         }), 500
 
 if __name__ == '__main__':
