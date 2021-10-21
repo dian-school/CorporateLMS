@@ -201,9 +201,9 @@ class Quizanswers(db.Model):
 class Materials(db.Model):
     __tablename__ = 'materials'
 
+    material_id= db.Column(db.Integer ,primary_key=True, autoincrement=True)
     class_section = db.Column(db.String(2), db.ForeignKey(Sections.class_section), primary_key=True)
     course_code = db.Column(db.Integer, db.ForeignKey(Courses.course_code), primary_key=True)
-    material_id= db.Column(db.Integer ,primary_key=True)
     material_name= db.Column(db.String(100))
     material_type = db.Column(db.String(100))
     material_link = db.Column(db.String(1000))
@@ -438,8 +438,11 @@ def add_material():
     data = request.get_json()
     print(data)
     if not all(key in data.keys() for
-               key in ('material_id', 'course_code',
-                       'class_section')):
+               key in ('course_code',
+                       'class_section', 
+                       'material_name', 
+                       'material_type', 
+                       'material_link')):
         return jsonify({
             "message": "Incorrect JSON object provided."
         }), 500
@@ -448,12 +451,19 @@ def add_material():
     try:
         db.session.add(material)
         db.session.commit()
-        return jsonify(material.to_dict()), 201
+        return jsonify(
+            {
+                "code": 200,
+                "message": "Course has been added successfully.",
+                "data": [material.to_dict()]
+            }
+            ), 200
     except SQLAlchemyError as e:
         print(str(e))
         db.session.rollback()
         return jsonify({
-            "message": "Unable to commit to database."
+            "code": 500,
+            "message": "Unable to add material to database."
         }), 500
 
 #search course by course code

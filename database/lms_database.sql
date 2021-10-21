@@ -277,14 +277,14 @@ CREATE TABLE IF NOT EXISTS `quizanswers` (
 
 DROP TABLE IF EXISTS `materials`;
 CREATE TABLE IF NOT EXISTS `materials` (
+  `material_id` int(11) NOT NULL AUTO_INCREMENT,
   `course_code` int(11) NOT NULL,
   `class_section` varchar(2) NOT NULL,
-  `material_id` int(11) NOT NULL,
   `material_name` varchar(100) NOT NULL,
   `material_type` varchar(100) NOT NULL,
   `material_link` varchar(1000) NOT NULL,
   
-  PRIMARY KEY (`course_code`, `class_section`, `material_id`),
+  PRIMARY KEY (`material_id`, `course_code`, `class_section`),
   CONSTRAINT `materials_ibfk_1` FOREIGN KEY (`course_code`) REFERENCES `courses` (`course_code`),
   CONSTRAINT `materials_ibfk_2` FOREIGN KEY (`class_section`) REFERENCES `sections` (`class_section`)
 

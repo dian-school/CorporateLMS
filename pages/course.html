@@ -24,48 +24,29 @@
         <div> 
           <nav class="navbar" style="margin-left: 0;">
             <div class="container-fluid">
-              <span class="navbar-brand mb-0 h1">G1T6 Learning Management System</span>
+              <span class="navbar-brand mb-0 h1">Course Name</span>
             </div>
           </nav>
-    
-          <ul class="nav">
-            <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">Courses</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="admin-trainers.html">Trainers</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="admin-learners.html">Learners</a>
-            </li>
-          </ul>
-          <!-- Search -->
-          <div class="input-group">
-            <input v-model="searchStr" type="text" class="form-control"
-              placeholder="Search for courses e.g 1001 or All About Maintenance"
-              aria-label="courses"
-              aria-describedby="basic-addon2" >
-            <div class="input-group-append">
-              <button @click="findCourse()" class="btn btn-info" type="button">Search</button>
-              <button @click="pageRefresh()" class="btn btn-outline-info" type="button">Clear All</button>
-              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
-                Create Course
-              </button>
-            </div>
 
-          </div> <!-- End Search-->
+          <br>
 
-          <div class="text-danger" v-if="searchError!=''">
-            {{ searchError }}
+          <!-- Add Materials -->
+          <div>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addMaterialsModal">
+                Add Materials
+            </button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addQuizModal">
+                Add Quiz
+            </button>
           </div>
 
-          <!-- Modal -->
-          <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+          <!-- Modal to Add Materials -->
+          <div class="modal fade" id="addMaterialsModal" tabindex="-1" role="dialog" aria-labelledby="addMaterialsModalTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
               <div class="modal-content">
   
                 <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLongTitle">Add Course</h5>
+                  <h5 class="modal-title" id="addMaterialsModalLongTitle">Add Materials</h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
@@ -77,31 +58,24 @@
                     <thead>
                       <tr>
                         <td class="form-group">
-                          <label for="courseTitle" class="cta-text">Course Title</label> <span class="text-danger"> *Required</span>
-                          <input required name="cname" v-model="newCourseTitle" type="text" class="form-control" id="courseTitle" placeholder="Enter Course Title">
+                          <label for="materialName" class="cta-text">Material Name</label><span class="text-danger">*</span>
+                          <input required name="materialName" v-model="materialName" type="text" class="form-control" id="materialName" placeholder="Enter Name of Material">
                         </td>
                       </tr>
   
                       <tr>
                         <td class="form-group">
-                          <label for="courseCode" class="cta-text">Course Code</label> <span class="text-danger"> *Required</span>
-                          <input required name="ccode" v-model="newCode" type="text" class="form-control" id="newCode" placeholder="Enter Course Code">
+                          <label for="materialType" class="cta-text">Material Type</label><span class="text-danger">*</span>
+                          <input required name="materialType" v-model="materialType" type="text" class="form-control" id="materialType"
+                            placeholder="Enter Type of Material (e.g. Doc, Slides)">
                         </td>
                       </tr>
   
                       <tr>
                         <td class="form-group">
-                          <label for="description" class="cta-text">Description</label><span class="text-danger"> *Required</span>
-                          <input required name="description" v-model="newDescription" type="text" class="form-control" id="description"
-                            placeholder="Enter description">
-                        </td>
-                      </tr>
-  
-                      <tr>
-                        <td class="form-group">
-                          <label for="prerequisites" class="cta-text">Prerequisites</label>
-                          <input v-model="newPrerequisites" type="text" class="form-control" id="prerequisites" 
-                            placeholder="Prerequisites">
+                          <label for="materialLink" class="cta-text">Material Link</label><span class="text-danger">*</span>
+                          <input name = "materialLink" v-model="materialLink" type="text" class="form-control" id="materialLink" 
+                            placeholder="Google Link of your Material">
                         </td>
                       </tr>
 
@@ -114,7 +88,7 @@
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                   <!-- onclick = "return addCourse()" -->
-                  <button @click="addCourse()" class="btn btn-primary" v-on:submit.prevent="onSubmit"  >Create Course</button>
+                  <button type="button" @click="addMaterial()" class="btn btn-primary" v-on:submit.prevent="onSubmit" data-dismiss="modal" >Add Material</button>
                 
   
                   <div class="row mt-4 justify-content-center">
@@ -131,7 +105,7 @@
 
                   <div class="row justify-content-center">
                     <div class="text-danger" v-if="addCourseError!=''">
-                      {{ addCourseError }}
+                      {{ errorMsg }}
                     </div>
                   </div> 
                 </div>
@@ -139,29 +113,128 @@
               </div>
             </form>
           </div>
+        
         </div>
+        <!-- End Modal Materials-->
+
+        <!-- Modal to Add Quiz -->
+        <div class="modal fade" id="addQuizModal" tabindex="-1" role="dialog" aria-labelledby="addQuizModalTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+
+                <div class="modal-header">
+                  <h5 class="modal-title" id="addQuizModalLongTitle">Add Quiz</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                  <form> 
+                    <table class="table table-striped">
+                      <thead>
+                        <tr>
+                          <td class="form-group">
+                            <label for="courseTitle" class="cta-text">Course Title</label> <span class="text-danger"> *Required</span>
+                            <input required name="cname" v-model="newCourseTitle" type="text" class="form-control" id="courseTitle" placeholder="Enter Course Title">
+                          </td>
+                        </tr>
+    
+                        <tr>
+                          <td class="form-group">
+                            <label for="courseCode" class="cta-text">Course Code</label> <span class="text-danger"> *Required</span>
+                            <input required name="ccode" v-model="newCode" type="text" class="form-control" id="newCode" placeholder="Enter Course Code">
+                          </td>
+                        </tr>
+    
+                        <tr>
+                          <td class="form-group">
+                            <label for="description" class="cta-text">Description</label><span class="text-danger"> *Required</span>
+                            <input required name="description" v-model="newDescription" type="text" class="form-control" id="description"
+                              placeholder="Enter description">
+                          </td>
+                        </tr>
+    
+                        <tr>
+                          <td class="form-group">
+                            <label for="prerequisites" class="cta-text">Prerequisites</label>
+                            <input v-model="newPrerequisites" type="text" class="form-control" id="prerequisites" 
+                              placeholder="Prerequisites">
+                          </td>
+                        </tr>
+  
+  
+                      </thead>
+                    </table>
+                  
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <!-- onclick = "return addCourse()" -->
+                    <button @click="addCourse()" class="btn btn-primary" v-on:submit.prevent="onSubmit" data-dismiss="modal" >Create Course</button>
+                  
+    
+                    <div class="row mt-4 justify-content-center">
+                      <div class="text-success" v-if="courseAdded">
+                        {{ statusMessage }} <br>
+                      </div>
+                    </div>
+                  
+                    <div class="row mt-4 justify-content-center">
+                      <div class="text-danger" v-if="msg != ''">
+                        {{ msg }} <br>
+                      </div>
+                    </div>
+  
+                    <div class="row justify-content-center">
+                      <div class="text-danger" v-if="addCourseError!=''">
+                        {{ addCourseError }}
+                      </div>
+                    </div> 
+                </div>
+
+              </div>
+            </div>
+          </form>
+        </div>
+        <!-- End Modal Quiz -->
   
       </div>
     </div>
       <!-- Button trigger modal -->
       
-    <br> <br>
+    <br>
+
+    <!-- Table of Materials and Quizzes -->
     <div class="container" style="display:center">
       <div class="row">
-          <div v-for="course in courses"  class="card col-sm-3" style="margin:10px; width: 15rem;background-color: lavender;">
-            <!-- <img src="{{ courseImg }}" class="card-img-center"> -->
-            <div class="card-body">
-              <h3 class="card-text"> {{ course.course_title }} </h3>
-              <p class="card-text"> Course ID: {{ course.course_code }} </p>
-            </div>
-          </div>
+          <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Material Title</th>
+                    <th scope="col">Material Type</th>
+                    <th scope="col">Link</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="material in materials">
+                    <td>{{ material.material_name }}</td>
+                    <td>{{ material.material_type }}</td>
+                    <td> 
+                        <a class="btn btn-outline-primary" :href="material.material_link" role="button">{{ material.material_type }} Link</a>
+                    </td>
+                </tr>
+            </tbody>
+          </table>
       </div>
     </div>
+    <!-- End Table -->
 
     </section>
   </div>
 
-  <script type="text/javascript" src="../js/admin.js"></script>
+  <script type="text/javascript" src="../js/course.js"></script>
 
   <!-- Optional JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
