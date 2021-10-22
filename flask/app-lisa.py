@@ -142,15 +142,17 @@ db.create_all()
 #get prerequisites
 @app.route("/courses/<int:course_code>/prerequisites")
 def prerequisites_by_course(course_code):
-    course = Courses.query.filter_by(course_code=course_code).all()
+    course = Courses.query.filter_by(course_code=course_code).first()
     if course:
-        prerequisites = request.args.get('prerequisites')
+        prerequisites_list = request.args.get('prerequisites', course.prerequisites)        
+        if prerequisites_list == None:
+            prerequisites_list = 'No prerequisites'
         return jsonify(
             {
                 "code": 200,
                 "data": {
                     "course_code": course_code,
-                    "prerequisites": prerequisites
+                    "prerequisites": prerequisites_list
                 }
             }
         )
@@ -169,7 +171,7 @@ def prerequisites_by_course(course_code):
 def completed_courses(learners_eid):
     learner = Learners.query.filter_by(learners_eid=learners_eid).all()
     if learner:
-        courses_completed = request.args.get('courses_completed', default=None, type=str)
+        courses_completed = request.values.get('courses_completed', default=None, type=str)
         return jsonify(
             {
                 "code": 200,
@@ -188,6 +190,11 @@ def completed_courses(learners_eid):
             "message": "No eligible courses found."
         }
     )
+
+# #get eligible courses
+# @app.route("/<int:learners_eid>/courses")
+# def eligible_courses(learners_eid):
+#     if 
 
 # #get eligible courses
 # @app.route("/courses/learners/<int:learners_eid>")
