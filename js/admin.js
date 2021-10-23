@@ -11,8 +11,11 @@ var app = new Vue({
         message: "There is a problem retrieving data, please try again later.",
         statusMessage: "",
         msg: "",
+        course_title: "",
 
         "courses": [],
+        "trainers": [],
+        "learners": [],
         searchError: "",
 
         newCourseTitle: "",
@@ -92,6 +95,35 @@ var app = new Vue({
                     });
             }
         },
+        courseProfile: function(course_title) {
+            this.searchError = "";
+            this.course_title = course_title;
+            console.log(course_title);
+
+            const response =
+                    fetch(`${get_all_URL}/searchTitle/${this.course_title}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(response);
+                        if (data.code === 404) {
+                            // no course found in db
+                            this.searchError = data.message;
+                        } else {
+
+                            this.courses = data.data;
+                            console.log(this.courses);
+
+                        }
+                    })
+                    .catch(error => {
+                        // Errors when calling the service; such as network error, 
+                        // service offline, etc
+                        searchError = 'Unable to retrieve course';
+                        console.log(this.searchError + error);
+                    });
+                
+        },
+        
         // validateForm: function() {
         //     let cname = document.forms["courseForm"]["cname"].value;
         //     let ccode = document.forms["courseForm"]["ccode"].value;
@@ -235,6 +267,31 @@ var app = new Vue({
                     });
             }
         },
+        trainerProfile: function(trainers_name) {
+            this.searchError = "";
+            this.trainers_name = trainers_name;
+            console.log(trainers_name);
+
+            const response =
+                    fetch(`${get_all_trainers}/${this.trainers_name}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(response);
+                        if (data.code === 404) {
+                            // no trainer found in db
+                            this.searchError = data.message;
+                        } else {
+                            this.trainers = data.data;
+                            console.log(this.trainers);
+                        }
+                    })
+                    .catch(error => {
+                        // Errors when calling the service; such as network error, 
+                        // service offline, etc
+                        console.log(this.searchError + error);
+                    });
+                
+        },
         getAllLearners: function () {
             // on Vue instance created, load the trainer list
             const response =
@@ -303,8 +360,35 @@ var app = new Vue({
                     });
             }
         },
+        learnerProfile: function(learners_name) {
+            this.searchError = "";
+            this.learners_name = learners_name;
+            console.log(learners_name);
+
+            const response =
+                    fetch(`${get_all_learners}/${this.learners_name}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(response);
+                        if (data.code === 404) {
+                            // no trainer found in db
+                            this.searchError = data.message;
+                        } else {
+                            this.learners = data.data;
+                            console.log(this.learners);
+                        }
+                    })
+                    .catch(error => {
+                        // Errors when calling the service; such as network error, 
+                        // service offline, etc
+                        console.log(this.searchError + error);
+                    });
+                
+        },
         pageRefresh: function () {
             this.getAllCourses();
+            this.getAllTrainers();
+            this.getAllLearners();
             this.searchError = "";
             this.searchStr = "";
         },
@@ -316,5 +400,6 @@ var app = new Vue({
         // on Vue instance created, load the course list
         this.getAllCourses();
         this.getAllTrainers();
+        this.getAllLearners();
     }
 });
