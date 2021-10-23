@@ -4,7 +4,10 @@ var get_all_learners = "http://localhost:5000/learners";
 
 var app = new Vue({
     el: "#app",
-    // computed: 
+    // computed: {
+    // prereqPlaceholder: function () {
+    //     return `${this.editPrerequisites}`
+    //   }
     // },
     data: {
         searchStr: "",
@@ -24,6 +27,18 @@ var app = new Vue({
         newPrerequisites: "",
         courseAdded: false,
         addCourseError: "",
+
+        courseDeleted: false,
+
+        edit: false,
+        editCurrentCourse: "",
+        editSuccessful: false,
+        editCourseError: "",
+        
+        editCourse_title: "",
+        editCourse_code: "",
+        editDescription: "",
+        editPrerequisites: "",
 
     },
     methods: {
@@ -124,26 +139,6 @@ var app = new Vue({
                 
         },
         
-        // validateForm: function() {
-        //     let cname = document.forms["courseForm"]["cname"].value;
-        //     let ccode = document.forms["courseForm"]["ccode"].value;
-        //     let description = document.forms["courseForm"]["description"].value;
-        //     error = [];
-        //     if (cname == "") {
-        //         error.push("Course Title must be filled out");
-        //         return false;
-        //       }
-        //     if (ccode == "") {
-        //         error.push("Course Code must be filled out");
-        //         return false;
-        //     }
-        //     if (description == "") {
-        //         error.push("Course Description must be filled out");
-        //         return false;
-        //     }
-        //     console.log(error);
-        //     alert(error);
-        // },
         addCourse: function () {
             // reset data to original setting
             this.courseAdded = false;
@@ -161,9 +156,72 @@ var app = new Vue({
             if (this.newCourseTitle === "" || this.newCode === "" || this.newDescription === "") {
                 this.msg = "Please fill in required fields.";
                 }
-        
+            else {
+                fetch(`${get_all_URL}`, {
+                        method: "POST",
+                        headers: {
+                            "Content-type": "application/json"
+                        },
+                        body: jsonData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        result = data.data;
+                        //console.log(result);
+                        // 3 cases
+                        switch (data.code) {
+                            case 201:
+                                this.courseAdded = true;
+                                this.statusMessage = data.message
+                                
+                                // refresh page
+                                this.pageRefresh();
+
+                                break;
+                        
+                            case 500:
+                                this.addCourseError = data.message;
+                                break;
+                            default:
+                                throw `${data.code}: ${data.message}`;
+                        }
+                    })
+                
+                .catch(error => {
+                    // Errors when calling the service; such as network error, 
+                    // service offline, etc
+                    this.addCourseError = this.statusMessage
+                    console.log(this.addCourseError);
+                });
+            }
+        },
+        editCourseForm: function (course) {
+            //resets the data setting
+            this.editSuccessful = false;
+            this.editCurrentCourse = course;
+            this.edit = true;
+
+            this.editCourse_title = "";
+            this.editCourse_code = "";
+            this.editDescription = "";
+            this.editPrerequisites = "";
+        },
+        editCourse: function (course) {
+            // reset data
+
+            this.editCourseError = "";
+            this.statusMessage = "";
+
+            let jsonData = JSON.stringify({
+                course_code: this.editCurrentCourse.course_code,
+                course_title: this.editCourse_title,
+                description: this.editDescription,
+                prerequisites: this.editPrerequisites
+            });
+
             fetch(`${get_all_URL}`, {
-                    method: "POST",
+                    method: "PATCH",
                     headers: {
                         "Content-type": "application/json"
                     },
@@ -173,31 +231,68 @@ var app = new Vue({
                 .then(data => {
                     console.log(data);
                     result = data.data;
-                    //console.log(result);
+                    console.log(result);
                     // 3 cases
                     switch (data.code) {
-                        case 201:
-                            this.courseAdded = true;
-                            this.statusMessage = data.message
-                            
-                            // refresh page
-                            this.pageRefresh();
+                        case 200:
+                            this.editSuccessful = true;
+
+                            this.getAllCourses();
+
+                            this.statusMessage = 'Successfully edited course details';
 
                             break;
-                    
+                        case 404:
+                            this.editCourseError = "Unable to edit course details";
                         case 500:
-                            this.addCourseError = data.message;
+                            this.editCourseError = data.message;
                             break;
                         default:
                             throw `${data.code}: ${data.message}`;
                     }
                 })
+        },
+        del: function (course_code) {
+            //reset all data to original setting
+            this.course_code = course_code;
+            this.courseDeleted = false;
+
+            this.courseAdded = false;
+            this.addCourseError = "";
+            this.statusMessage = "";
+
+            const response =
+                fetch(`${get_all_URL}/${this.course_code}`, {
+                    method: "DELETE",
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(response);
+                    if (data.code === 404) {
+                        // no course in db
+                        this.message = data.message;
+                        this.courses = [];
+                    } else {
+                        this.courseDeleted = true;
+                        this.statusMessage = "The course has been successfully deleted!";
+                    }
+                })
                 .catch(error => {
-                    // Errors when calling the service; such as network error, 
+                    // Errors when calling the service; such as network error,
                     // service offline, etc
-                    this.addCourseError = this.statusMessage
-                    console.log(this.addCourseError);
+                    console.log(this.message + error);
+
                 });
+
+            //Front end Vue
+            var idx = 0
+            for (course of this.courses) {
+                if (course.course_code == course_code) {
+                    this.courses.splice(idx, 1) // remove this element
+                    break
+                }
+                idx++
+            }
         },
         getAllTrainers: function () {
             // on Vue instance created, load the trainer list

@@ -90,6 +90,7 @@ body {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
+
 /* course content learner table*/
 .radiotext {
   margin: 10px 10px 0px 0px;
@@ -169,7 +170,7 @@ body {
 }
 
 .solution_cards_box .solution_card:hover .solu_description button {
-  background: #fff !important;
+  background: #fff ;
   color: #309df0;
 }
 
@@ -196,7 +197,7 @@ body {
     #42c3ca 0%,
     #42c3ca 50%,
     #42c3cac7 75%
-  ) !important;
+  ) ;
   color: #fff;
   font-weight: 500;
   font-size: 1rem;
@@ -5785,8 +5786,8 @@ label {
   display: flex;
   flex-wrap: wrap;
   flex-shrink: 0;
-  align-items: center;
-  justify-content: flex-end;
+  align-items: left;
+  justify-content: flex;
   padding: 0.75rem;
   border-top: 1px solid #dee2e6;
   border-bottom-right-radius: calc(0.3rem - 1px);

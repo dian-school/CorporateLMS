@@ -35,110 +35,111 @@
     </nav>
     
 	<!-- Search -->
-	<br>
-	<div style="display:center" class="container">
-	<div class="input-group">
-		<input v-model="searchStr" type="text" class="form-control"
-		placeholder="Search for courses e.g 1001 or All About Maintenance"
-		aria-label="courses"
-		aria-describedby="basic-addon2" >
-		<div class="input-group-append">
-		<button @click="findCourse()" class="btn btn-info" type="button">Search</button>
-		<button @click="pageRefresh()" class="btn btn-outline-info" type="button">Clear All</button> <br>
-		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
-			Create Course
-		</button>
+    <br>
+    <div style="display:center" class="container">
+      <div class="input-group">
+        <input v-model="searchStr" type="text" class="form-control"
+        placeholder="Search for courses e.g 1001 or All About Maintenance"
+        aria-label="courses"
+        aria-describedby="basic-addon2" >
+        <div class="input-group-append">
+          <button @click="findCourse()" class="btn btn-info" type="button">Search</button>
+          <button @click="pageRefresh()" class="btn btn-outline-info" type="button">Clear All</button> <br>
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+            Create Course
+          </button>
+        </div>
+
+      </div> 
+
+	  <div class="text-danger" v-if="searchError!=''">
+		{{ searchError }}
 		</div>
+    </div> <!-- End Search-->
 
-	</div> 
-	</div> <!-- End Search-->
 
-	<div class="text-danger" v-if="searchError!=''">
-	{{ searchError }}
+	<!-- Add Course Modal -->
+	<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLongTitle">Add Course</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+
+			<div class="modal-body">
+			<form> 
+			<table class="table">
+				<thead>
+					<tr>
+						<td class="form-group">
+							<label for="courseTitle" class="cta-text">Course Title</label> <span class="text-danger"> *Required</span>
+							<input required name="cname" v-model="newCourseTitle" type="text" class="form-control" id="courseTitle" placeholder="Enter Course Title">
+						</td>
+					</tr>
+
+					<tr>
+						<td class="form-group">
+							<label for="courseCode" class="cta-text">Course Code</label> <span class="text-danger"> *Required</span>
+							<input required name="ccode" v-model="newCode" type="text" class="form-control" id="newCode" placeholder="Enter Course Code">
+						</td>
+					</tr>
+
+					<tr>
+						<td class="form-group">
+							<label for="description" class="cta-text">Description</label><span class="text-danger"> *Required</span>
+							<input required name="description" v-model="newDescription" type="text" class="form-control" id="description"
+								placeholder="Enter description">
+						</td>
+					</tr>
+
+					<tr>
+						<td class="form-group">
+							<label for="prerequisites" class="cta-text">Prerequisites</label>
+							<input v-model="newPrerequisites" type="text" class="form-control" id="prerequisites" 
+								placeholder="Prerequisites">
+						</td>
+					</tr>
+				</thead>
+			</table>
+			</form>
+			</div>
+
+			<div class="modal-footer">
+
+				<div class="justify-content-left;">
+					<div class="text-success" v-if="courseAdded">
+					{{ statusMessage }} <br>
+					</div>
+				</div>
+				
+				<div class="justify-content-left;">
+					<div class="text-danger" v-if="msg != ''">
+					{{ msg }} <br>
+					</div>
+				</div>
+	
+				<div class="justify-content-left;">
+					<div class="text-danger" v-if="addCourseError!=''">
+					{{ addCourseError }}
+					</div>
+				</div> 
+
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				
+				<button @click="addCourse()" class="btn btn-primary" v-on:submit.prevent="onSubmit"  >Create Course</button>
+			
+			</div>
+			
+			</div>
+			
+		</div>
 	</div>
+	
 
-          <!-- Modal -->
-        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        	<div class="modal-dialog modal-dialog-centered" role="document">
-              <div class="modal-content">
-  
-                <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLongTitle">Add Course</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-  
-                <div class="modal-body">
-                <form> 
-                  <table class="table">
-                    <thead>
-                      <tr>
-                        <td class="form-group">
-                          <label for="courseTitle" class="cta-text">Course Title</label> <span class="text-danger"> *Required</span>
-                          <input required name="cname" v-model="newCourseTitle" type="text" class="form-control" id="courseTitle" placeholder="Enter Course Title">
-                        </td>
-                      </tr>
-  
-                      <tr>
-                        <td class="form-group">
-                          <label for="courseCode" class="cta-text">Course Code</label> <span class="text-danger"> *Required</span>
-                          <input required name="ccode" v-model="newCode" type="text" class="form-control" id="newCode" placeholder="Enter Course Code">
-                        </td>
-                      </tr>
-  
-                      <tr>
-                        <td class="form-group">
-                          <label for="description" class="cta-text">Description</label><span class="text-danger"> *Required</span>
-                          <input required name="description" v-model="newDescription" type="text" class="form-control" id="description"
-                            placeholder="Enter description">
-                        </td>
-                      </tr>
-  
-                      <tr>
-                        <td class="form-group">
-                          <label for="prerequisites" class="cta-text">Prerequisites</label>
-                          <input v-model="newPrerequisites" type="text" class="form-control" id="prerequisites" 
-                            placeholder="Prerequisites">
-                        </td>
-                      </tr>
-                    </thead>
-                  </table>
-                
-                </div>
-  
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                  <!-- onclick = "return addCourse()" -->
-                  <button @click="addCourse()" class="btn btn-primary" v-on:submit.prevent="onSubmit"  >Create Course</button>
-                
-  
-                  <div class="row mt-4 justify-content-center">
-                    <div class="text-success" v-if="courseAdded">
-                      {{ statusMessage }} <br>
-                    </div>
-                  </div>
-                
-                  <div class="row mt-4 justify-content-center">
-                    <div class="text-danger" v-if="msg != ''">
-                      {{ msg }} <br>
-                    </div>
-                  </div>
-
-                  <div class="row justify-content-center">
-                    <div class="text-danger" v-if="addCourseError!=''">
-                      {{ addCourseError }}
-                    </div>
-                  </div> 
-                </div>
-
-            	</div>
-            	</form>
-        	</div>
-    	</div>
-		
-      <!-- Button trigger modal -->
-      
     <br> <br>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
@@ -209,16 +210,138 @@
 						{{course.description}}
 					</p>
                 	<a target="_blank" href="courseProfile.html"><button @click= "courseProfile(course.course_title)" type="button" class="read_more_btn">Read More</button></a>
+                    <button @click= "editCourseForm(course)" type="button" class="btn btn-light" data-toggle="modal" data-target="#editCourseModal">
+                        Update Course
+                    </button>
+                    <button @click= "del(course.course_code)" type="button" class="btn btn-danger">Delete Course</button>
+                    <!-- currently ends up at the bottom need to figure out how to get it to open in the center like a modal -->
+                    
                 </div>
 
+                
             </div>
             </div>
+
         </div>
         </div>
+
     </div>
     </div>
 
-  </div>
+    <!-- <div class="container center-block alert alert-success alert-dismissible fade show"  v-if="courseDeleted" role="alert">
+        <strong>{{statusMessage}}</strong> 
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div>  -->
+
+    <div class="container-fluid" >
+        <div class="row" v-if="courseDeleted">
+            <div class="col-md-10 col-md-offset-1">
+                <div class="alert alert-warning alert-dismissible fade in text-center margin-auto" role="alert">
+                    <strong>{{statusMessage}}</strong> 
+                </div>
+            </div>
+      </div>
+    </div>
+<!-- Flexbox container for aligning the toasts -->
+    <!-- <div aria-live="polite" aria-atomic="true" v-if="courseDeleted" class="d-flex justify-content-center align-items-center"> -->
+
+        <!-- Then put toasts within -->
+        <!-- <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="mr-auto">{{statusMessage}}</strong>
+            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        </div>
+    </div> -->
+    
+  
+  <!-- Modal
+  <div class="modal fade" id="exampleModalCenter" v-if="courseDeleted" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <strong>{{statusMessage}}</strong> 
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div> -->
+        
+            
+    <!-- Edit Course Modal -->
+    <div class="modal fade" id="editCourseModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Update Course</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="modal-body">
+
+            <form> 
+            <table class="table">
+                <thead>
+                    <tr>
+                        <td class="form-group">
+                            <label for="courseTitle" class="cta-text">Course Title</label> 
+                            <input required name="newCname" v-model="editCurrentCourse.course_title" type="text" class="form-control" id="editCourseTitle"> 
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="form-group">
+                            <label for="courseCode" class="cta-text">Course Code</label> 
+                            <input required name="newCcode" v-model="editCurrentCourse.course_code" type="text" class="form-control" id="editCourseCode"> 
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="form-group">
+                            <label for="description" class="cta-text">Description</label>
+                            <input required name="description" v-model="editCurrentCourse.description" type="text" class="form-control" id="editDescription"> 
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="form-group">
+                            <label for="prerequisites" class="cta-text">Prerequisites</label>
+                            <input v-model="editCurrentCourse.prerequisites" type="text" class="form-control" id="editPrerequisites" >  
+                        </td>
+                    </tr>
+                </thead>
+            </table>
+            </form>
+            </div>
+
+            <div class="modal-footer">
+
+                <div class="justify-content-left;">
+                    <div class="text-success" v-if="editSuccessful">
+                    {{ statusMessage }} <br>
+                    </div>
+                </div>
+    
+                <div class="justify-content-left;">
+                    <div class="text-danger" v-if="editCourseError!=''">
+                    {{ editCourseError }}
+                    </div>
+                </div> 
+
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                
+                <button @click="editCourse(course)" class="btn btn-primary" v-on:submit.prevent="onSubmit"  >Update Course</button>
+            
+            </div>
+            
+            </div>
+            
+        </div>
+    </div>
+  	</div>
           
   <!-- Footer-->
   <footer class="py-2 bg-dark">
