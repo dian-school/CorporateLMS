@@ -35,10 +35,6 @@ var app = new Vue({
         editSuccessful: false,
         editCourseError: "",
         
-        editCourse_title: "",
-        editCourse_code: "",
-        editDescription: "",
-        editPrerequisites: "",
 
     },
     methods: {
@@ -202,22 +198,18 @@ var app = new Vue({
             this.editCurrentCourse = course;
             this.edit = true;
 
-            this.editCourse_title = "";
-            this.editCourse_code = "";
-            this.editDescription = "";
-            this.editPrerequisites = "";
         },
         editCourse: function (course) {
             // reset data
 
             this.editCourseError = "";
-            this.statusMessage = "";
+            
 
             let jsonData = JSON.stringify({
                 course_code: this.editCurrentCourse.course_code,
-                course_title: this.editCourse_title,
-                description: this.editDescription,
-                prerequisites: this.editPrerequisites
+                course_title: this.editCurrentCourse.course_title,
+                description: this.editCurrentCourse.description,
+                prerequisites: this.editCurrentCourse.prerequisites
             });
 
             fetch(`${get_all_URL}`, {
@@ -243,7 +235,7 @@ var app = new Vue({
 
                             break;
                         case 404:
-                            this.editCourseError = "Unable to edit course details";
+                            this.editCourseError = data.message;
                         case 500:
                             this.editCourseError = data.message;
                             break;
