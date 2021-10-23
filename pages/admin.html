@@ -332,6 +332,12 @@
                     </div>
                 </div> 
 
+                <div class="justify-content-left;">
+                    <div class="text-danger" v-if="msg!=''">
+                    {{ msg }}
+                    </div>
+                </div> 
+                
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 
                 <button @click="editCourse(course)" class="btn btn-primary" v-on:submit.prevent="onSubmit"  >Update Course</button>

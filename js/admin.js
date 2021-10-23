@@ -203,7 +203,7 @@ var app = new Vue({
             // reset data
 
             this.editCourseError = "";
-            
+            this.msg = "";
 
             let jsonData = JSON.stringify({
                 course_code: this.editCurrentCourse.course_code,
@@ -211,7 +211,10 @@ var app = new Vue({
                 description: this.editCurrentCourse.description,
                 prerequisites: this.editCurrentCourse.prerequisites
             });
-
+            if (this.editCurrentCourse.course_title === "" || this.editCurrentCourse.course_code === "" || this.editCurrentCourse.description === "") {
+                this.msg = "Please fill in required fields.";
+                }
+            else {
             fetch(`${get_all_URL}`, {
                     method: "PATCH",
                     headers: {
@@ -243,6 +246,7 @@ var app = new Vue({
                             throw `${data.code}: ${data.message}`;
                     }
                 })
+            }
         },
         del: function (course_code) {
             //reset all data to original setting
