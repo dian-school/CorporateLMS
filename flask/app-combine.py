@@ -4,8 +4,7 @@ from flask_cors import CORS, cross_origin
 from sqlalchemy.exc import SQLAlchemyError
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root' + \
-                                        '@localhost:8889/lms_database'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/lms_database'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_size': 100,
                                            'pool_recycle': 280}
@@ -180,24 +179,6 @@ class Quizquestions(db.Model):
             result[column] = getattr(self, column)
         return result
 
-class Quizanswers(db.Model):
-    __tablename__ = 'quizanswers'
-    questionid= db.Column(db.Integer, db.ForeignKey(Quizquestions.questionid) ,primary_key=True)
-    quizid= db.Column(db.Integer, db.ForeignKey(Quizzes.quizid), primary_key=True)
-    class_section = db.Column(db.String(2), db.ForeignKey(Sections.class_section), primary_key=True)
-    course_code = db.Column(db.Integer, db.ForeignKey(Courses.course_code), primary_key=True)
-    answertext = db.Column(db.String(1000))
-
-    def to_dict(self):
-        """
-        'to_dict' converts the object into a dictionary,
-        in which the keys correspond to database columns
-        """
-        columns = self.__mapper__.column_attrs.keys()
-        result = {}
-        for column in columns:
-            result[column] = getattr(self, column)
-        return result
 
 class Materials(db.Model):
     __tablename__ = 'materials'
