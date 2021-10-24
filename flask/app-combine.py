@@ -4,7 +4,8 @@ from flask_cors import CORS, cross_origin
 from sqlalchemy.exc import SQLAlchemyError
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/lms_database'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root' + \
+                                        '@localhost:8889/lms_database'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_size': 100,
                                            'pool_recycle': 280}
@@ -166,6 +167,7 @@ class Quizquestions(db.Model):
     questiontext = db.Column(db.String(1000))
     questiontype = db.Column(db.String(4))
     questionoptions = db.Column(db.String(1000))
+    answertext = db.Column(db.String(1000))
 
     def to_dict(self):
         """
@@ -395,6 +397,7 @@ def update_section(class_section, course_code):
 #add quiz
 #step 1 create quiz 
 @app.route("/quizzes", methods=['POST'])
+@cross_origin()
 def add_quiz():
     data = request.get_json()
     if not all(key in data.keys() for
@@ -407,7 +410,13 @@ def add_quiz():
     try:
         db.session.add(quiz)
         db.session.commit()
-        return jsonify(quiz.to_dict()), 201
+        return jsonify(
+            {
+                "code": 200,
+                "message": "Quiz has been added successfully.",
+                "data": [quiz.to_dict()]
+            }
+            ), 200
     except SQLAlchemyError as e:
         print(str(e))
         db.session.rollback()
@@ -415,13 +424,14 @@ def add_quiz():
             "message": "Unable to commit to database."
         }), 500
 
-#step2 add questions
-@app.route("/quizzes/<int:quizid>", methods=['POST'])
-def add_questions(quizid):
+#step2 add questions and answer
+@app.route("/questions", methods=['POST'])
+@cross_origin()
+def add_questions():
     data = request.get_json()
     if not all(key in data.keys() for
                key in ('quizid', 'class_section', 'course_code',
-                       'questiontext', 'questiontype', 'questionoptions')):
+                       'questiontext', 'questiontype', 'questionoptions', 'answertext')):
         return jsonify({
             "message": "Incorrect JSON object provided."
         }), 500
@@ -429,28 +439,13 @@ def add_questions(quizid):
     try:
         db.session.add(quizquestion)
         db.session.commit()
-        return jsonify(quizquestion.to_dict()), 201
-    except SQLAlchemyError as e:
-        print(str(e))
-        db.session.rollback()
-        return jsonify({
-            "message": "Unable to commit to database."
-        }), 500
-# step 3 add answer
-@app.route("/quizzes/<int:quizid>/<int:questionid>", methods=['POST'])
-def add_answers(quizid, questionid):
-    data = request.get_json()
-    if not all(key in data.keys() for
-               key in ('questionid', 'quizid', 'class_section', 'course_code',
-                       'answertext')):
-        return jsonify({
-            "message": "Incorrect JSON object provided."
-        }), 500
-    quizquestion = Quizanswers(**data)
-    try:
-        db.session.add(quizquestion)
-        db.session.commit()
-        return jsonify(quizquestion.to_dict()), 201
+        return jsonify(
+            {
+                "code": 200,
+                "message": "Question has been added successfully.",
+                "data": [quizquestion.to_dict()]
+            }
+            ), 200
     except SQLAlchemyError as e:
         print(str(e))
         db.session.rollback()
@@ -468,6 +463,18 @@ def get_quizzes(class_section, course_code):
                      for quiz in quiz_list]
         }
     ), 200
+
+#get quiz questions
+@app.route("/questions/<string:class_section>/<int:course_code>/<int:quizid>")
+def get_questions(class_section, course_code, quizid):
+    question_list = Quizquestions.query.filter_by(class_section=class_section, course_code=course_code, quizid=quizid).all()
+    return jsonify(
+        {
+            "data": [question.to_dict()
+                     for question in question_list]
+        }
+    ), 200
+
 
 #get all class materials related to the course
 @app.route("/materials/<string:class_section>/<int:course_code>")

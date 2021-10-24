@@ -313,7 +313,7 @@ var app = new Vue({
             .then(response => response.json())
             .then(data => {
                 result = data.data;
-                console.log(result);
+                console.log(result[0].quizid);
                 // 3 cases
                 switch (data.code) {
                     case 200:

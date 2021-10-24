@@ -38,9 +38,9 @@
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addQuizModal">
                 Add Quiz
             </button>
-            <button type="button" class="btn btn-primary" data-toggle="modal" @click="pageRefresh()">
+            <!-- <button type="button" class="btn btn-primary" data-toggle="modal" @click="pageRefresh()">
               Update Table
-          </button>
+          </button> -->
           </div>
 
           <!-- Modal to Add Materials -->
@@ -262,7 +262,7 @@
                     <td v-if="quiz.graded =='T'">Final Quiz</td>
                     <td v-if="quiz.graded =='F'">Progress Quiz</td>
                     <td> 
-                        <a class="btn btn-outline-primary" :href="#" role="button"> View/Add</a>
+                        <a class="btn btn-outline-primary" href= "question.html" role="button" > View/Add</a>
                     </td>
                 </tr>
             </tbody>
