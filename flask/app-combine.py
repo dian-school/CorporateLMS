@@ -5,6 +5,9 @@ from sqlalchemy.exc import SQLAlchemyError
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/lms_database'
+#Mac config
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root' + \
+#                                         '@localhost:8889/lms_database'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_size': 100,
                                            'pool_recycle': 280}
@@ -339,10 +342,10 @@ def get_trainers():
         }
     ), 200
 
-#get all sections
-@app.route("/sections")
-def get_sections():
-    section_list = Sections.query.all()
+#get all section by course
+@app.route("/sections/<int:course_code>")
+def get_sections(course_code):
+    section_list = Sections.query.filter_by(course_code=course_code).all()
     return jsonify(
         {
             "data": [sections.to_dict()
@@ -470,7 +473,6 @@ def get_class_material(class_section, course_code):
     ), 200
 
 
-## NEED CHANGE ##
 #add course material
 @app.route("/materials", methods=['POST'])
 @cross_origin()
