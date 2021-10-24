@@ -92,18 +92,18 @@ var app = new Vue({
                     });
             }
         },
+        storeCourseInfo: function (message) {
+            // sessionStorage.course_code= ;
+            console.log(message);
+            localStorage.course_code = message;
+        },
+        getCourseinfo: function(){
+            console.log(localStorage.getItem("course_code"));
+        },
         pageRefresh: function () {
             this.getAllCourses();
             this.searchError = "";
             this.searchStr = "";
-        },
-        storeCourseInfo: function (message) {
-            // sessionStorage.course_code= ;
-            // console.log(message);
-            sessionStorage.course_code = message;
-        },
-        getCourseinfo: function(){
-            console.log(sessionStorage.getItem("course_code"));
         }
     },
     created: function () {

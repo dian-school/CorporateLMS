@@ -20,18 +20,23 @@
 <body>
   <div id = "app">
     <section class="wow fadeInUp mt-2"> 
-      <div style="display:center" class="container"> <!-- container START-->
+      <div> <!-- container START-->
         <div> 
-          <nav class="navbar" style="margin-left: 0;">
-            <div class="container-fluid">
-              <span class="navbar-brand mb-0 h1">Course Name</span>
+          <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container px-lg-5">
+                <a class="navbar-brand" href="#!">Course Name</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                      <li class="nav-item"><a class="nav-link" aria-current="page" href="index.html">Home</a></li>
+                      <li class="nav-item"><a class="nav-link" href="chat.html">Chat</a></li>
+                      <li class="nav-item"><a class="nav-link" href="#!">Profile</a></li>
+                    </ul>
+                </div>
             </div>
           </nav>
-
-          <br>
-
-          <!-- Add Materials -->
-          <div>
+            <!-- Add Materials/Quiz -->
+          <div class="py-3 text-center">
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addMaterialsModal">
                 Add Materials
             </button>
@@ -40,10 +45,12 @@
             </button>
             <!-- <button type="button" class="btn btn-primary" data-toggle="modal" @click="pageRefresh()">
               Update Table
-          </button> -->
+            </button>
           </div>
 
-          <!-- Modal to Add Materials -->
+          <br>
+
+          <-- Modal to Add Materials -->
           <div class="modal fade" id="addMaterialsModal" tabindex="-1" role="dialog" aria-labelledby="addMaterialsModalTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
               <div class="modal-content">
@@ -144,20 +151,6 @@
                   <form> 
                     <table class="table table-striped">
                       <thead>
-                        <!-- <tr>
-                          <td class="form-group">
-                            <label for="courseCode" class="cta-text">Course Code</label> <span class="text-danger"> *Required</span>
-                            <input required name="ccode" v-model="newcourseCode" type="text" class="form-control" id="newCode" placeholder="Enter Course Code">
-                          </td>
-                        </tr>
-
-                        <tr>
-                          <td class="form-group">
-                            <label for="classSection" class="cta-text">Course Section</label> <span class="text-danger"> *Required</span>
-                            <input required name="cname" v-model="newclassSection" type="text" class="form-control" id="classSection" placeholder="Enter Class Section">
-                          </td>
-                        </tr> -->
-    
                         <tr>
                           <td class="form-group">
                             <label for="time" class="cta-text">Time (in minutes)</label><span class="text-danger"> *Required</span>
@@ -215,7 +208,6 @@
   
       </div>
     </div>
-      <!-- Button trigger modal -->
       
     <br>
 
