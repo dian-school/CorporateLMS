@@ -249,7 +249,7 @@ def eligible_courses(learners_eid):
             "data": {
                 "learner_eid": learners_eid
             },
-            "message": "No eligible courses found."
+            "message": "No eligible courses."
         }
     )
 
