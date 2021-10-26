@@ -8,9 +8,9 @@ var app = new Vue({
     // computed: {
     
     // },
-    // beforeMount:function(){
-    //     this.getCourseinfo() //method1 will execute at pageload
-    // },
+    mounted:function(){
+        this.getCourseinfo() //method1 will execute at pageload
+    },
     data: {
         searchStr: "",
         message: "There is a problem retrieving data, please try again later.",
@@ -135,9 +135,10 @@ var app = new Vue({
                     });
                        
         },
-        getSection: function () {
-            // on Vue instance created, load the course list
+       
+        getCourseinfo: function(){
             clickedCourse = JSON.parse(localStorage.getItem("clickedCourse"));
+            console.log(clickedCourse);
 
             const response =
                 fetch(`${section_url}/${clickedCourse[0].course_code}`)
@@ -152,60 +153,74 @@ var app = new Vue({
                         console.log(this.sections);
                         localStorage.sections = JSON.stringify(this.sections);
                         console.log(localStorage.getItem("sections")); 
+                        courseSections = JSON.parse(localStorage.getItem("sections"));
+                        console.log(courseSections);
+                        console.log(courseSections.length);
+                        if (courseSections.length == 0) {
+                            document.getElementById("courseDetails").innerHTML = 
+                            `
+                            <H1> ${clickedCourse[0].course_title} </H1>
+                            <h2> Course Code: ${clickedCourse[0].course_code} </h2>
+                            <h3> Course Description: ${clickedCourse[0].description} </h3>
+                            `;
+                        } else {
+                            document.getElementById("courseDetails").innerHTML = 
+                            `
+                            <H1> ${clickedCourse[0].course_title} </H1>
+                            <h2> Course Code: ${clickedCourse[0].course_code} </h2>
+                            <h3> Course Description: ${clickedCourse[0].description} </h3>
+                            `;
+                            for (let i = 0; i < courseSections.length; i++) {
+                                const response =
+                                    fetch(`${get_all_trainers}/eid/${courseSections[i].trainers_eid}`)
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        console.log(response);
+                                        if (data.code === 404) {
+                                            // no trainer found in db
+                                            this.searchError = data.message;
+                                        } else {
+                                            this.trainer = data.data;
+                                            console.log(this.trainer);
+                                            console.log(this.trainer[0].trainers_name);
+                                            document.getElementById("section").innerHTML = 
+                                            `
+                                            <h4> Sections: </h4>
+                                            <ul> 
+                                                <li> <a target="_blank" href="courseSection.html" @click="storeCourseSection(courseSections[i].class_section);"> ${courseSections[i].class_section} </a>, Section Trainer: ${this.trainer[0].trainers_name} </li>
+                                            </ul>
+                                            `;
+                                        }
+                                    })
+                                    
+                                    .catch(error => {
+                                        // Errors when calling the service; such as network error, 
+                                        // service offline, etc
+                                        console.log(this.searchError + error);
+                                    });
+                            } 
+                        }
                     }
                 })
-                .catch(error => {
-                    // Errors when calling the service; such as network error, 
-                    // service offline, etc
-                    console.log(this.message + error);
-
-                });
-
-        },
-        getCourseinfo: function(){
-            clickedCourse = JSON.parse(localStorage.getItem("clickedCourse"));
-            console.log(clickedCourse);
-            
-            sections = JSON.parse(localStorage.getItem("sections"));
-            console.log(sections);
-            console.log(sections.length);
-
-            document.getElementById("courseDetails").innerHTML = 
-            `
-            <H1> ${clickedCourse[0].course_title} </H1>
-            <h2> Course Code: ${clickedCourse[0].course_code} </h2>
-            <h3> Course Description: ${clickedCourse[0].description} </h3>
-            `;
-
-            for (let i = 0; i < sections.length; i++) {
-                const response =
-                    fetch(`${get_all_trainers}/eid/${sections[i].trainers_eid}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log(response);
-                        if (data.code === 404) {
-                            // no trainer found in db
-                            this.searchError = data.message;
-                        } else {
-                            this.trainer = data.data;
-                            console.log(this.trainer);
-                            console.log(this.trainer[0].trainers_name);
-                            document.getElementById("section").innerHTML = 
-                            `
-                            <h4> Sections: </h4>
-                            <ul> 
-                                <li> ${sections[i].class_section}, ${this.trainer[0].trainers_name} </li>
-                            </ul>
-                            `;
-                        }
-                    })
                     .catch(error => {
                         // Errors when calling the service; such as network error, 
                         // service offline, etc
-                        console.log(this.searchError + error);
+                        console.log(this.message + error);
+
                     });
-            } 
+
             
+           
+        },
+        storeCourseSection: function (class_section) {
+            console.log(class_section);
+            localstorage.clickedSection = class_section;
+        },
+        getCourseSection: function(){
+            console.log(localStorage.getItem("clickedSection"));
+            sectionNumber = localStorage.getItem("clickedSection");
+            document.getElementById("sectionNumber").innerHTML = `${sectionNumber}`;
+
         },
         addCourse: function () {
             // reset data to original setting
@@ -547,17 +562,18 @@ var app = new Vue({
                         console.log(this.searchError + error);
                     });
                 
+                
         },
         pageRefresh: function () {
             this.getAllCourses();
             this.getAllTrainers();
             this.getAllLearners();
-            // this.getCourseinfo();
-            // this.getSection();
+            this.getCourseinfo();
+            this.getSection();
             this.searchError = "";
             this.searchStr = "";
         },
-        
+    
     },
     created: function () {
         // on Vue instance created, load the course list
