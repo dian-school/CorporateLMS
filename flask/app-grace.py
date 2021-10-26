@@ -227,5 +227,26 @@ def getQuizzes(course_code, class_section):
         "message": "No quizzes created yet."
     })
 
+# 2 Get all questions by section, course and quiz id
+@app.route("/<int:course_code>/<string:class_section>/<int:quizid>")
+def getQuizQuestions(course_code, class_section, quizid):
+    qnsid = Quizquestions.query.filter_by(course_code=course_code, class_section=class_section, quizid=quizid).all()
+    if qnsid:
+        return jsonify({
+            "data": [qns.to_dict() for qns in qnsid]
+        }),200
+    else:
+        return jsonify({
+            "code": 404,
+            "data": {
+                "course_code": course_code,
+                "class_section": class_section
+            },
+            "message": "No quiz questions created yet."
+        })
+
+
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
