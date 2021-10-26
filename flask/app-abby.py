@@ -288,6 +288,16 @@ def deleteCourse(course_code):
         }
     ), 404
 
+#get all section by course
+@app.route("/sections/<int:course_code>")
+def get_sections(course_code):
+    section_list = Sections.query.filter_by(course_code=course_code).all()
+    return jsonify(
+        {
+            "data": [sections.to_dict()
+                     for sections in section_list]
+        }
+    ), 200
 
 #get all learners
 @app.route("/learners")
@@ -457,16 +467,16 @@ def find_by_trainerEid(trainers_eid):
         }
     ), 404
 
-#get all sections
-@app.route("/sections")
-def get_sections():
-    section_list = Sections.query.all()
-    return jsonify(
-        {
-            "data": [sections.to_dict()
-                     for sections in section_list]
-        }
-    ), 200
+# #get all sections
+# @app.route("/sections")
+# def get_sections():
+#     section_list = Sections.query.all()
+#     return jsonify(
+#         {
+#             "data": [sections.to_dict()
+#                      for sections in section_list]
+#         }
+#     ), 200
 
 #assign trainer a to section of a course -> update to section
 @app.route("/sections/<string:class_section>/<int:course_code>", methods=['PUT'])

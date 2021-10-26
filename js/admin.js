@@ -1,13 +1,15 @@
 var get_all_URL = "http://localhost:5000/courses";
 var get_all_trainers = "http://localhost:5000/trainers";
 var get_all_learners = "http://localhost:5000/learners";
+var section_url = "http://localhost:5000/sections";
 
 var app = new Vue({
     el: "#app",
     // computed: {
-    // prereqPlaceholder: function () {
-    //     return `${this.editPrerequisites}`
-    //   }
+    
+    // },
+    // beforeMount:function(){
+    //     this.getCourseinfo() //method1 will execute at pageload
     // },
     data: {
         searchStr: "",
@@ -120,21 +122,91 @@ var app = new Vue({
                             // no course found in db
                             this.searchError = data.message;
                         } else {
-
-                            this.courses = data.data;
-                            console.log(this.courses);
-
+                            this.course = data.data;
+                            console.log(this.course);
+                            localStorage.clickedCourse = JSON.stringify(this.course);
+                            console.log(localStorage.getItem("clickedCourse")); 
                         }
                     })
                     .catch(error => {
                         // Errors when calling the service; such as network error, 
                         // service offline, etc
-                        searchError = 'Unable to retrieve course';
                         console.log(this.searchError + error);
                     });
-                
+                       
         },
-        
+        getSection: function () {
+            // on Vue instance created, load the course list
+            clickedCourse = JSON.parse(localStorage.getItem("clickedCourse"));
+
+            const response =
+                fetch(`${section_url}/${clickedCourse[0].course_code}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(response);
+                    if (data.code === 404) {
+                        // course has no section
+                        this.message = data.message;
+                    } else {
+                        this.sections = data.data;
+                        console.log(this.sections);
+                        localStorage.sections = JSON.stringify(this.sections);
+                        console.log(localStorage.getItem("sections")); 
+                    }
+                })
+                .catch(error => {
+                    // Errors when calling the service; such as network error, 
+                    // service offline, etc
+                    console.log(this.message + error);
+
+                });
+
+        },
+        getCourseinfo: function(){
+            clickedCourse = JSON.parse(localStorage.getItem("clickedCourse"));
+            console.log(clickedCourse);
+            
+            sections = JSON.parse(localStorage.getItem("sections"));
+            console.log(sections);
+            console.log(sections.length);
+
+            document.getElementById("courseDetails").innerHTML = 
+            `
+            <H1> ${clickedCourse[0].course_title} </H1>
+            <h2> Course Code: ${clickedCourse[0].course_code} </h2>
+            <h3> Course Description: ${clickedCourse[0].description} </h3>
+            `;
+
+            for (let i = 0; i < sections.length; i++) {
+                const response =
+                    fetch(`${get_all_trainers}/eid/${sections[i].trainers_eid}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(response);
+                        if (data.code === 404) {
+                            // no trainer found in db
+                            this.searchError = data.message;
+                        } else {
+                            this.trainer = data.data;
+                            console.log(this.trainer);
+                            console.log(this.trainer[0].trainers_name);
+                            document.getElementById("section").innerHTML = 
+                            `
+                            <h4> Sections: </h4>
+                            <ul> 
+                                <li> ${sections[i].class_section}, ${this.trainer[0].trainers_name} </li>
+                            </ul>
+                            `;
+                        }
+                    })
+                    .catch(error => {
+                        // Errors when calling the service; such as network error, 
+                        // service offline, etc
+                        console.log(this.searchError + error);
+                    });
+            } 
+            
+        },
         addCourse: function () {
             // reset data to original setting
             this.courseAdded = false;
@@ -480,17 +552,19 @@ var app = new Vue({
             this.getAllCourses();
             this.getAllTrainers();
             this.getAllLearners();
+            // this.getCourseinfo();
+            // this.getSection();
             this.searchError = "";
             this.searchStr = "";
         },
-        storeCourseInfo: function () {
-            pass
-        }
+        
     },
     created: function () {
         // on Vue instance created, load the course list
         this.getAllCourses();
         this.getAllTrainers();
         this.getAllLearners();
+        //this.getSection();
+        // this.getCourseinfo();
     }
 });
