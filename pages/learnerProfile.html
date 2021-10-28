@@ -20,8 +20,12 @@
 <body>
     <div id = "app" >
         {{getLearnerInfo()}}
+
+        <template v-for="course in eligibleCourses">
+            <div>{{ course.course_title }}</div>
+        </template>
         
-        {{getEligibleCourses()}}
+        <!-- {{getEligibleCourses()}} -->
         <!-- <button type="button" class="btn-btn-primary" @click="getEligibleCourses()"> Test getEligibleCourses</button> -->
         <div class="container" style="margin:30px;">
             <div id="learnerInfo"></div>

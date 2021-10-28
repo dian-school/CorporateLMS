@@ -599,7 +599,7 @@ var app = new Vue({
                             // no eligible courses
                             this.searchError = data.message;
                         } else {
-                            this.eligibleCourses = data.data;
+                            this.eligibleCourses = data.data.eligible_courses;
                             console.log(this.eligibleCourses);
                         }
                     })
@@ -610,18 +610,18 @@ var app = new Vue({
                     });
 
         },
-        pageRefresh: function () {
-            this.getAllCourses();
-            this.getAllTrainers();
-            this.getAllLearners();
-            this.getCourseinfo();
+        // pageRefresh: function () {
+        //     this.getAllCourses();
+        //     this.getAllTrainers();
+        //     this.getAllLearners();
+        //     this.getCourseinfo();
             
-            // this.getCourseSection();
-            //this.getLearnerInfo();
-            this.getEligibleCourses();
-            this.searchError = "";
-            this.searchStr = "";
-        },
+        //     // this.getCourseSection();
+        //     //this.getLearnerInfo();
+        //     this.getEligibleCourses();
+        //     this.searchError = "";
+        //     this.searchStr = "";
+        // },
     
     },
     created: function () {
@@ -629,6 +629,10 @@ var app = new Vue({
         this.getAllCourses();
         this.getAllTrainers();
         this.getAllLearners();
+        this.getCourseinfo();
+        this.getEligibleCourses();
+        this.searchError = "";
+        this.searchStr = "";
         //this.getSection();
         // this.getCourseinfo();
         //this.getLearnerInfo();

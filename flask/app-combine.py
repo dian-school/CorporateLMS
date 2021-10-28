@@ -239,7 +239,7 @@ def eligible_courses(learners_eid):
                 "code": 200,
                 "data": {
                     "learner_eid": learners_eid,
-                    "courses_completed": eligible_courses
+                    "eligible_courses": eligible_courses
                 }
             }
         )
@@ -304,6 +304,35 @@ def course_prerequisites(course_code):
                 }
             }
         )
+
+#get all learners
+@app.route("/learners")
+def learners():
+    learners_list = Learners.query.all()
+    return jsonify(
+        {
+            "data": [learners.to_dict()
+                     for learners in learners_list]
+        }
+    ), 200
+
+#find by learner name
+@app.route("/learners/<string:learners_name>")
+def find_by_learnerName(learners_name):
+    learnerName = Learners.query.filter_by(learners_name=learners_name).first()
+    if learnerName:
+        return jsonify(
+            {
+                "code": 200,
+                "data": [learnerName.to_dict()]
+            }
+        ), 200
+    return jsonify(
+        {
+            "code": 404,
+            "message": "Learner not found."
+        }
+    ), 404
 
 #self enrol - add learner to course
 @app.route("/selfenrol", methods=['POST'])
@@ -427,6 +456,24 @@ def get_trainers():
             "data": [trainer.to_dict() for trainer in trainers_list]
         }
     ), 200
+
+#search trainer by trainer eid
+@app.route("/trainers/eid/<int:trainers_eid>")
+def find_by_trainerEid(trainers_eid):
+    trainerEid = Trainers.query.filter_by(trainers_eid=trainers_eid).first()
+    if trainerEid:
+        return jsonify(
+            {
+                "code": 200,
+                "data": [trainerEid.to_dict()]
+            }
+        ), 200
+    return jsonify(
+        {
+            "code": 404,
+            "message": "Trainer not found."
+        }
+    ), 404
 
 #get all section by course
 @app.route("/sections/<int:course_code>")
