@@ -334,6 +334,25 @@ def find_by_learnerName(learners_name):
         }
     ), 404
 
+
+#find by learner Eid
+@app.route("/learners/eid/<int:learners_eid>")
+def find_by_learnerEid(learners_eid):
+    learnerEid = Learners.query.filter_by(learners_eid=learners_eid).first()
+    if learnerEid:
+        return jsonify(
+            {
+                "code": 200,
+                "data": [learnerEid.to_dict()]
+            }
+        ), 200
+    return jsonify(
+        {
+            "code": 404,
+            "message": "Learner not found."
+        }
+    ), 404
+    
 #self enrol - add learner to course
 @app.route("/selfenrol", methods=['POST'])
 @cross_origin()

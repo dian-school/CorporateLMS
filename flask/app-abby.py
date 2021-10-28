@@ -5,6 +5,9 @@ from sqlalchemy.exc import SQLAlchemyError
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/lms_database'
+#Mac config
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root' + \
+#                                         '@localhost:8889/lms_database'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_size': 100,
                                            'pool_recycle': 280}
@@ -82,8 +85,6 @@ class Learners(db.Model):
     learners_email = db.Column(db.String(1000))
     learners_qualifications = db.Column(db.String(1000))
     courses_completed = db.Column(db.String(1000))
-    class_section = db.Column(db.String(2), db.ForeignKey(Sections.class_section))
-    course_code = db.Column(db.Integer, db.ForeignKey(Courses.course_code))
 
     def to_dict(self):
         """
@@ -114,14 +115,14 @@ class Admins(db.Model):
             result[column] = getattr(self, column)
         return result
 
-class Enrols(db.Model):
-    __tablename__ = 'enroling'
+class Progress(db.Model):
+    __tablename__ = 'progress'
 
     learners_eid = db.Column(db.Integer, db.ForeignKey(Learners.learners_eid), primary_key=True)
     course_code = db.Column(db.Integer, db.ForeignKey(Courses.course_code), primary_key=True)
     class_section = db.Column(db.Integer, db.ForeignKey(Sections.class_section), primary_key=True)
-    #learners_eid = db.Column(db.Integer, db.ForeignKey('learners_eid'), primary_key=True)
-    #course_code = db.Column(db.Integer, db.ForeignKey('course_code'), primary_key=True)
+    chapter_completed = db.Column(db.Integer)
+    
 
     def to_dict(self):
         """
@@ -134,16 +135,77 @@ class Enrols(db.Model):
             result[column] = getattr(self, column)
         return result
 
-    def __init__(self, course_code, learners_eid, class_section):
+    def __init__(self, course_code, learners_eid, class_section, chapter_completed):
         self.course_code = course_code
         self.learners_eid = learners_eid
         self.class_section = class_section
+        self.chapter_completed = chapter_completed
+
+class Quizzes(db.Model):
+    __tablename__ = 'quizzes'
+    quizid= db.Column(db.Integer, primary_key=True, autoincrement=True)
+    class_section = db.Column(db.String(2), db.ForeignKey(Sections.class_section), primary_key=True)
+    course_code = db.Column(db.Integer, db.ForeignKey(Courses.course_code), primary_key=True)
+    time = db.Column(db.Integer)
+    graded = db.Column(db.String(2))
+
+    def to_dict(self):
+        """
+        'to_dict' converts the object into a dictionary,
+        in which the keys correspond to database columns
+        """
+        columns = self.__mapper__.column_attrs.keys()
+        result = {}
+        for column in columns:
+            result[column] = getattr(self, column)
+        return result
+
+class Quizquestions(db.Model):
+    __tablename__ = 'quizquestions'
+    questionid= db.Column(db.Integer, primary_key=True, autoincrement=True)
+    quizid= db.Column(db.Integer, db.ForeignKey(Quizzes.quizid), primary_key=True)
+    class_section = db.Column(db.String(2), db.ForeignKey(Sections.class_section), primary_key=True)
+    course_code = db.Column(db.Integer, db.ForeignKey(Courses.course_code), primary_key=True)
+    questiontext = db.Column(db.String(1000))
+    questiontype = db.Column(db.String(4))
+    questionoptions = db.Column(db.String(1000))
+    answertext = db.Column(db.String(1000))
+
+    def to_dict(self):
+        """
+        'to_dict' converts the object into a dictionary,
+        in which the keys correspond to database columns
+        """
+        columns = self.__mapper__.column_attrs.keys()
+        result = {}
+        for column in columns:
+            result[column] = getattr(self, column)
+        return result
 
 
-db.create_all()
+class Materials(db.Model):
+    __tablename__ = 'materials'
 
+    material_id= db.Column(db.Integer ,primary_key=True, autoincrement=True)
+    class_section = db.Column(db.String(2), db.ForeignKey(Sections.class_section), primary_key=True)
+    course_code = db.Column(db.Integer, db.ForeignKey(Courses.course_code), primary_key=True)
+    material_name= db.Column(db.String(100))
+    material_type = db.Column(db.String(100))
+    material_link = db.Column(db.String(1000))
+    material_chapter = db.Column(db.Integer)
 
+    def to_dict(self):
+        """
+        'to_dict' converts the object into a dictionary,
+        in which the keys correspond to database columns
+        """
+        columns = self.__mapper__.column_attrs.keys()
+        result = {}
+        for column in columns:
+            result[column] = getattr(self, column)
+        return result
 
+##Courses##
 #get all courses
 @app.route("/courses")
 def courses():
@@ -334,6 +396,7 @@ def get_sections(course_code):
         }
     ), 200
 
+##Learners##
 #get all learners
 @app.route("/learners")
 def learners():
@@ -399,35 +462,58 @@ def learner_by_course(course_code):
             "message": "No learners in this course."
         }), 404
 
+#Progress##
+#Get Progress
+@app.route("/progress")
+def progress():
+    progress_list = Progress.query.all()
+    return jsonify(
+        {
+            "data": [progress.to_dict()
+                     for progress in progress_list]
+        }
+    ), 200
+
+
 # add learner to course 
-@app.route("/enrols", methods=['POST'])
+@app.route("/progress", methods=['POST'])
 @cross_origin()
 def add_learner():
     data = request.get_json()
     print(data)
     if not all(key in data.keys() for
                key in ('learners_eid', 'course_code',
-                       'class_section')):
+                       'class_section', 'chapter_completed')):
         return jsonify({
             "message": "Incorrect JSON object provided."
         }), 500
-    learner = Enrols(**data)
+    learner = Progress(**data)
     print(learner)
     try:
         db.session.add(learner)
         db.session.commit()
-        return jsonify(learner.to_dict()), 201
+        return jsonify(
+            {
+                "code": 201,
+                "message": "Learner has been assigned successfully.",
+                "data": [learner.to_dict()]
+            }
+        ), 201 
+
     except SQLAlchemyError as e:
         print(str(e))
         db.session.rollback()
-        return jsonify({
+        return jsonify(
+            
+            {
+            "code":500,
             "message": "Unable to commit to database."
         }), 500
 
 # remove learner from course
-@app.route("/enrols/<int:course_code>/<string:learners_eid>", methods=['DELETE'])
+@app.route("/progress/<int:course_code>/<string:learners_eid>", methods=['DELETE'])
 def delete_book(course_code, learners_eid):
-    learnertoremove = Enrols.query.filter_by(course_code=course_code , learners_eid=learners_eid).first()
+    learnertoremove = Progress.query.filter_by(course_code=course_code , learners_eid=learners_eid).first()
     if learnertoremove:
         db.session.delete(learnertoremove)
         db.session.commit()
@@ -451,6 +537,7 @@ def delete_book(course_code, learners_eid):
         }
     ), 404
 
+##Trainers##
 #get all trainers
 @app.route("/trainers")
 def get_trainers():
@@ -502,16 +589,17 @@ def find_by_trainerEid(trainers_eid):
         }
     ), 404
 
-# #get all sections
-# @app.route("/sections")
-# def get_sections():
-#     section_list = Sections.query.all()
-#     return jsonify(
-#         {
-#             "data": [sections.to_dict()
-#                      for sections in section_list]
-#         }
-#     ), 200
+##Sections##
+#get all sections
+@app.route("/sections/all")
+def get_Allsections():
+    section_list = Sections.query.all()
+    return jsonify(
+        {
+            "data": [sections.to_dict()
+                     for sections in section_list]
+        }
+    ), 200
 
 #assign trainer a to section of a course -> update to section
 @app.route("/sections/<string:class_section>/<int:course_code>", methods=['PUT'])

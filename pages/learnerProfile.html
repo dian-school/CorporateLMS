@@ -20,18 +20,12 @@
 <body>
     <div id = "app" >
         {{getLearnerInfo()}}
-
-        <template v-for="course in eligibleCourses">
-            <div>{{ course.course_title }}</div>
-        </template>
-        
-        <!-- {{getEligibleCourses()}} -->
-        <!-- <button type="button" class="btn-btn-primary" @click="getEligibleCourses()"> Test getEligibleCourses</button> -->
+        {{courseSections()}}
         <div class="container" style="margin:30px;">
             <div id="learnerInfo"></div>
             
             <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                     <div class="modal-content">
 
                     <div class="modal-header">
@@ -43,13 +37,12 @@
 
                     <div class="modal-body">
                     <!-- Default checkbox -->
-                    <div class="form-check" v-for="course in eligibleCourses">
-                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"/>
-                        <label class="form-check-label" for="flexCheckDefault">
-                            {{course.course_code}}:{{course.course_title}}
-                        </label>
-                    </div>
-
+                        <div class="form-check" v-for="course in eligibleCourseSections">
+                            <input  type="checkbox" value="{{course.course_code}}" id="{{course.course_code}}"/>
+                            <label for="{{course.course_code}}" style="white-space:nowrap;">
+                                {{course.course_code}} : {{course.course_title}}
+                            </label>
+                        </div>
                     </div>
 
                     <div class="modal-footer">
@@ -74,7 +67,7 @@
 
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         
-                        <button @click="assignCourse()" class="btn btn-primary" v-on:submit.prevent="onSubmit"  >Assign Course</button>
+                        <button @click="assignCourse()" class="btn btn-primary" v-on:submit.prevent="onSubmit">Assign Course</button>
                     
                     </div>
                     
