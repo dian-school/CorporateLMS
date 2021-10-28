@@ -155,6 +155,41 @@ def courses():
         }
     ), 200
 
+#get eligible courses
+@app.route("/<int:learners_eid>/courses")
+def eligible_courses(learners_eid):
+    eligible_courses = []
+    course_list = Courses.query.all()
+    if course_list:
+        for course in course_list:
+            prerequisites = request.args.get('prerequisites', course.prerequisites)   
+            if prerequisites == "":
+                eligible_courses.append(course.to_dict())
+            else:
+                learner = Learners.query.filter_by(learners_eid=learners_eid).first()
+                if learner:
+                    completed_courses = request.args.get('courses_completed', learner.courses_completed)        
+                    if completed_courses == prerequisites:
+                        eligible_courses.append(course.to_dict())
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "learner_eid": learners_eid,
+                    "eligible_courses": eligible_courses
+                }
+            }
+        )
+    return jsonify (
+        {
+            "code": 404,
+            "data": {
+                "learner_eid": learners_eid
+            },
+            "message": "No eligible courses."
+        }
+    )
+
 #search course by course code
 @app.route("/courses/search/<int:course_code>")
 def find_by_course_code(course_code):
