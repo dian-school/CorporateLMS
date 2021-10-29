@@ -9,11 +9,11 @@ var app = new Vue({
     // computed: {
     
     // },
-    mounted:function(){
-        this.getCourseinfo(); //method1 will execute at pageload
-        this.getCourseSection();
-        this.getLearnerInfo();
-    },
+    // mounted:function(){
+    //     this.getCourseinfo(); //method1 will execute at pageload
+    //     this.getCourseSection();
+    //     this.getLearnerInfo();
+    // },
     data: {
         searchStr: "",
         message: "There is a problem retrieving data, please try again later.",
@@ -28,6 +28,8 @@ var app = new Vue({
         "eligibleCourseSections": [],
         checkedCourses: [],
         searchError: "",
+
+        courseWithSection: {},
 
         newCourseTitle: "",
         newCode: "",
@@ -45,6 +47,7 @@ var app = new Vue({
 
         // learnerId: 0,
         learner: {}
+        // trackSection = 0
         
     },
     methods: {
@@ -577,79 +580,99 @@ var app = new Vue({
                 });        
         },
          
-        // get eligible courses for learner
-        getEligibleCourses: function (learner_eid) {
+        //get eligible courses that have sections to assign learners to the course section
+        courseSections: function(id) {
+            // console.log(courseId)
+            // if (courseId_list != []) {
+            // for (let id of this.checkedCourses) {
             const response =
-                    fetch(`http://localhost:5000/${learner_eid}/courses`)
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log(response);
-                        if (data.code === 404) {
-                            // no eligible courses
-                            this.searchError = data.message;
-                        } else {
-                            this.eligibleCourses = data.data.eligible_courses;
-                            console.log(this.eligibleCourses);
+                fetch(`${section_url}/${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    // console.log(response);
+                    if (data.code === 404) {
+                        // no eligible courses
+                        this.searchError = data.message;
+                    } else {
+                        // console.log(data.data)
+                        for (let section of data.data) {
+                            this.eligibleCourseSections.push({
+                                code: section.course_code,
+                                class: section.class_section
+                            });
                         }
-                    })
-                    .catch(error => {
-                        // Errors when calling the service; such as network error, 
-                        // service offline, etc
-                        console.log(this.searchError + error);
-                    });
+                        console.log(this.eligibleCourseSections)
+                        // console.log(this.eligibleCourseSections);
+                        // this.eligibleCourseSections.push(course)
+                        // for (let section of this.eligibleCourseSections) {
+                        //     array = this.courseWithSection[courseId]
+                        //     // console.log(section.class_section)
+                        //     array.push(section.class_section)
+                        //     this.courseWithSection[courseId] = array;
+                        // }
+                        // console.log(this.courseWithSection);
+                    }  
+                })
+                .catch(error => {
+                    // Errors when calling the service; such as network error, 
+                    // service offline, etc
+                    console.log(this.searchError + error);
+                });     
+            // }
+            // }
         },
 
-        //get eligible courses that have sections to assign learners to the course section
-        // courseSections: function(learners_eid) {
-        //     learnerInfo = JSON.parse(localStorage.getItem("learner")); 
-        //     // console.log(learnerInfo);
-        //     learners_eid = learnerInfo[0].learners_eid;
-        //         const response =
-        //                 fetch(`http://localhost:5000/${learners_eid}/courses`)
-        //                 .then(response => response.json())
-        //                 .then(data => {
-        //                     // console.log(response);
-        //                     if (data.code === 404) {
-        //                         // no eligible courses
-        //                         this.searchError = data.message;
-        //                     } else {
-        //                         this.eligibleCourses = data.data.eligible_courses;
-        //                         // console.log(this.eligibleCourses);
-        //                         const response =
-        //                             fetch(`${section_url}/all`)
-        //                             .then(response => response.json())
-        //                             .then(data => {
-        //                                 console.log(response);
-        //                                 if (data.code === 404) {
-        //                                     // course has no section
-        //                                     this.message = data.message;
-        //                                 } else {
-        //                                     this.sections = data.data;
-        //                                     // console.log(this.sections);
-        //                                     eligibleCourseSections = [];
-        //                                     for (course of this.eligibleCourses) {
-        //                                         //console.log(course.course_code);
-        //                                         for (section of this.sections) {
-        //                                             if (course.course_code == section.course_code) {
-                                                        
-        //                                                 eligibleCourseSections.push(course);
-                                                        
-        //                                             }
-        //                                         }
-        //                                     }
-        //                                     // console.log(eligibleCourseSections);
-        //                                 }
-                                            
-        //                                     })
-        //                                     .catch(error => {
-        //                                         // Errors when calling the service; such as network error, 
-        //                                         // service offline, etc
-        //                                         console.log(this.searchError + error);
-        //                                     });
-        //                         } 
-        //                     });
-                            
-        // },    
+        randomFunc: function(code) {
+            return this.courseWithSection[code]
+        },
+        
+        // get eligible courses for learner
+        getEligibleCourses: function (learner_eid) {
+            const response = 
+                fetch(`http://localhost:5000/${learner_eid}/courses`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(response);
+                    if (data.code === 404) {
+                        // no eligible courses
+                        this.searchError = data.message;
+                    } else {
+                        this.eligibleCourses = data.data.eligible_courses;
+                        console.log(this.eligibleCourses);
+                        // this.courseSections(this.checkedCourses)
+
+                        for (let course of this.eligibleCourses) {
+                            this.courseWithSection[course.course_code] = []
+                        }
+                    }
+                })
+                .catch(error => {
+                    // Errors when calling the service; such as network error, 
+                    // service offline, etc
+                    console.log(this.searchError + error);
+                });
+
+            // for (let course of this.eligibleCourses) {
+            //     fetch(`${section_url}/${course.course_code}`)
+            //     .then(response => response.json())
+            //     .then(data => {
+            //         console.log(response);
+            //         if (data.code === 404) {
+            //             // no eligible courses
+            //             this.searchError = data.message;
+            //         } else {
+            //             this.eligibleCourses = data.data;
+            //             console.log(this.eligibleCourses);
+            //             this.eligibleCourseSections.push(this.eligibleCourses);
+            //         }
+            //     })
+            //     .catch(error => {
+            //         // Errors when calling the service; such as network error, 
+            //         // service offline, etc
+            //         console.log(this.searchError + error);
+            //     });
+            // }
+        },    
         
         assignCourse: function() {
             // reset data to original setting
@@ -712,8 +735,9 @@ var app = new Vue({
         this.getAllLearners();
         this.getCourseinfo();
         this.getLearnerInfo();
+        // this.randomFunc(code);
         // this.getEligibleCourses();
-        // this.courseSections();
+        // this.courseSections(this.checkedCourses);
         this.searchError = "";
         this.searchStr = "";
      

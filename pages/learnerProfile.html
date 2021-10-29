@@ -45,11 +45,21 @@
                     <div class="modal-body">
                     <!-- Default checkbox -->
                         <div class="form-check" v-for="course in eligibleCourses">
-                            <input  type="checkbox" value="{{course.course_code}}" id="{{course.course_code}}"/>
+                            <!-- <div v-for="code in courseWithSections[course.course_code]"> -->
+                            <input  type="checkbox" value="{{course.course_code}}" id="{{course.course_code}}" v-model="checkedCourses" @change="courseSections(course.course_code)"/>
                             <label for="{{course.course_code}}" style="white-space:nowrap;">
                                 {{course.course_code}} : {{course.course_title}}
                             </label>
+
+                            <div v-for="section in eligibleCourseSections">
+                                <template v-if = "section.code == course.course_code">
+                                    <input type="radio" id="{{section.class}}" value="{{section.class}}" v-model="picked">
+                                    <label for="{{section.class}}">{{section.class}}</label>
+                                </template>
+                            </div>
+
                         </div>
+                        <span>Checked courses: {{ checkedCourses }}</span>
                     </div>
 
                     <div class="modal-footer">
