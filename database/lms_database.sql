@@ -142,8 +142,7 @@ CREATE TABLE IF NOT EXISTS `sections` (
   
   PRIMARY KEY (`class_section`, `course_code`, `start_date`),
   CONSTRAINT `section_ibfk_1` FOREIGN KEY (`trainers_eid`) REFERENCES `trainers` (`trainers_eid`),
-  CONSTRAINT `section_ibfk_2` FOREIGN KEY (`course_code`) REFERENCES `courses` (`course_code`),
-  CONSTRAINT `section_ibfk_3` FOREIGN KEY (`trainers_name`) REFERENCES `trainers` (`trainers_name`)
+  CONSTRAINT `section_ibfk_2` FOREIGN KEY (`course_code`) REFERENCES `courses` (`course_code`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 --
