@@ -6,14 +6,6 @@ var progress_url = "http://localhost:5000/progress";
 
 var app = new Vue({
     el: "#app",
-    // computed: {
-    
-    // },
-    mounted:function(){
-        this.getCourseinfo(); //method1 will execute at pageload
-        this.getCourseSection();
-        this.getLearnerInfo();
-    },
     data: {
         searchStr: "",
         message: "There is a problem retrieving data, please try again later.",
@@ -646,7 +638,7 @@ var app = new Vue({
                                                 for (section of this.sections) {
                                                     if (course.course_code == section.course_code) {
                                                         
-                                                        eligibleCourseSections.push(course);
+                                                        eligibleCourseSections.push(section);
                                                         
                                                     }
                                                 }
@@ -720,10 +712,8 @@ var app = new Vue({
         }
     },
     pageRefresh: function () {
-        // this.getAllLearners();
-        // this.getAllCourses();
-        // this.getAllTrainers();
-        // this.searchError = "";
+        
+        this.searchError = "";
         this.searchStr = "";
     },
     created: function () {
