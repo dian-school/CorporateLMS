@@ -4,10 +4,12 @@ from flask_cors import CORS, cross_origin
 from sqlalchemy.exc import SQLAlchemyError
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/lms_database'
-#Mac config
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root' + \
-#                                         '@localhost:8889/lms_database'
+app.config['SQLALCHEMY_DATABASE_URI'] = \
+    'mysql+mysqlconnector://root@localhost:3306/lms_database'
+# Mac config
+# app.config['SQLALCHEMY_DATABASE_URI'] = \
+# 'mysql+mysqlconnector://root:root' + \
+# @localhost:8889/lms_database'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_size': 100,
                                            'pool_recycle': 280}
@@ -62,9 +64,14 @@ class Sections(db.Model):
     class_section = db.Column(db.String(2), primary_key=True)
     course_code = db.Column(db.Integer, db.ForeignKey(Courses.course_code), primary_key=True)
     class_size = db.Column(db.Integer)
-    duration = db.Column(db.Integer)
+    start_date= db.Column(db.Date)
+    end_date= db.Column(db.Date)
+    start_time = db.Column(db.Integer)
+    end_time= db.Column(db.Integer)
     trainers_eid = db.Column(db.Integer, db.ForeignKey(Trainers.trainers_eid))
     vacancies = db.Column(db.Integer)
+    trainers_name= db.Column(db.String(26))
+    duration = db.Column(db.Integer)
 
     def to_dict(self):
         """
@@ -505,6 +512,7 @@ def get_sections(course_code):
         }
     ), 200
 
+## NEED CHANGE##
 #assign trainer a to section of a course -> update to section
 @app.route("/sections/<string:class_section>/<int:course_code>", methods=['PUT'])
 def update_section(class_section, course_code):

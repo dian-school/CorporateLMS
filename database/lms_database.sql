@@ -131,11 +131,16 @@ CREATE TABLE IF NOT EXISTS `sections` (
   `class_section` varchar(2) NOT NULL,
   `course_code` int(11) NOT NULL,
   `class_size` int(11) NOT NULL,
-  `duration` int(11) NOT NULL,
+  `start_date` date NOT NULL,
+  `end_date` date NOT NULL,
+  `start_time` int(6) NOT NULL,
+  `end_time` int(6) NOT NULL,
   `trainers_eid` int(11) DEFAULT NULL,
   `vacancies` int(11) NOT NULL,
+  `trainers_name` char(26) NOT NULL,
+  `duration` int(11) NOT NULL,
   
-  PRIMARY KEY (`class_section`, `course_code`),
+  PRIMARY KEY (`class_section`, `course_code`, `start_date`),
   CONSTRAINT `section_ibfk_1` FOREIGN KEY (`trainers_eid`) REFERENCES `trainers` (`trainers_eid`),
   CONSTRAINT `section_ibfk_2` FOREIGN KEY (`course_code`) REFERENCES `courses` (`course_code`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
@@ -144,11 +149,31 @@ CREATE TABLE IF NOT EXISTS `sections` (
 -- Dumping data for table `section` 
 --
 
-INSERT INTO `sections` (`class_section`, `course_code`, `class_size`, `duration`, `trainers_eid`, `vacancies`) VALUES
-('G1', 1008, 40, 3, 1, 40),
-('G1', 1009, 40, 3, 1, 40),
-('G2', 1003, 40, 3, 2, 40),
-('G3', 1005, 40, 3, 3, 40);
+INSERT INTO `sections` (`class_section`, `course_code`, `class_size`, `start_date`, `end_date`, `start_time`, `end_time`, `trainers_eid`, `vacancies`,  `trainers_name`, `duration`) VALUES
+('G1', 1001, 40, '2021-08-05', '2021-12-10',0800, 2359, 2, 40, 'Diana Cummings', 15),
+('G1', 1002, 40, '2021-08-05', '2021-12-10', 0800, 2359, 1, 40, 'Laura Valdez', 15),
+('G1', 1003, 40,'2021-08-05' ,'2021-12-10' ,0800, 2359, 3, 40, 'Camilla Parker', 15),
+('G1', 1004, 40,'2021-08-05' ,'2021-12-10' ,0800, 2359, 3, 40, 'Camilla Parker', 15),
+('G1', 1005, 40,'2021-08-05' , '2021-12-10',0800, 2359, 1, 40, 'Laura Valdez', 15),
+('G1', 1006, 40,'2021-08-05' , '2021-12-10',0800, 2359, 1, 40, 'Laura Valdez', 15),
+('G1', 1007, 40, '2021-08-05', '2021-12-10',0800, 2359, 2, 40, 'Diana Cummings', 20),
+('G1', 1008, 40, '2021-08-05', '2021-12-10',0800, 2359, 2, 40, 'Diana Cummings', 20),
+('G1', 1009, 40, '2021-08-05', '2021-12-10',0800, 2359, 1, 40, 'Laura Valdez', 20),
+('G1', 1010, 40, '2021-08-05', '2021-12-10',0800, 2359, 3, 40, 'Camilla Parker', 25),
+('G1', 1011, 40,'2021-08-05',  '2021-12-10',0800, 2359, 1, 40, 'Laura Valdez', 25),
+('G1', 1012, 40, '2021-08-05', '2021-12-10',0800, 2359, 3, 40, 'Camilla Parker', 18),
+('G1', 1013, 40, '2021-08-05','2021-12-10' ,0800, 2359, 2, 40, 'Diana Cummings', 22),
+('G1', 1014, 40, '2021-08-05', '2021-12-10',0800, 2359, 1, 40, 'Laura Valdez', 25),
+('G1', 1015, 40, '2021-08-05', '2021-12-10',0800, 2359, 2, 40, 'Diana Cummings', 17),
+('G1', 1016, 40, '2021-08-05', '2021-12-10',0800, 2359, 3, 40, 'Camilla Parker', 27),
+('G1', 1017, 40, '2021-08-05', '2021-12-10',0800, 2359, 2, 40, 'Diana Cummings', 30),
+('G1', 1018, 40, '2021-08-05','2021-12-10' ,0800, 2359, 2, 40, 'Diana Cummings', 26),
+('G1', 1019, 40, '2021-08-05','2021-12-10' ,0800, 2359, 2, 40, 'Diana Cummings', 25),
+('G2', 1008, 40, '2021-08-05', '2021-12-10',0800, 2359, 2, 40, 'Diana Cummings', 20),
+('G2', 1009, 40, '2021-08-05', '2021-12-10',0800, 2359, 1, 40, 'Laura Valdez', 20),
+('G2', 1003, 40, '2021-08-05','2021-12-10' ,0800, 2359, 2, 40, 'Diana Cummings', 15),
+('G2', 1005, 40, '2021-08-05', '2021-12-10',0800, 2359, 3, 40, 'Camilla Parker', 15),
+('G3', 1005, 40, '2021-08-05', '2021-12-10',0800, 2359, 3, 40, 'Camilla Parker', 15);
 
 -- --------------------------------------------------------
 
