@@ -23,7 +23,12 @@ pipeline {
 
       steps {
 
-        sh '''python -m venv env source env/bin/activate pip3 install flake8 flake8 flask/app-combine.py'''
+        sh '''
+        python -m venv env 
+        source env/bin/activate 
+        pip3 install flake8 
+        flake8 flask/app-combine.py
+        '''
 
       }
 

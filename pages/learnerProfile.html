@@ -19,10 +19,17 @@
 
 <body>
     <div id = "app" >
-        {{getLearnerInfo()}}
-        {{courseSections()}}
+        <!-- {{courseSections()}} -->
         <div class="container" style="margin:30px;">
-            <div id="learnerInfo"></div>
+                <h1> {{ learner.learners_name }}</h1>
+                <h3> Learner ID: {{ learner.learners_eid }} </h3>
+                <h3> Learner's Email: {{ learner.learners_email }}</h3>
+                <h3> Courses Completed: {{ learner.courses_completed }} </h3>
+                <h3> Qualifications: {{ learner.learners_qualifications }} </h3>
+                <br> 
+                <button type="button" class="btn btn-primary" @click="getEligibleCourses(learner.learners_eid)" data-toggle="modal" data-target="#exampleModalCenter">
+                Assign Courses
+                </button>
             
             <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -37,7 +44,7 @@
 
                     <div class="modal-body">
                     <!-- Default checkbox -->
-                        <div class="form-check" v-for="course in eligibleCourseSections">
+                        <div class="form-check" v-for="course in eligibleCourses">
                             <input  type="checkbox" value="{{course.course_code}}" id="{{course.course_code}}"/>
                             <label for="{{course.course_code}}" style="white-space:nowrap;">
                                 {{course.course_code}} : {{course.course_title}}
