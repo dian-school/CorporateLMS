@@ -8,7 +8,7 @@ pipeline {
 
       steps {
 
-        checkout([$class: 'GitSCM', extensions:[], userRemoteConfigs: [[credentialsId: 'g1t6CorporateLMSGit', url: 'git@github.com:dian-school/CorporateLMS.git']]])
+        checkout([$class: 'GitSCM', branches: [[name: '*/']], extensions:[], userRemoteConfigs: [[credentialsId: 'g1t6CorporateLMSGit', url: 'git@github.com:dian-school/CorporateLMS.git']]])
 
       }
 
