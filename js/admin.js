@@ -6,14 +6,6 @@ var progress_url = "http://localhost:5000/progress";
 
 var app = new Vue({
     el: "#app",
-    // computed: {
-    
-    // },
-    // mounted:function(){
-    //     this.getCourseinfo(); //method1 will execute at pageload
-    //     this.getCourseSection();
-    //     this.getLearnerInfo();
-    // },
     data: {
         searchStr: "",
         message: "There is a problem retrieving data, please try again later.",
@@ -27,6 +19,7 @@ var app = new Vue({
         "eligibleCourses": [],
         "eligibleCourseSections": [],
         checkedCourses: [],
+        picked: [],
         searchError: "",
 
         courseWithSection: {},
@@ -222,8 +215,6 @@ var app = new Vue({
                         console.log(this.message + error);
 
                     });
-
-            
            
         },
         storeCourseSection: function (sectionInfo) {
@@ -602,15 +593,7 @@ var app = new Vue({
                             });
                         }
                         console.log(this.eligibleCourseSections)
-                        // console.log(this.eligibleCourseSections);
-                        // this.eligibleCourseSections.push(course)
-                        // for (let section of this.eligibleCourseSections) {
-                        //     array = this.courseWithSection[courseId]
-                        //     // console.log(section.class_section)
-                        //     array.push(section.class_section)
-                        //     this.courseWithSection[courseId] = array;
-                        // }
-                        // console.log(this.courseWithSection);
+                        
                     }  
                 })
                 .catch(error => {
@@ -652,26 +635,7 @@ var app = new Vue({
                     console.log(this.searchError + error);
                 });
 
-            // for (let course of this.eligibleCourses) {
-            //     fetch(`${section_url}/${course.course_code}`)
-            //     .then(response => response.json())
-            //     .then(data => {
-            //         console.log(response);
-            //         if (data.code === 404) {
-            //             // no eligible courses
-            //             this.searchError = data.message;
-            //         } else {
-            //             this.eligibleCourses = data.data;
-            //             console.log(this.eligibleCourses);
-            //             this.eligibleCourseSections.push(this.eligibleCourses);
-            //         }
-            //     })
-            //     .catch(error => {
-            //         // Errors when calling the service; such as network error, 
-            //         // service offline, etc
-            //         console.log(this.searchError + error);
-            //     });
-            // }
+            
         },    
         
         assignCourse: function() {
@@ -733,7 +697,6 @@ var app = new Vue({
         this.getAllCourses();
         this.getAllTrainers();
         this.getAllLearners();
-        this.getCourseinfo();
         this.getLearnerInfo();
         // this.randomFunc(code);
         // this.getEligibleCourses();
