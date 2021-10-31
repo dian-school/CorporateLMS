@@ -1,10 +1,15 @@
 var get_all_URL = "http://localhost:5000/courses";
 var materials_url = "http://localhost:5000/materials";
 var quiz_url = "http://localhost:5000/quizzes";
+var questions_url = "http://localhost:5000/questions";
+// import { BForm } from 'bootstrap-vue'
+// Vue.component('b-form', BForm)
 
 
 var app = new Vue({
     // binds the new Vue object to the HTML element with id="app".
+    // import { FormPlugin } from 'bootstrap-vue',
+    // Vue.use(FormPlugin),
     el: "#app",
     data: {
         searchStr: "",
@@ -26,7 +31,12 @@ var app = new Vue({
         "material_chapters": [],
         chapter_completed: 2,
 
-        "quizzes": []
+        "quizzes": [],
+
+        "quizquestions":[],
+        course_code: 0, 
+        class_section: "",
+        quizid: 0,
     },
     methods: {
         getAllCourses: function () {
@@ -139,20 +149,107 @@ var app = new Vue({
                     console.log(this.searchError + error);
                 });
         },
+        getQuizQuestions: function () { 
+            this.course_code = 1008;
+            this.class_section = "G1";
+            this.quizid = 3
+            // this.course_code = localStorage.getItem("course_code");
+            // this.class_section = localStorage.getItem("class_section");
+            // this.quizid = localStorage.getItem("quizid");
+
+            console.log(this.class_section)
+
+            const response =
+                fetch(`${questions_url}/${this.class_section}/${this.course_code}/${this.quizid}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(response);
+                    if (data.code === 404) {
+                        // no course found in db
+                        this.searchError = data.message;
+                    } else {
+                        this.quizquestions = data.data;
+                        console.log(this.quizquestions);
+                    }
+                })
+                .catch(error => {
+                    // Errors when calling the service; such as network error, service offline, etc
+                    console.log(this.searchError + error);
+                });
+        },
+        checkAnswers: function(){
+            this.course_code = 1008;
+            this.class_section = "G1";
+            this.quizid = 3
+            console.log(this.quizid)
+
+            const response =
+                fetch(`${questions_url}/${this.class_section}/${this.course_code}/${this.quizid}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(response);
+                    if (data.code === 404) {
+                        // no course found in db
+                        this.searchError = data.message;
+                    } else {
+                        this.quizquestions = data.data;
+                        console.log(this.quizquestions);
+
+                        var marks = 0;
+                        var form = document.getElementById(this.quizid);
+                        //for each question
+                        var qnNum = 0;
+                        for (qnNum = 0; qnNum < quizquestions.length; qnNum++) {
+                            qn = form[question.questionid];
+                            console.log(qn);
+
+                            var ansNum = 0;
+                            //check which option is selected
+                            for (ansNum = 0; ansNum < qn.length; ansNum++) {
+                                if (qn[ansNum].checked) {
+                                    // get selected option.value
+                                    var option= parse(qn[ansNum].value);
+                                    console.log(option);
+                                }
+                            }
+                            // get correct answer
+                            this.answertext = question.answertext;
+                            console.log(this.answertext);
+
+                            // mark selected option with feedback
+                            if(option==this.answertext){ 
+                                marks += 1;
+                                document.writeln("Your answer is correct!"); 
+                            }
+                            else{
+                                document.writeln("The correct answer is '" + this.answertext + "'.");
+                            }
+                        }
+                        if (marks/this.quizquestions.count > 0.85) {
+                            document.writeln("Your total marks is" + marks); 
+                        }
+                    }
+                })
+                .catch(error => {
+                    // Errors when calling the service; such as network error, service offline, etc
+                    console.log(this.searchError + error);
+                });
+        },
         storeQuizForm: function(quizid) {
             localStorage.quizid = quizid
         },
-        getQuizForm: function() {
-            console.log(localStorage.getItem("quizid"))
-            return localStorage.getItem("quizid")
-        },
+        // getQuizForm: function() {
+        //     console.log(localStorage.getItem("quizid"))
+        //     return localStorage.getItem("quizid")
+        // },
     },
     created: function () {
         // on Vue instance created, load the course list
         // this.getAllCourses();
         this.getMaterials();
         this.getQuizzes();
-        this.getQuizForm();
+        // this.getQuizForm();
+        this.getQuizQuestions();
     }
 
 });

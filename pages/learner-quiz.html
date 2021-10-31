@@ -27,12 +27,38 @@
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
         </div>
     </nav>
-    
-    <h1>Quiz {{ getQuizForm() }}</h1>
-
+    <!-- <script type="module">
+      import { BForm } from 'bootstrap'
+      Vue.component('b-form', BForm) -->
+    <!-- </script> -->
+    <!-- <template> -->
+      <div>
+        <h1>Quiz {{ quizquestions.quizid }}</h1> 
+        <form methods="POST" actions="/" v-for="question in quizquestions" id="question.questionid">
+          <!-- each question -->
+          <!-- <div v-for="question in quizquestions"> -->
+            <fieldset id="question.questionid">
+              <h3>{{ question.questiontext }}</h3>
+              <!-- options -->
+              <div v-for="option in (question.questionoptions.split(','))" >
+                <!-- same name, diff value and id -->
+                <input type="radio" value="option" name="question.questionid"> {{option}} </input>
+              </div>
+            </fieldset>
+          <!-- </div> -->
+          <!-- submit button -->     
+        </form> 
+        <button class="btn btn-outline-primary" type="submit" @click="checkAnswer()">Submit</button>
+         
+      </div>
+    <!-- </template> -->
   </div>
 
-  <script type="text/javascript" src="../js/learner.js"></script>
+  <script type="text/javascript" src="../js/learner.js">
+  // <script type="module" src="../js/learner.js">
+  //   import { BForm } from 'bootstrap-vue'
+  //   Vue.component('b-form', BForm)  
+  // </script>
 
   <!-- Optional JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
