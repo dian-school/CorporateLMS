@@ -619,6 +619,44 @@ def get_questions(class_section, course_code, quizid):
         }
     ), 200
 
+#get chapter(s) completed by learner in a course
+@app.route("/progress/<int:learners_eid>/<string:class_section>/<int:course_code>")
+@cross_origin()
+def get_chapter_completed(learners_eid, class_section, course_code):
+    progress = Progress.query.filter_by(learners_eid=learners_eid,class_section=class_section, course_code=course_code).first()
+    return jsonify(
+        {
+            "code": 200,
+            "data": progress.to_dict()
+        }
+    ), 200
+
+#update chapter(s) completed once learner completes a progress quiz
+@app.route("/progress/<int:learners_eid>/<string:class_section>/<int:course_code>", methods=['PUT'])
+@cross_origin()
+def update_chapter_completed(learners_eid,class_section, course_code):
+    progress = Progress.query.filter_by(learners_eid=learners_eid, class_section=class_section, course_code=course_code).first()
+    if progress:
+        data = request.get_json()
+        progress.chapter_completed = data['chapter_completed']
+        db.session.commit()
+        return jsonify(
+            {
+                "code": 200,
+                "data": progress.to_dict()
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "data": {
+                "learners_eid": learners_eid,
+                "class_section": class_section,
+                "course_code": course_code
+            },
+            "message": "Learner not found."
+        }
+    ), 404
 
 #get all class materials related to the course
 @app.route("/materials/<string:class_section>/<int:course_code>")
