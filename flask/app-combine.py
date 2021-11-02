@@ -140,7 +140,12 @@ class Progress(db.Model):
             result[column] = getattr(self, column)
         return result
 
-#jas tdd
+    # def __init__(self, course_code, learners_eid, class_section, chapter_completed):
+    #     self.course_code = course_code
+    #     self.learners_eid = learners_eid
+    #     self.class_section = class_section
+    #     self.chapter_completed = chapter_completed
+
 class Quizzes(db.Model):
     __tablename__ = 'quizzes'
     quizid= db.Column(db.Integer, primary_key=True, autoincrement=True)
