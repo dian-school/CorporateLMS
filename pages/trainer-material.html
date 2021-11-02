@@ -68,16 +68,25 @@
                       </tr>
                       <tr>
                         <td class="form-group">
-                          <label for="material_type" class="cta-text">Material Type</label><span class="text-danger">*</span>
-                          <input required name="material_type" v-model="material_type" type="text" class="form-control" id="material_type"
-                            placeholder="Enter Type of Material (e.g. Doc, Slides)">
+
+                          <label>Material Type</label><br>
+
+                          <input type="radio" id="Doc" value="Document" v-model="material_type">
+                          <label for="Doc">Document</label>
+                          <br>
+                          <input type="radio" id="Video" value="Video" v-model="material_type">
+                          <label for="Video">Video</label>
+                          <br>
+                          <input type="radio" id="Hyperlink" value="Hyperlink" v-model="material_type">
+                          <label for="Hyperlink">Hyperlink</label>
+
                         </td>
                       </tr>
                       <tr>
                         <td class="form-group">
                           <label for="material_link" class="cta-text">Material Link</label><span class="text-danger">*</span>
                           <input name = "material_link" v-model="material_link" type="text" class="form-control" id="material_link" 
-                            placeholder="Google Link of your Material">
+                            placeholder="Link of your Material (e.g. Google Link, Websites, etc)">
                         </td>
                       </tr>
 
@@ -225,7 +234,7 @@
                     <td>{{ material.material_name }}</td>
                     <td>{{ material.material_type }}</td>
                     <td> 
-                        <a class="btn btn-outline-primary" :href="material.material_link" role="button">{{ material.material_type }} Link</a>
+                        <a class="btn btn-outline-primary" :href="material.material_link" role="button">{{ material.material_type }}</a>
                     </td>
                     <td>{{ material.material_chapter }}</td>
                 </tr>
