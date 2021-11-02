@@ -31,6 +31,7 @@ var app = new Vue({
         quizid: 0,
         time:0,
         graded:"",
+        chapter:0,
 
         "questions":[],
         questiontext:"",
@@ -250,6 +251,7 @@ var app = new Vue({
                 class_section: this.class_section,
                 time: this.time,
                 graded: this.graded,
+                chapter: this.chapter,
             });
             console.log(jsonData)
             if (this.time === 0 || this.graded === "") {
