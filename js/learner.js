@@ -29,7 +29,7 @@ var app = new Vue({
 
         "materials": [],
         "material_chapters": [],
-        chapter_completed: 2,
+        chapter_completed: 3,
 
         "quizzes": [],
 
@@ -93,8 +93,8 @@ var app = new Vue({
                 });
         },
         getMaterials: function () { 
-            this.courseCode = 1003;
-            this.classSection = "G2"
+            this.courseCode = 1008;
+            this.classSection = "G1"
 
             console.log(this.courseCode)
 
@@ -125,8 +125,8 @@ var app = new Vue({
                 });
         },
         getQuizzes: function () { 
-            this.courseCode = 1003;
-            this.classSection = "G2"
+            this.courseCode = 1008;
+            this.classSection = "G1"
 
             console.log(this.courseCode)
 

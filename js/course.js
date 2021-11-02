@@ -68,8 +68,8 @@ var app = new Vue({
             // this.statusMessage = "";
             // this.msg = "";
 
-            this.courseCode = 1003;
-            this.classSection = "G2"
+            this.courseCode = 1008;
+            this.classSection = "G1"
 
             console.log(this.materialName)
             let jsonData = JSON.stringify({
@@ -262,8 +262,8 @@ var app = new Vue({
             }
         },
         getQuizzes: function () { 
-            this.courseCode = 1003;
-            this.classSection = "G2"
+            this.courseCode = 1008;
+            this.classSection = "G1"
 
             const response =
                 fetch(`${quizzes_url}/${this.classSection}/${this.courseCode}`)
@@ -290,8 +290,8 @@ var app = new Vue({
             // this.errorMsg = "";
             // this.statusMessage = "";
             // this.msg = "";
-            this.courseCode = 1003;
-            this.classSection = "G2"
+            this.courseCode = 1008;
+            this.classSection = "G1"
 
             console.log("hey")
 
