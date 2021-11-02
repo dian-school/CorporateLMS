@@ -161,7 +161,7 @@
 
                         <tr>
                           <td class="form-group">
-                            <label for="chapter" class="cta-text">Time (in minutes)</label><span class="text-danger"> *Required</span>
+                            <label for="chapter" class="cta-text">Chapter Number</label><span class="text-danger"> *Required</span>
                             <input required name="description" v-model="chapter" type="number" class="form-control" id="chapter"
                               placeholder="Enter chapter number">
                           </td>
@@ -243,6 +243,7 @@
                     <th scope="col">Quiz Id</th>
                     <th scope="col">Time (in minutes) </th>
                     <th scope="col">Quiz Type</th>
+                    <th scope= "col"> Quiz Chapter</th>
                     <th scope="col">View/Add questions</th>
                 </tr>
             </thead>
@@ -252,7 +253,7 @@
                     <td>{{ quiz.time }}</td>
                     <td v-if="quiz.graded =='T'">Final Quiz</td>
                     <td v-if="quiz.graded =='F'">Progress Quiz</td>
-                    <td> {{ quiz.chapter }}</td>
+                    <td> {{ quiz.chapter }} </td>
                     <td> 
                         <a class="btn btn-outline-primary" @click="storeQuizInfo(quiz.quizid)" href= "trainer-question.html" role="button" > View/Add</a>
                     </td>
