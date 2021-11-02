@@ -19,6 +19,7 @@ var app = new Vue({
         "eligibleCourses": [],
         "eligibleCourseSections": [],
         checkedCourses: [],
+        "classSections": [],
         picked: [],
         searchError: "",
 
@@ -613,9 +614,18 @@ var app = new Vue({
             
         },
 
-        assignCourses: function(sectionClass) {
+        assignCourses: function() {
             //each time i click a section, I want to append the course code and class section to and array
             //for section in eligible course sections, if section.course_code in checkedCourses and section.class_section in picked, append the course code and class section to an array. 
+            for (section in eligibleCourseSections) {
+                if (section.class_section in picked && (document.getElementsByName("group[i]") == document.getElementById("group[i]")) ) {
+                    this.classSections.push({
+                        code: section.code,
+                        class: section.class_section
+                    });
+                }
+            }
+            console.log(this.classSections);
         },
         randomFunc: function(code) {
             return this.courseWithSection[code]
