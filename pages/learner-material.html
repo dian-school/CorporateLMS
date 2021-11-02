@@ -73,8 +73,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(quiz, index) in quizzes" v-if ="index == mat_chap">
-                                <td>Quiz {{ quiz.quizid }}</td>
+                            <tr v-for="quiz in quizzes" v-if ="quiz.chapter == mat_chap">
+                                <td>Quiz {{ quiz.chapter }}</td>
                                 <td>{{ quiz.time }}</td>
                                 <td>Ungraded</td>
                                 <td> 
