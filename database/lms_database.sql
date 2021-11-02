@@ -137,7 +137,7 @@ CREATE TABLE IF NOT EXISTS `sections` (
   `end_time` int(6) NOT NULL,
   `trainers_eid` int(11) DEFAULT NULL,
   `vacancies` int(11) NOT NULL,
-  `trainers_name` char(26) NOT NULL,
+  `trainers_name` char(26) DEFAULT NULL,
   `duration` int(11) NOT NULL,
   
   PRIMARY KEY (`class_section`, `course_code`, `start_date`),
@@ -244,6 +244,7 @@ CREATE TABLE IF NOT EXISTS `quizzes` (
   `class_section` varchar(2) NOT NULL,
   `time` int(11) NOT NULL,
   `graded` varchar(1) NOT NULL,
+  `chapter` int(11) NOT NULL,
   
 
   PRIMARY KEY (`quizid`, `course_code`, `class_section`),
