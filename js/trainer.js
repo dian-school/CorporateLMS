@@ -277,6 +277,7 @@ var app = new Vue({
                         // refresh page
                         this.time = 0;
                         this.graded = "";
+                        this.chapter=0;
                         this.pageRefresh()
 
                         break;
