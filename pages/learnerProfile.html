@@ -19,6 +19,22 @@
 
 <body>
     <div id = "app" >
+
+        <!-- Responsive navbar-->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container px-lg-5">
+                <a class="navbar-brand" href="admin.html">G1T6 Learning Management System</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link "  href="admin.html">Courses</a></li>
+                        <li class="nav-item"><a class="nav-link" href="admin-trainers.html">Trainers</a></li>
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="admin-learners.html">Learners</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
         <!-- {{courseSections()}} -->
         <div class="container" style="margin:30px;">
                 <h1> {{ learner.learners_name }}</h1>
@@ -46,20 +62,20 @@
                     <!-- Default checkbox -->
                         <div class="form-check" v-for="course in eligibleCourses">
                             <!-- <div v-for="code in courseWithSections[course.course_code]"> -->
-                            <input  type="checkbox" value="{{course.course_code}}" id="{{course.course_code}}" v-model="checkedCourses" @change="courseSections(course.course_code)"/>
+                            <input  type="checkbox" value="{{course.course_code}}" id="{{course.course_code}}" v-model="checkedCourses" @click="courseSections(course.course_code)"/>
                             <label for="{{course.course_code}}" style="white-space:nowrap;">
                                 {{course.course_code}} : {{course.course_title}}
                             </label>
 
                             <div v-for="section in eligibleCourseSections">
                                 <template v-if = "section.code == course.course_code">
-                                    <input type="radio" id="{{section.class}}" value="{{section.class}}" v-model="picked">
+                                    <input type="radio" id="{{section.class}}" value="{{section.class}}" v-model="picked" @click=assignCourses(section.class)>
                                     <label for="{{section.class}}">{{section.class}}</label>
                                 </template>
                             </div>
 
                         </div>
-                        <span>Checked courses: {{ checkedCourses }} : {{ picked }} </span>
+                        <span>Checked courses: {{ checkedCourses }}</span>
                           
                         
                     </div>
@@ -86,7 +102,7 @@
 
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         
-                        <button @click="assignCourse()" class="btn btn-primary" v-on:submit.prevent="onSubmit">Assign Course</button>
+                        <button @click="assignCourse(learner.learners_eid)" class="btn btn-primary" v-on:submit.prevent="onSubmit">Assign Course</button>
                     
                     </div>
                     
