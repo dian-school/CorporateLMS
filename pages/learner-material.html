@@ -73,12 +73,12 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="quiz in quizzes" v-if ="quiz.quizid == mat_chap">
+                            <tr v-for="(quiz, index) in quizzes" v-if ="index == mat_chap">
                                 <td>Quiz {{ quiz.quizid }}</td>
                                 <td>{{ quiz.time }}</td>
                                 <td>Ungraded</td>
                                 <td> 
-                                    <a class="btn btn-outline-primary" href="learner-takequiz.html" role="button" @click="storeQuizForm(quiz.quizid)">Link</a>
+                                    <a class="btn btn-outline-primary" href="learner-quiz.html" role="button" @click="storeQuizForm(quiz.quizid)">Link</a>
                                 </td>
                             </tr>
                         </tbody>
