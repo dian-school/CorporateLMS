@@ -17,7 +17,7 @@ var app = new Vue({
         "trainers": [],
 
         "sectionsNoTrainers": [],
-        sectionCourseTitle: "",
+        sectionCourseTitle: [],
         checkedSections: [],
         assignTrainerError: "",
         assignSuccess: false,
@@ -515,7 +515,7 @@ var app = new Vue({
                                     } else {
                                         this.course = data.data[0];
                                         console.log(this.course);
-                                        this.sectionCourseTitle = this.course.course_title;
+                                        this.sectionCourseTitle.push(this.course);
                                         console.log(this.sectionCourseTitle); //currently showing the last course title only because section course title is stored as a str and keeps changing. Must think about how to display the titles according to course code
                                         
                                          
@@ -548,7 +548,7 @@ var app = new Vue({
 
                 let jsonData = JSON.stringify({
                     trainers_eid: trainerId,
-                    
+                    trainers_name: trainerName,
                     
                 });
     
