@@ -70,7 +70,7 @@
                             <!-- @click="checkedSections(section.course_code)" -->
                         <input  type="checkbox" value="{{section.course_code}}:{{section.class_section}}" id="{{section.course_code}}" v-model="checkedSections" />
                         <label for="{{section.course_code}}" style="white-space:nowrap;">
-                            {{section.course_code}} : {{ sectionCourseTitle }} ({{ section.class_section }})
+                            {{section.course_code}} : <span v-for="course in sectionCourseTitle" v-if = "course.course_code == section.course_code">{{course.course_title}}</span> ({{ section.class_section }})
                         </label>
 
                     </div>
