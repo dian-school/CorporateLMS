@@ -65,15 +65,16 @@
 
                 <div class="modal-body">
                 <!-- Default checkbox -->
-                    <div class="form-check" v-for="section in sectionArr">
-                        <!-- <div v-for="code in courseWithSections[course.course_code]"> -->
-                        <input  type="checkbox" value="{{section.course_code}}" id="{{section.course_code}}" v-model="checkedSections" @click="checkedSections(section.course_code)"/>
+                    <div class="form-check" v-for="section in sectionsNoTrainers">
+                        
+                            <!-- @click="checkedSections(section.course_code)" -->
+                        <input  type="checkbox" value="{{section.course_code}}:{{section.class_section}}" id="{{section.course_code}}" v-model="checkedSections" />
                         <label for="{{section.course_code}}" style="white-space:nowrap;">
-                            {{section.course_code}} : {{section.class_section}}
+                            {{section.course_code}} : {{ sectionCourseTitle }} ({{ section.class_section }})
                         </label>
 
                     </div>
-                    <span>Checked sections: {{ checkedSections }}</span>
+                    <span>Checked Sections: {{ checkedSections }}</span>
                       
                     
                 </div>
@@ -81,26 +82,20 @@
                 <div class="modal-footer">
 
                     <div class="justify-content-left;">
-                        <div class="text-success" v-if="sectionAssigned">
-                        {{ statusMessage }} <br>
+                        <div class="text-success" v-if="assignSuccess = true">
+                        {{ assignTrainerError }} <br>
                         </div>
                     </div>
                     
                     <div class="justify-content-left;">
-                        <div class="text-danger" v-if="msg != ''">
-                        {{ msg }} <br>
+                        <div class="text-danger" v-if="assignSuccess = false">
+                        {{ assignTrainerError }} <br>
                         </div>
                     </div>
-        
-                    <div class="justify-content-left;">
-                        <div class="text-danger" v-if="assignSectionError!=''">
-                        {{ assignSectionError }}
-                        </div>
-                    </div> 
 
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     
-                    <button @click="assignSection(trainer.trainers_eid)" class="btn btn-primary" v-on:submit.prevent="onSubmit">Assign Course Sections</button>
+                    <button @click="assignSections()" class="btn btn-primary" v-on:submit.prevent="onSubmit">Assign Course Sections</button>
                 
                 </div>
                 

@@ -512,7 +512,17 @@ def get_sections(course_code):
         }
     ), 200
 
-## NEED CHANGE##
+#get all sections
+@app.route("/sections/all")
+def get_Allsections():
+    section_list = Sections.query.all()
+    return jsonify(
+        {
+            "data": [sections.to_dict()
+                     for sections in section_list]
+        }
+    ), 200
+
 #assign trainer a to section of a course -> update to section
 @app.route("/sections/<string:class_section>/<int:course_code>", methods=['PUT'])
 def update_section(class_section, course_code):
@@ -534,10 +544,28 @@ def update_section(class_section, course_code):
                 "class_section": class_section,
                 "course_code": course_code
             },
-            "message": "Class not found."
+            "message": "Unable to assign trainer."
         }
     ), 404
 
+#get sections with no trainers
+@app.route("/sections/noTrainers", methods=['GET'])
+def getSectionsWithNoTrainer():
+    sectionsNoTrainer = Sections.query.filter_by(trainers_eid=None).all()
+    if sectionsNoTrainer:
+       return jsonify(
+            {
+                "code": 200,
+                "data": [trainer.to_dict() for trainer in sectionsNoTrainer]
+            }
+        ), 200
+    return jsonify(
+        {
+            "code": 404,
+            "message": "No sections without trainers."
+        }
+    ), 404
+    
 #add quiz
 #step 1 create quiz 
 @app.route("/quizzes", methods=['POST'])
