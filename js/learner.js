@@ -31,14 +31,26 @@ var app = new Vue({
         chapter_completed: 0,
 
         "quizzes": [],
-
+        "quiz": [],
+        
         "quizquestions":[],
         course_code: 0, 
         class_section: "",
         quizid: 0,
+        // date: moment(60 * 10 * 1000),
 
         marks: 85 //hardcoded - should be updated using checkanswer() later
     },
+    // computed: {
+    //     time: function(){
+    //       return this.date.format('mm:ss');
+    //     }
+    // },
+    // mounted: function(){   
+    //     setInterval(() => {
+    //         this.date = moment(this.date.subtract(1, 'seconds'))
+    //     }, 1000);
+    // },
     methods: {
         getAllCourses: function () {
             const response =
@@ -126,13 +138,13 @@ var app = new Vue({
                 });
         },
         getQuizzes: function () { 
-            this.courseCode = 1008;
-            this.classSection = "G1"
+            this.course_code = 1008;
+            this.class_section = "G1"
 
-            console.log(this.courseCode)
+            console.log(this.course_code)
 
             const response =
-                fetch(`${quiz_url}/${this.classSection}/${this.courseCode}`)
+                fetch(`${quiz_url}/${this.class_section}/${this.course_code}`)
                 .then(response => response.json())
                 .then(data => {
                     console.log(response);
@@ -149,6 +161,35 @@ var app = new Vue({
                     // service offline, etc
                     console.log(this.searchError + error);
                 });
+        },
+        getQuiz: function(){
+            this.course_code = 1008;
+            this.class_section = "G1";
+            this.quizid = 3;
+            this.time = 60;
+            // this.questionid = 1;
+            // this.answertext = "True";
+            console.log(this.quizid);
+
+            const response =
+                fetch(`${quiz_url}/${this.class_section}/${this.course_code}/${this.quizid}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(response);
+                    if (data.code === 404) {
+                        // no course found in db
+                        this.searchError = data.message;
+                    } else {
+                        this.quiz = data.data;
+                        console.log(this.quiz);
+                    }
+                })
+                .catch(error => {
+                    // Errors when calling the service; such as network error, 
+                    // service offline, etc
+                    console.log(this.searchError + error);
+                });
+            
         },
         getQuizQuestions: function () { 
             this.course_code = 1008;
@@ -177,13 +218,14 @@ var app = new Vue({
                     // Errors when calling the service; such as network error, service offline, etc
                     console.log(this.searchError + error);
                 });
+            
         },
         checkAnswers: function(){
             this.course_code = 1008;
             this.class_section = "G1";
             this.quizid = 3;
-            this.questionid = 1;
-            this.answertext = "True";
+            // this.questionid = 1;
+            // this.answertext = "True";
             console.log(this.quizid);
 
             const response =
@@ -199,32 +241,35 @@ var app = new Vue({
                         console.log(this.quizquestions);
 
                         // var marks = 0;
-                        var form = document.getElementById(question.quizid);
-                        qn = form[question.questionid];
-                        //for each question
-                        var n = 0;
-                        for (n = 0; n < qn.length; n++) {
-                            // qn = form[question.questionid];
-                            // console.log(qn);
+                        if (document.getElementById(question.questionid) in quizquestions){
+                            var form = document.getElementById(quizquestions.questionid);
+                            qn = form[quizquestions.questionid];
+                            //for each question
+                            var n = 0;
+                            for (n = 0; n < qn.length; n++) {
+                                // qn = form[question.questionid];
+                                // console.log(qn);
 
-                            // var ansNum = 0;
-                            // //check which option is selected
-                            // for (ansNum = 0; ansNum < qn.length; ansNum++) {
-                                if (qn[n].checked) {
-                                    // get selected option.value
-                                    var choice= parse(qn[n].value);
-                                    console.log(choice);
-                                }
+                                // var ansNum = 0;
+                                // //check which option is selected
+                                // for (ansNum = 0; ansNum < qn.length; ansNum++) {
+                                    if (qn[n].checked) {
+                                        // get selected option.value
+                                        var choice= parse(qn[n].value);
+                                        console.log(choice);
+                                    }
                             // }
-
-                            // mark selected option with feedback
-                            if(choice==this.answertext){ 
-                                // marks += 1;
-                                document.writeln("Your answer is correct!"); 
+                                if(choice==quizquestions.answertext){ 
+                                    // marks += 1;
+                                    alert("Your answer is correct!"); 
+                                }
+                                else{
+                                alert("The correct answer is '" + quizquestions.answertext + "'.");
+                                }
                             }
-                            else{
-                                document.writeln("The correct answer is '" + this.answertext + "'.");
-                            }
+                        }
+                        else{
+                            alert("cannot get question");
                         }
                         // if (marks/this.quizquestions.count > 0.85) {
                         //     document.writeln("Your total marks is" + marks); 
@@ -319,6 +364,7 @@ var app = new Vue({
         // this.getQuizForm();
         this.getQuizQuestions();
         this.checkAnswers();
+        this.getQuiz();
     }
 
 });

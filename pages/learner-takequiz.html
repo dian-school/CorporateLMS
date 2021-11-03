@@ -36,34 +36,9 @@
 
         <!-- Show Unlocked Chapters -->
         <div class="container" style="display:center">
-            <div class="row">
-                <template v-for="mat_chap in material_chapters">
-                    <h1  v-if = "mat_chap <= chapter_completed + 1">
-                        Lesson {{ mat_chap }}
-                    </h1>
-
-                    <!-- Materials -->
-                    <table class="table"  v-if = "mat_chap <= chapter_completed + 1">
-                        <thead>
-                            <tr>
-                                <th scope="col">Material Title</th>
-                                <th scope="col">Material Type</th>
-                                <th scope="col">Link</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="material in materials" v-if ="material.material_chapter == mat_chap">
-                                <td>{{ material.material_name }}</td>
-                                <td>{{ material.material_type }}</td>
-                                <td> 
-                                    <a class="btn btn-outline-primary" :href="material.material_link" role="button">{{ material.material_type }} Link</a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-
+            
                     <!-- Progress Quiz -->
-                    <table class="table"  v-if = "mat_chap <= chapter_completed + 1">
+                    <table class="table">
                         <thead>
                             <tr>
                                 <th scope="col">Quiz Number</th>
@@ -73,45 +48,17 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="quiz in quizzes" v-if ="quiz.chapter == mat_chap">
-                                <td>Quiz {{ quiz.chapter }}</td>
+                            <tr >
+                                <td>Quiz {{ quizid }}</td>
                                 <td>{{ quiz.time }}</td>
-                                <td>Ungraded</td>
+                                <td v-if="graded == 'F' ">Ungraded</td>
+                                <td v-else>Graded</td>
                                 <td> 
-                                    <a class="btn btn-outline-primary" href="learner-quiz.html" role="button" @click="storeQuizForm(quiz.quizid)">Link</a>
+                                    <a class="btn btn-outline-primary" type="button" href="learner-quiz.html" id="app">Take quiz</a>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
-
-                </template>
-
-                <!-- Final Quiz -->
-                <template v-if ="chapter_completed == material_chapters[material_chapters.length-1]">
-
-                    <h1>Final Quiz</h1>
-
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">Quiz</th>
-                                <th scope="col">Duration (min)</th>
-                                <th scope="col">Graded</th>
-                                <th scope="col">Link</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Final Quiz</td>
-                                <td>{{ quizzes[quizzes.length-1].time }}</td>
-                                <td>Graded</td>
-                                <td> 
-                                    <a class="btn btn-outline-primary" href="learner-takequiz.html" role="button" @click="storeQuizForm(quizzes[quizzes.length-1].quizid)">Link</a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </template>
 
             </div>
         </div>
