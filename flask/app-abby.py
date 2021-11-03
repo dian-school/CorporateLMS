@@ -589,6 +589,8 @@ def find_by_trainerEid(trainers_eid):
         }
     ), 404
 
+
+
 ##Sections##
 #get all sections
 @app.route("/sections/all")
@@ -622,9 +624,28 @@ def update_section(class_section, course_code):
                 "class_section": class_section,
                 "course_code": course_code
             },
-            "message": "Class not found."
+            "message": "Unable to assign trainer."
         }
     ), 404
+
+#get sections with no trainers
+@app.route("/sections/noTrainers", methods=['GET'])
+def getSectionsWithNoTrainer():
+    sectionsNoTrainer = Sections.query.filter_by(trainers_eid=None).all()
+    if sectionsNoTrainer:
+       return jsonify(
+            {
+                "code": 200,
+                "data": [trainer.to_dict() for trainer in sectionsNoTrainer]
+            }
+        ), 200
+    return jsonify(
+        {
+            "code": 404,
+            "message": "No sections without trainers."
+        }
+    ), 404
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

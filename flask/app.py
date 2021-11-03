@@ -7,9 +7,8 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = \
     'mysql+mysqlconnector://root@localhost:3306/lms_database'
 # Mac config
-# app.config['SQLALCHEMY_DATABASE_URI'] = \
-# 'mysql+mysqlconnector://root:root' + \
-# @localhost:8889/lms_database'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root' + \
+#                                         '@localhost:8889/lms_database'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_size': 100,
                                            'pool_recycle': 280}
@@ -121,7 +120,7 @@ class Admins(db.Model):
         for column in columns:
             result[column] = getattr(self, column)
         return result
-
+#farah tdd
 class Progress(db.Model):
     __tablename__ = 'progress'
 
@@ -142,11 +141,11 @@ class Progress(db.Model):
             result[column] = getattr(self, column)
         return result
 
-    def __init__(self, course_code, learners_eid, class_section, chapter_completed):
-        self.course_code = course_code
-        self.learners_eid = learners_eid
-        self.class_section = class_section
-        self.chapter_completed = chapter_completed
+    # def __init__(self, course_code, learners_eid, class_section, chapter_completed):
+    #     self.course_code = course_code
+    #     self.learners_eid = learners_eid
+    #     self.class_section = class_section
+    #     self.chapter_completed = chapter_completed
 
 class Quizzes(db.Model):
     __tablename__ = 'quizzes'
@@ -155,6 +154,7 @@ class Quizzes(db.Model):
     course_code = db.Column(db.Integer, db.ForeignKey(Courses.course_code), primary_key=True)
     time = db.Column(db.Integer)
     graded = db.Column(db.String(2))
+    chapter = db.Column(db.Integer)
 
     def to_dict(self):
         """
@@ -166,7 +166,7 @@ class Quizzes(db.Model):
         for column in columns:
             result[column] = getattr(self, column)
         return result
-
+#jas tdd
 class Quizquestions(db.Model):
     __tablename__ = 'quizquestions'
     questionid= db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -189,7 +189,7 @@ class Quizquestions(db.Model):
             result[column] = getattr(self, column)
         return result
 
-
+#Farah tdd
 class Materials(db.Model):
     __tablename__ = 'materials'
 
@@ -512,7 +512,17 @@ def get_sections(course_code):
         }
     ), 200
 
-## NEED CHANGE##
+#get all sections
+@app.route("/sections/all")
+def get_Allsections():
+    section_list = Sections.query.all()
+    return jsonify(
+        {
+            "data": [sections.to_dict()
+                     for sections in section_list]
+        }
+    ), 200
+
 #assign trainer a to section of a course -> update to section
 @app.route("/sections/<string:class_section>/<int:course_code>", methods=['PUT'])
 def update_section(class_section, course_code):
@@ -534,10 +544,28 @@ def update_section(class_section, course_code):
                 "class_section": class_section,
                 "course_code": course_code
             },
-            "message": "Class not found."
+            "message": "Unable to assign trainer."
         }
     ), 404
 
+#get sections with no trainers
+@app.route("/sections/noTrainers", methods=['GET'])
+def getSectionsWithNoTrainer():
+    sectionsNoTrainer = Sections.query.filter_by(trainers_eid=None).all()
+    if sectionsNoTrainer:
+       return jsonify(
+            {
+                "code": 200,
+                "data": [trainer.to_dict() for trainer in sectionsNoTrainer]
+            }
+        ), 200
+    return jsonify(
+        {
+            "code": 404,
+            "message": "No sections without trainers."
+        }
+    ), 404
+    
 #add quiz
 #step 1 create quiz 
 @app.route("/quizzes", methods=['POST'])
@@ -546,7 +574,7 @@ def add_quiz():
     data = request.get_json()
     if not all(key in data.keys() for
                key in ('class_section', 'course_code',
-                       'time', 'graded')):
+                       'time', 'graded', 'chapter')):
         return jsonify({
             "message": "Incorrect JSON object provided."
         }), 500
@@ -619,6 +647,44 @@ def get_questions(class_section, course_code, quizid):
         }
     ), 200
 
+#get chapter(s) completed by learner in a course
+@app.route("/progress/<int:learners_eid>/<string:class_section>/<int:course_code>")
+@cross_origin()
+def get_chapter_completed(learners_eid, class_section, course_code):
+    progress = Progress.query.filter_by(learners_eid=learners_eid,class_section=class_section, course_code=course_code).first()
+    return jsonify(
+        {
+            "code": 200,
+            "data": progress.to_dict()
+        }
+    ), 200
+
+#update chapter(s) completed once learner completes a progress quiz
+@app.route("/progress/<int:learners_eid>/<string:class_section>/<int:course_code>", methods=['PUT'])
+@cross_origin()
+def update_chapter_completed(learners_eid,class_section, course_code):
+    progress = Progress.query.filter_by(learners_eid=learners_eid, class_section=class_section, course_code=course_code).first()
+    if progress:
+        data = request.get_json()
+        progress.chapter_completed = data['chapter_completed']
+        db.session.commit()
+        return jsonify(
+            {
+                "code": 200,
+                "data": progress.to_dict()
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "data": {
+                "learners_eid": learners_eid,
+                "class_section": class_section,
+                "course_code": course_code
+            },
+            "message": "Learner not found."
+        }
+    ), 404
 
 #get all class materials related to the course
 @app.route("/materials/<string:class_section>/<int:course_code>")

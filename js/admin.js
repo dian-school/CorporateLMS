@@ -6,14 +6,6 @@ var progress_url = "http://localhost:5000/progress";
 
 var app = new Vue({
     el: "#app",
-    // computed: {
-    
-    // },
-    // mounted:function(){
-    //     this.getCourseinfo(); //method1 will execute at pageload
-    //     this.getCourseSection();
-    //     this.getLearnerInfo();
-    // },
     data: {
         searchStr: "",
         message: "There is a problem retrieving data, please try again later.",
@@ -23,10 +15,20 @@ var app = new Vue({
 
         "courses": [],
         "trainers": [],
+
+        "sectionsNoTrainers": [],
+        sectionCourseTitle: "",
+        checkedSections: [],
+        assignTrainerError: "",
+        assignSuccess: false,
+
+
         "learners_all": [],
         "eligibleCourses": [],
         "eligibleCourseSections": [],
         checkedCourses: [],
+        "classSections": [],
+        picked: [],
         searchError: "",
 
         courseWithSection: {},
@@ -46,7 +48,8 @@ var app = new Vue({
         editCourseError: "",
 
         // learnerId: 0,
-        learner: {}
+        learner: {},
+        trainer: {},
         // trackSection = 0
         
     },
@@ -57,7 +60,7 @@ var app = new Vue({
                 fetch(get_all_URL)
                 .then(response => response.json())
                 .then(data => {
-                    // console.log(response);
+                    console.log(response);
                     if (data.code === 404) {
                         // no courses in db
                         this.message = data.message;
@@ -75,14 +78,14 @@ var app = new Vue({
 
         },
         findCourse: function () { 
-            this.searchError = "";
+            // this.searchError = "";
 
             if (isNaN(this.searchStr)) {
                 const response =
                     fetch(`${get_all_URL}/searchTitle/${this.searchStr}`)
                     .then(response => response.json())
                     .then(data => {
-                        // console.log(response);
+                        console.log(response);
                         if (data.code === 404) {
                             // no course found in db
                             this.searchError = data.message;
@@ -102,7 +105,7 @@ var app = new Vue({
                     fetch(`${get_all_URL}/search/${this.searchStr}`)
                     .then(response => response.json())
                     .then(data => {
-                        // console.log(response);
+                        console.log(response);
                         if (data.code === 404) {
                             // no course found in db
                             this.searchError = data.message;
@@ -128,7 +131,7 @@ var app = new Vue({
                     fetch(`${get_all_URL}/searchTitle/${this.course_title}`)
                     .then(response => response.json())
                     .then(data => {
-                        // console.log(response);
+                        console.log(response);
                         if (data.code === 404) {
                             // no course found in db
                             this.searchError = data.message;
@@ -155,7 +158,7 @@ var app = new Vue({
                 fetch(`${section_url}/${clickedCourse[0].course_code}`)
                 .then(response => response.json())
                 .then(data => {
-                    // console.log(response);
+                    console.log(response);
                     if (data.code === 404) {
                         // course has no section
                         this.message = data.message;
@@ -222,8 +225,6 @@ var app = new Vue({
                         console.log(this.message + error);
 
                     });
-
-            
            
         },
         storeCourseSection: function (sectionInfo) {
@@ -364,7 +365,7 @@ var app = new Vue({
                 })
                 .then(response => response.json())
                 .then(data => {
-                    // console.log(response);
+                    console.log(response);
                     if (data.code === 404) {
                         // no course in db
                         this.message = data.message;
@@ -397,7 +398,7 @@ var app = new Vue({
                 fetch(get_all_trainers)
                 .then(response => response.json())
                 .then(data => {
-                    // console.log(response);
+                    console.log(response);
                     if (data.code === 404) {
                         // no trainers in db
                         this.message = data.message;
@@ -422,7 +423,7 @@ var app = new Vue({
                     fetch(`${get_all_trainers}/${this.searchStr}`)
                     .then(response => response.json())
                     .then(data => {
-                        // console.log(response);
+                        console.log(response);
                         if (data.code === 404) {
                             // no trainer found in db
                             this.searchError = data.message;
@@ -442,7 +443,7 @@ var app = new Vue({
                     fetch(`${get_all_trainers}/eid/${this.searchStr}`)
                     .then(response => response.json())
                     .then(data => {
-                        // console.log(response);
+                        console.log(response);
                         if (data.code === 404) {
                             // no trainer found in db
                             this.searchError = data.message;
@@ -459,22 +460,73 @@ var app = new Vue({
                     });
             }
         },
-        trainerProfile: function(trainers_name) {
+        trainerProfile: function(trainers_eid) {
             this.searchError = "";
-            this.trainers_name = trainers_name;
-            // console.log(trainers_name);
+            localStorage.trainerId = trainers_eid;
+            console.log(localStorage.getItem("trainerId"));     
+        },
+        getTrainerInfo: function() {
+            trainerId = localStorage.getItem("trainerId");
+            console.log(trainerId);
 
             const response =
-                    fetch(`${get_all_trainers}/${this.trainers_name}`)
+                fetch(`${get_all_trainers}/eid/${trainerId}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(response);
+                    if (data.code === 404) {
+                        // no trainer found in db
+                        this.searchError = data.message;
+                    } else {
+                        this.trainer = data.data[0];
+                        console.log(this.trainer);
+                        localStorage.trainerName = this.trainer.trainers_name;
+                        console.log(localStorage.getItem("trainerName"));
+                        this.searchError = "";
+                    }
+                })
+                .catch(error => {
+                    // Errors when calling the service; such as network error, 
+                    // service offline, etc
+                    console.log(this.searchError + error);
+                });
+        },
+        sectionsWithNoTrainer: function () {
+            const response =
+                    fetch(`${section_url}/noTrainers`)
                     .then(response => response.json())
                     .then(data => {
-                        // console.log(response);
+                        console.log(response);
                         if (data.code === 404) {
-                            // no trainer found in db
+                            // no sections without trainers found in db
                             this.searchError = data.message;
                         } else {
-                            this.trainers = data.data;
-                            // console.log(this.trainers);
+                            this.sectionsNoTrainers = data.data;
+                            console.log(this.sectionsNoTrainers);
+                            for (let i = 0; i < this.sectionsNoTrainers.length; i++) {
+                                const response =
+                                fetch(`${get_all_URL}/search/${this.sectionsNoTrainers[i].course_code}`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    console.log(response);
+                                    if (data.code === 404) {
+                                        // no course found in db
+                                        this.searchError = data.message;
+                                    } else {
+                                        this.course = data.data[0];
+                                        console.log(this.course);
+                                        this.sectionCourseTitle = this.course.course_title;
+                                        console.log(this.sectionCourseTitle); //currently showing the last course title only because section course title is stored as a str and keeps changing. Must think about how to display the titles according to course code
+                                        
+                                         
+                                    }
+                                })
+                                .catch(error => {
+                                    // Errors when calling the service; such as network error, 
+                                    // service offline, etc
+                                    console.log(this.searchError + error);
+                                });
+                            }
                         }
                     })
                     .catch(error => {
@@ -482,7 +534,52 @@ var app = new Vue({
                         // service offline, etc
                         console.log(this.searchError + error);
                     });
-                
+        },
+        assignSections: function () {
+            for (courseSection of this.checkedSections) {
+                console.log(courseSection);
+                splitCourseSection = courseSection.split(':');
+                courseCode = splitCourseSection[0];
+                console.log(courseCode);
+                courseSection = splitCourseSection[1];
+                console.log(courseSection);
+
+                this.assignTrainerError = "";
+
+                let jsonData = JSON.stringify({
+                    trainers_eid: trainerId,
+                    
+                    
+                });
+    
+                fetch(`${section_url}/${courseSection}/${courseCode}`, {
+                        method: "PUT",
+                        headers: {
+                            "Content-type": "application/json"
+                        },
+                        body: jsonData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        result = data.data;
+                        console.log(result);
+                        
+                        switch (data.code) {
+                            case 200:
+                                this.assignSuccess = true;
+    
+                                this.assignTrainerError = 'Trainer successfully assigned.';
+    
+                                break;
+                            case 404:
+                                this.assignTrainerError = data.message;
+                            
+                            default:
+                                throw `${data.code}: ${data.message}`;
+                        }
+                    })
+            }
         },
         getAllLearners: function () {
             // on Vue instance created, load the trainer list
@@ -490,7 +587,7 @@ var app = new Vue({
                 fetch(get_all_learners)
                 .then(response => response.json())
                 .then(data => {
-                    // console.log(response);
+                    console.log(response);
                     if (data.code === 404) {
                         // no trainers in db
                         this.message = data.message;
@@ -509,13 +606,13 @@ var app = new Vue({
         },
         findLearner: function () { 
             this.searchError = "";
-
+            
             if (isNaN(this.searchStr)) {
                 const response =
                     fetch(`${get_all_learners}/${this.searchStr}`)
                     .then(response => response.json())
                     .then(data => {
-                        // console.log(response);
+                        console.log(response);
                         if (data.code === 404) {
                             // no learner found in db
                             this.searchError = data.message;
@@ -535,7 +632,7 @@ var app = new Vue({
                     fetch(`${get_all_learners}/eid/${this.searchStr}`)
                     .then(response => response.json())
                     .then(data => {
-                        // console.log(response);
+                        console.log(response);
                         if (data.code === 404) {
                             // no trainer found in db
                             this.searchError = data.message;
@@ -589,7 +686,7 @@ var app = new Vue({
                 fetch(`${section_url}/${id}`)
                 .then(response => response.json())
                 .then(data => {
-                    // console.log(response);
+                    console.log(response);
                     if (data.code === 404) {
                         // no eligible courses
                         this.searchError = data.message;
@@ -602,26 +699,31 @@ var app = new Vue({
                             });
                         }
                         console.log(this.eligibleCourseSections)
-                        // console.log(this.eligibleCourseSections);
-                        // this.eligibleCourseSections.push(course)
-                        // for (let section of this.eligibleCourseSections) {
-                        //     array = this.courseWithSection[courseId]
-                        //     // console.log(section.class_section)
-                        //     array.push(section.class_section)
-                        //     this.courseWithSection[courseId] = array;
-                        // }
-                        // console.log(this.courseWithSection);
+                        
                     }  
+                    
                 })
                 .catch(error => {
                     // Errors when calling the service; such as network error, 
                     // service offline, etc
                     console.log(this.searchError + error);
                 });     
-            // }
-            // }
+            
         },
 
+        assignCourses: function() {
+            //each time i click a section, I want to append the course code and class section to and array
+            //for section in eligible course sections, if section.course_code in checkedCourses and section.class_section in picked, append the course code and class section to an array. 
+            for (section in eligibleCourseSections) {
+                if (section.class_section in picked && (document.getElementsByName("group[i]") == document.getElementById("group[i]")) ) {
+                    this.classSections.push({
+                        code: section.code,
+                        class: section.class_section
+                    });
+                }
+            }
+            console.log(this.classSections);
+        },
         randomFunc: function(code) {
             return this.courseWithSection[code]
         },
@@ -652,29 +754,10 @@ var app = new Vue({
                     console.log(this.searchError + error);
                 });
 
-            // for (let course of this.eligibleCourses) {
-            //     fetch(`${section_url}/${course.course_code}`)
-            //     .then(response => response.json())
-            //     .then(data => {
-            //         console.log(response);
-            //         if (data.code === 404) {
-            //             // no eligible courses
-            //             this.searchError = data.message;
-            //         } else {
-            //             this.eligibleCourses = data.data;
-            //             console.log(this.eligibleCourses);
-            //             this.eligibleCourseSections.push(this.eligibleCourses);
-            //         }
-            //     })
-            //     .catch(error => {
-            //         // Errors when calling the service; such as network error, 
-            //         // service offline, etc
-            //         console.log(this.searchError + error);
-            //     });
-            // }
+            
         },    
         
-        assignCourse: function() {
+        assignCourse: function(learnerId) {
             // reset data to original setting
             this.courseAssigned = false;
             this.assignCourseError = "";
@@ -682,7 +765,7 @@ var app = new Vue({
             this.msg = "";
 
             let jsonData = JSON.stringify({
-                learners_eid: this.learners_eid,
+                learners_eid: learnerId,
                 course_code: this.course_code,
                 class_section: this.class_section,
                 chapter_completed: this.chapter_completed
@@ -726,6 +809,13 @@ var app = new Vue({
                 this.assignCourseError = this.statusMessage
                 console.log(this.assignCourseError);
             });
+        },
+    
+    pageRefresh: function () {
+        this.getAllCourses();
+        this.getAllTrainers();
+        this.getAllLearners();
+        this.searchStr = "";
         }
     },
     created: function () {
@@ -733,8 +823,8 @@ var app = new Vue({
         this.getAllCourses();
         this.getAllTrainers();
         this.getAllLearners();
-        this.getCourseinfo();
         this.getLearnerInfo();
+        this.getTrainerInfo();
         // this.randomFunc(code);
         // this.getEligibleCourses();
         // this.courseSections(this.checkedCourses);

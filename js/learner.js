@@ -2,8 +2,7 @@ var get_all_URL = "http://localhost:5000/courses";
 var materials_url = "http://localhost:5000/materials";
 var quiz_url = "http://localhost:5000/quizzes";
 var questions_url = "http://localhost:5000/questions";
-// import { BForm } from 'bootstrap-vue'
-// Vue.component('b-form', BForm)
+var progress_url = "http://localhost:5000/progress"
 
 
 var app = new Vue({
@@ -29,7 +28,7 @@ var app = new Vue({
 
         "materials": [],
         "material_chapters": [],
-        chapter_completed: 2,
+        chapter_completed: 0,
 
         "quizzes": [],
 
@@ -37,6 +36,8 @@ var app = new Vue({
         course_code: 0, 
         class_section: "",
         quizid: 0,
+
+        marks: 85 //hardcoded - should be updated using checkanswer() later
     },
     methods: {
         getAllCourses: function () {
@@ -93,8 +94,8 @@ var app = new Vue({
                 });
         },
         getMaterials: function () { 
-            this.courseCode = 1003;
-            this.classSection = "G2"
+            this.courseCode = 1008;
+            this.classSection = "G1"
 
             console.log(this.courseCode)
 
@@ -125,8 +126,8 @@ var app = new Vue({
                 });
         },
         getQuizzes: function () { 
-            this.courseCode = 1003;
-            this.classSection = "G2"
+            this.courseCode = 1008;
+            this.classSection = "G1"
 
             console.log(this.courseCode)
 
@@ -242,10 +243,77 @@ var app = new Vue({
         //     console.log(localStorage.getItem("quizid"))
         //     return localStorage.getItem("quizid")
         // },
+        getCompleteChapter: function() {
+            learners_eid = 1
+            courseCode = 1008;
+            classSection = "G1"
+
+            // console.log(this.courseCode)
+
+            const response =
+                fetch(`${progress_url}/${learners_eid}/${classSection}/${courseCode}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(response);
+                    if (data.code === 200) {
+                        this.chapter_completed = data.data.chapter_completed;
+                        console.log(this.chapter_completed);
+                    }
+                })
+                .catch(error => {
+                    // Errors when calling the service; such as network error, 
+                    // service offline, etc
+                    console.log(this.searchError + error);
+                });
+        },
+        updateCompleteChapter: function() {
+            learners_eid = 1
+            courseCode = 1008;
+            classSection = "G1"
+            this.chapter_completed += 1
+
+            console.log(this.chapter_completed)
+
+            let jsonData = JSON.stringify({
+                learners_eid: learners_eid,
+                course_code: courseCode,
+                class_section: classSection,
+                chapter_completed: this.chapter_completed
+            });
+
+            console.log(jsonData)
+
+            fetch(`${progress_url}/${learners_eid}/${classSection}/${courseCode}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-type": "application/json"
+                    },
+                    body: jsonData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    result = data.data;
+                    console.log(result);
+                    // 3 cases
+                    switch (data.code) {
+                        case 200:
+                            window.location = 'learner-material.html';
+                            break;
+                        case 404:
+                            this.editCourseError = data.message;
+                        case 500:
+                            this.editCourseError = data.message;
+                            break;
+                        default:
+                            throw `${data.code}: ${data.message}`;
+                    }
+                })
+        },
     },
     created: function () {
         // on Vue instance created, load the course list
         // this.getAllCourses();
+        this.getCompleteChapter();
         this.getMaterials();
         this.getQuizzes();
         // this.getQuizForm();
