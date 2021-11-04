@@ -4,8 +4,9 @@ from flask_cors import CORS, cross_origin
 from sqlalchemy.exc import SQLAlchemyError
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/lms_database'
-#Mac config
+app.config['SQLALCHEMY_DATABASE_URI'] = \
+    'mysql+mysqlconnector://root@localhost:3306/lms_database'
+# Mac config
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root' + \
 #                                         '@localhost:8889/lms_database'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -62,9 +63,14 @@ class Sections(db.Model):
     class_section = db.Column(db.String(2), primary_key=True)
     course_code = db.Column(db.Integer, db.ForeignKey(Courses.course_code), primary_key=True)
     class_size = db.Column(db.Integer)
-    duration = db.Column(db.Integer)
+    start_date= db.Column(db.Date)
+    end_date= db.Column(db.Date)
+    start_time = db.Column(db.Integer)
+    end_time= db.Column(db.Integer)
     trainers_eid = db.Column(db.Integer, db.ForeignKey(Trainers.trainers_eid))
     vacancies = db.Column(db.Integer)
+    trainers_name= db.Column(db.String(26))
+    duration = db.Column(db.Integer)
 
     def to_dict(self):
         """
@@ -114,7 +120,7 @@ class Admins(db.Model):
         for column in columns:
             result[column] = getattr(self, column)
         return result
-
+#farah tdd
 class Progress(db.Model):
     __tablename__ = 'progress'
 
@@ -135,11 +141,11 @@ class Progress(db.Model):
             result[column] = getattr(self, column)
         return result
 
-    def __init__(self, course_code, learners_eid, class_section, chapter_completed):
-        self.course_code = course_code
-        self.learners_eid = learners_eid
-        self.class_section = class_section
-        self.chapter_completed = chapter_completed
+    # def __init__(self, course_code, learners_eid, class_section, chapter_completed):
+    #     self.course_code = course_code
+    #     self.learners_eid = learners_eid
+    #     self.class_section = class_section
+    #     self.chapter_completed = chapter_completed
 
 class Quizzes(db.Model):
     __tablename__ = 'quizzes'
@@ -148,6 +154,7 @@ class Quizzes(db.Model):
     course_code = db.Column(db.Integer, db.ForeignKey(Courses.course_code), primary_key=True)
     time = db.Column(db.Integer)
     graded = db.Column(db.String(2))
+    chapter = db.Column(db.Integer)
 
     def to_dict(self):
         """
@@ -159,7 +166,7 @@ class Quizzes(db.Model):
         for column in columns:
             result[column] = getattr(self, column)
         return result
-
+#jas tdd
 class Quizquestions(db.Model):
     __tablename__ = 'quizquestions'
     questionid= db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -182,7 +189,7 @@ class Quizquestions(db.Model):
             result[column] = getattr(self, column)
         return result
 
-
+#Farah tdd
 class Materials(db.Model):
     __tablename__ = 'materials'
 
@@ -204,6 +211,8 @@ class Materials(db.Model):
         for column in columns:
             result[column] = getattr(self, column)
         return result
+
+db.create_all()
 
 ##Courses##
 #get all courses
@@ -385,7 +394,7 @@ def deleteCourse(course_code):
         }
     ), 404
 
-#get all section by course
+#get all section by course code
 @app.route("/sections/<int:course_code>")
 def get_sections(course_code):
     section_list = Sections.query.filter_by(course_code=course_code).all()
@@ -461,6 +470,58 @@ def learner_by_course(course_code):
         return jsonify({
             "message": "No learners in this course."
         }), 404
+
+#get learners completed courses 
+@app.route("/<int:learners_eid>/completed")
+def completed_courses(learners_eid):
+    learner = Learners.query.filter_by(learners_eid=learners_eid).first()
+    if learner:
+        completed_courses = request.args.get('courses_completed', learner.courses_completed)        
+        if completed_courses == None:
+                return jsonify(
+                    {
+                        "code": 404,
+                        "data": {
+                            "learner_eid": learners_eid
+                        },
+                        "message": "No completed courses."
+                    }
+                )
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "learner_eid": learners_eid,
+                    "courses_completed": completed_courses
+                }
+            }
+        )
+
+#get course prerequisites 
+@app.route("/courses/<int:course_code>/prerequisites")
+def course_prerequisites(course_code):
+    course = Courses.query.filter_by(course_code=course_code).first()
+    if course:
+        prerequisites_list = request.args.get('prerequisites', course.prerequisites)        
+        if prerequisites_list == None:
+            return jsonify(
+                {
+                    "code": 404,
+                    "data": {
+                        "course_code": course_code
+                    },
+                    "message": "No prerequisites"
+                }
+            )
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "course_code": course_code,
+                    "prerequisites": prerequisites_list
+                }
+            }
+        )
 
 #Progress##
 #Get Progress
@@ -610,6 +671,8 @@ def update_section(class_section, course_code):
     if sections:
         data = request.get_json()
         sections.trainers_eid = data['trainers_eid']
+        sections.trainers_name = data['trainers_name']
+        
         db.session.commit()
         return jsonify(
             {
@@ -646,6 +709,23 @@ def getSectionsWithNoTrainer():
         }
     ), 404
 
+#get sections with vacancies
+@app.route("/sections/vacancies", methods=['GET'])
+def getSectionsWithVacancies():
+    sectionsVacancies = Sections.query.filter_by(vacancies!= 0).all()
+    if sectionsVacancies:
+       return jsonify(
+            {
+                "code": 200,
+                "data": [section.to_dict() for section in sectionsVacancies]
+            }
+        ), 200
+    return jsonify(
+        {
+            "code": 404,
+            "message": "No sections without trainers."
+        }
+    ), 404
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

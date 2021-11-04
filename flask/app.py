@@ -4,11 +4,11 @@ from flask_cors import CORS, cross_origin
 from sqlalchemy.exc import SQLAlchemyError
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = \
-    'mysql+mysqlconnector://root@localhost:3306/lms_database'
+# app.config['SQLALCHEMY_DATABASE_URI'] = \
+#     'mysql+mysqlconnector://root@localhost:3306/lms_database'
 # Mac config
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root' + \
-#                                         '@localhost:8889/lms_database'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root' + \
+                                        '@localhost:8889/lms_database'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_size': 100,
                                            'pool_recycle': 280}
@@ -523,17 +523,7 @@ def get_sections(course_code):
         }
     ), 200
 
-#get all sections
-@app.route("/sections/all")
-def get_Allsections():
-    section_list = Sections.query.all()
-    return jsonify(
-        {
-            "data": [sections.to_dict()
-                     for sections in section_list]
-        }
-    ), 200
-
+## NEED CHANGE##
 #assign trainer a to section of a course -> update to section
 @app.route("/sections/<string:class_section>/<int:course_code>", methods=['PUT'])
 def update_section(class_section, course_code):
@@ -555,28 +545,10 @@ def update_section(class_section, course_code):
                 "class_section": class_section,
                 "course_code": course_code
             },
-            "message": "Unable to assign trainer."
+            "message": "Class not found."
         }
     ), 404
 
-#get sections with no trainers
-@app.route("/sections/noTrainers", methods=['GET'])
-def getSectionsWithNoTrainer():
-    sectionsNoTrainer = Sections.query.filter_by(trainers_eid=None).all()
-    if sectionsNoTrainer:
-       return jsonify(
-            {
-                "code": 200,
-                "data": [trainer.to_dict() for trainer in sectionsNoTrainer]
-            }
-        ), 200
-    return jsonify(
-        {
-            "code": 404,
-            "message": "No sections without trainers."
-        }
-    ), 404
-    
 #add quiz
 #step 1 create quiz 
 @app.route("/quizzes", methods=['POST'])
@@ -835,5 +807,39 @@ def addCourse():
             "message": "Unable to add course to database."
         }), 500
 
+@app.route("/sections", methods=['POST'])
+@cross_origin()
+def addSection():
+    data = request.get_json()
+    print(data)
+    if not all(key in data.keys() for
+               key in ('class_section', 'course_code','class_size', 'start_date',
+               'end_date','start_time','end_time','vacancies', 'duration')):
+        return jsonify({
+            "code": 500,
+            "message": "Required fields not provided."
+        }), 500
+    section = Sections(**data)
+    try:
+        db.session.add(section)
+        db.session.commit()
+        return jsonify(
+            {
+                "code": 201,
+                "message": "Section has been added successfully.",
+                "data": [section.to_dict()]
+            }
+            ), 201
+
+    except SQLAlchemyError as e:
+        print(str(e))
+        db.session.rollback()
+        return jsonify(
+            {
+            "code": 500,
+            "message": "Unable to add course to database."
+        }), 500
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+

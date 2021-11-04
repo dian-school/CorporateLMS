@@ -260,8 +260,8 @@
                 <tr v-for="quiz in quizzes">
                     <td>{{ quiz.quizid }}</td>
                     <td>{{ quiz.time }}</td>
-                    <td v-if="quiz.graded =='T'">Final Quiz</td>
                     <td v-if="quiz.graded =='F'">Progress Quiz</td>
+                    <td v-if="quiz.graded =='T'">Final Quiz</td>
                     <td> {{ quiz.chapter }} </td>
                     <td> 
                         <a class="btn btn-outline-primary" @click="storeQuizInfo(quiz.quizid)" href= "trainer-question.html" role="button" > View/Add</a>

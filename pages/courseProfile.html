@@ -20,12 +20,23 @@
 
 <body>
     <div id = "app" >
-        {{getCourseinfo()}}
-        <div class="container" style="margin: 30px;">
-           
-            <div id = "courseDetails" > </div>
-            <div id="section"></div>
+        {{getCourseinfo()}} {{getCourseSectioninfo()}}
+        <div class="container" style="margin: 30px;" >
+        <div v-for="course in selected_course">
+            <h1>{{course.course_title}}</h1>
+            <h2> Course code: {{course.course_code}}</h2>
+            <h3> Course description: {{course.description}}</h3>
         </div>
+        <h4>Sections:</h4>
+        <div v-for="section in sections">
+        <ul>
+            <li v-if="section.trainers_name == null">
+                <a target="_blank" href="courseSection.html" @click="storeCourseSection(section.class_section);"> {{section.class_section}} </a> No trainer assigned. 
+                <a class="btn btn-outline-primary" :href="#" role="button">Assign Trainer</a>
+            <li v-else> 
+                <a target="_blank" href="courseSection.html" @click="storeCourseSection(section.class_section);"> {{section.class_section}} </a>, Section Trainer: {{section.trainers_name}}
+            </li>
+        </ul>
     </div>
 
     <script type="text/javascript" src="../js/admin.js"></script>
