@@ -70,14 +70,14 @@
                             {{course.course_code}} : {{course.course_title}}
                         </label>
 
-                        <div v-for="section in eligibleCourseSections">
+                        <!-- <div v-for="section in eligibleCourseSections">
                             <template v-if = "section.code == course.course_code" >
-                                <fieldset v-for="let i=1; i < eligibleCourseSections.count(section.code); i++" id="group[i]"> <!--so that all the sections with same course code will hv same grp no.-->
-                                    <input type="radio" id="{{section.class}}" value="{{section.class}}" name="group[i]" v-model="picked" @click="assignCourses(section.class)">
+                                <fieldset v-for="let i=1; i < eligibleCourseSections.count(section.code); i++"> 
+                                    <input type="radio" id="{{section.class}}" value="{{section.code}}:{{section.class}}" v-model="picked" @click="assignCourses(section.class)">
                                     <label for="{{section.class}}">{{section.class}}</label>
                                 </fieldset>
                             </template>
-                        </div>
+                        </div> -->
 
                     </div>
                     <span>Checked courses: {{ checkedCourses }}</span>
