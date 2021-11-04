@@ -166,7 +166,7 @@ var app = new Vue({
             this.course_code = 1008;
             this.class_section = "G1";
             this.quizid = 3;
-            this.time = 60;
+            // this.time = 60;
             // this.questionid = 1;
             // this.answertext = "True";
             console.log(this.quizid);
@@ -264,7 +264,7 @@ var app = new Vue({
                                     alert("Your answer is correct!"); 
                                 }
                                 else{
-                                alert("The correct answer is '" + quizquestions.answertext + "'.");
+                                    alert("The correct answer is '" + quizquestions.answertext + "'.");
                                 }
                             }
                         }

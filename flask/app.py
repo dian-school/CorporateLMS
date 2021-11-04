@@ -638,19 +638,18 @@ def get_quizzes(class_section, course_code):
 
 #get all quizzes for that section and course
 @app.route("/quizzes/<string:class_section>/<int:course_code>/<int:quizid>")
-def get_quizzes(class_section, course_code):
-    quiz_list = Quizzes.query.filter_by(class_section=class_section, course_code=course_code).all()
+def get_quiz(class_section, course_code, quizid):
+    quiz_list = Quizzes.query.filter_by(class_section=class_section, course_code=course_code, quizid=quizid).first()
     return jsonify(
         {
-            "data": [quiz.to_dict()
-                     for quiz in quiz_list]
+            "data": [quiz_list.to_dict()]
         }
     ), 200
 
 #get quiz questions
 @app.route("/questions/<string:class_section>/<int:course_code>/<int:quizid>")
-def get_quiz(class_section, course_code, quizid):
-    question_list = Quizquestions.query.filter_by(class_section=class_section, course_code=course_code, quizid=quizid).first()
+def get_questions(class_section, course_code, quizid):
+    question_list = Quizquestions.query.filter_by(class_section=class_section, course_code=course_code, quizid=quizid).all()
     return jsonify(
         {
             "data": [question.to_dict()

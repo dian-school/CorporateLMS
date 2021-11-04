@@ -38,15 +38,15 @@
         <form v-for="question in quizquestions" id="question.questionid">
           <!-- each question -->
           <!-- <div v-for="question in quizquestions"> -->
-            <fieldset id="question.questionid">
+            <div id="question.questionid">
               <h3>{{ question.questiontext }}</h3>
               <!-- options -->
               <div v-for="option in (question.questionoptions.split(','))" >
                 <!-- same name, diff value and id -->
-                <input type="radio" value="option" name="question.questiontext" id="option"> {{option}} 
+                <input type="radio" value="option" name="question.questiontext" id="option" onchange="checkAnswer()"> {{option}} 
               </div>
-              <button class="btn btn-outline-primary"  @click="checkAnswer()">Check Answer</button>
-            </fieldset>
+              <!-- <button class="btn btn-outline-primary"  onchange="checkAnswer()">Check Answer</button> -->
+            </div>
             <!-- <div><span id="feedback"></span></div> -->
           <!-- </div> -->
           <!-- submit button -->     
