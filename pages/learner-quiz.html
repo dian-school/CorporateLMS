@@ -43,9 +43,9 @@
               <!-- options -->
               <div v-for="option in (question.questionoptions.split(','))" >
                 <!-- same name, diff value and id -->
-                <input type="radio" value="option" name="question.questiontext" id="option" onchange="checkAnswer()"> {{option}} 
+                <input type="radio" value="option" name="question.questiontext" id="option" @click="checkAnswers()"> {{option}} 
               </div>
-              <!-- <button class="btn btn-outline-primary"  onchange="checkAnswer()">Check Answer</button> -->
+              <!-- <button class="btn btn-outline-primary"  onchange="checkAnswers()">Check Answer</button> -->
             </div>
             <!-- <div><span id="feedback"></span></div> -->
           <!-- </div> -->
