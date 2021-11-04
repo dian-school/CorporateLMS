@@ -548,7 +548,7 @@ var app = new Vue({
 
                 let jsonData = JSON.stringify({
                     trainers_eid: trainerId,
-                    trainers_name: trainerName,
+                    trainers_name: localStorage.getItem("trainerName"),
                     
                 });
     
