@@ -103,6 +103,37 @@
 								placeholder="Prerequisites"> </textarea>
 						</td>
 					</tr>
+                    <tr>
+						<td class="form-group">
+                            <label for="class_size" class="cta-text">Class Size</label><span class="text-danger"> *Required</span>
+                            <input required name="new_size" v-model="new_size" type="number" class="form-control" id="new_size"
+                              placeholder="Enter class size">
+						</td>
+					</tr>
+
+                    <tr>
+						<td class="form-group">
+							<label for="start_date" class="cta-text">Start Date</label> <span class="text-danger"> *Required</span>
+							<input required name="newstart_date" v-model="newstart_date" type="text" class="form-control" id="newstart_date" placeholder="Enter Start Date in format YYYY-MM-DD">
+						</td>
+					</tr>
+
+                    <tr>
+						<td class="form-group">
+							<label for="end_date" class="cta-text">End Date</label> <span class="text-danger"> *Required</span>
+							<input required name="newend_date" v-model="newend_date" type="text" class="form-control" id="newend_date" placeholder="Enter End Date in format YYYY-MM-DD">
+						</td>
+					</tr>
+
+                    <tr>
+						<td class="form-group">
+                            <label for="duration" class="cta-text">Duration (in hours)</label><span class="text-danger"> *Required</span>
+                            <input required name="new_duration" v-model="new_duration" type="number" class="form-control" id="new_duration"
+                              placeholder="Enter duration">
+						</td>
+					</tr>
+                    
+
 				</thead>
 			</table>
 			</form>
@@ -209,7 +240,7 @@
 					<p style="text-align:center">
 						{{course.description}}
 					</p>
-                	<a href="courseProfile.html"><button @click= "courseProfile(course.course_title)" type="button" class="read_more_btn">View </button></a>
+                	<a href="courseProfile.html"><button @click= "courseProfile(course.course_code)" type="button" class="read_more_btn">View </button></a>
                     <button @click= "editCourseForm(course)" type="button" style="color: white; background-color:#f0ad4e; overflow-wrap: break-word" data-toggle="modal" data-target="#editCourseModal">
                         Update
                     </button>
@@ -233,39 +264,6 @@
         <span aria-hidden="true">&times;</span>
         </button>
     </div> 
-
-    <!-- <div class="container-fluid" >
-        <div class="row" v-if="courseDeleted">
-            <div class="col-md-10 col-md-offset-1">
-                <div class="alert alert-warning alert-dismissible fade in text-center margin-auto" role="alert">
-                    <strong>{{statusMessage}}</strong> 
-                </div>
-            </div>
-      </div>
-    </div> -->
-
-<!-- Flexbox container for aligning the toasts -->
-    <!-- <div aria-live="polite" aria-atomic="true" v-if="courseDeleted" class="d-flex justify-content-center align-items-center"> -->
-
-        <!-- Then put toasts within -->
-        <!-- <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header">
-            <strong class="mr-auto">{{statusMessage}}</strong>
-            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        </div>
-    </div> -->
-    
-  
-  <!-- Modal
-  <div class="modal fade" id="exampleModalCenter" v-if="courseDeleted" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <strong>{{statusMessage}}</strong> 
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-        </button>
-    </div> -->
         
             
     <!-- Edit Course Modal -->
