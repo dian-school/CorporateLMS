@@ -37,9 +37,116 @@ var app = new Vue({
         class_section: "",
         quizid: 0,
 
-        marks: 85 //hardcoded - should be updated using checkanswer() later
+        marks: 85, //hardcoded - should be updated using checkanswer() later
+
+        "eligibleCourses": [],
+        "completedCoursesArr": [],
+        "completedCoursesObjectArr": [],
+        // "inprogressCourses": [],
+
+        learners_eid: 0,        
     },
     methods: {
+        getEligibleCourses: function() {
+            this.learners_eid = 1    
+
+            const response = 
+                fetch(`${get_all_URL}/${this.learners_eid}/eligible`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(response);
+                    if (data.code === 404) {
+                        this.message = data.message;
+                        console.log(this.message);
+                    } else {
+                        console.log(data.data.eligible_courses);
+                        this.eligibleCourses = data.data.eligible_courses;
+                        console.log(this.eligibleCourses);
+                    }
+                })
+                .catch(error => {
+                    console.log(this.message + error);
+                });
+        },
+
+        // getInprogressCourses: function() {
+        //     this.learners_eid = 1
+
+        //     const response = 
+        //         fetch(`${get_all_URL}/${this.learners_eid}/inprogress`)
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             console.log(response);
+        //             if (data.code === 404) {
+        //                 this.message = data.message;
+        //                 console.log(this.message);
+        //             } else {
+        //                 console.log(data.data);
+        //                 this.inprogressCourses = data.data;
+        //                 console.log(this.inprogressCourses);
+        //             }
+        //         })
+        //         .catch(error => {
+        //             console.log(this.message + error);
+        //         });
+        // },
+        
+        getCompletedCourses: function() {
+            this.learners_eid = 1 
+
+            const response = 
+                fetch(`${get_all_URL}/${this.learners_eid}/completed`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(response);
+                    if (data.code === 404) {
+                        this.message = data.message;
+                        console.log(this.message);
+                    } else {
+                        console.log(data.data.courses_completed);
+                        this.completedCourses = data.data.courses_completed;
+                        if (this.completedCourses.includes(',')) {
+                            this.completedCoursesArr = this.completedCourses.split(', ');
+                            console.log(this.completedCoursesArr);
+                            
+                        } else {
+                            
+                            this.completedCoursesArr = new Array(this.completedCourses); 
+                            console.log(this.completedCoursesArr);
+                        }
+                        for (var i = 0; i < this.completedCoursesArr.length; i++) {
+                
+                            console.log(this.completedCoursesArr[i]);
+                            const response =
+                                fetch(`${get_all_URL}/searchTitle/${this.completedCoursesArr[i]}`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    console.log(response);
+                                    if (data.code === 404) {
+                                        // no course found in db
+                                        this.searchError = data.message;
+                                    } else {
+                                        this.course = data.data;
+                                        console.log(this.course);
+                                        
+                                        this.completedCoursesObjectArr.push(this.course[0]);
+                                        console.log(this.completedCoursesObjectArr);
+                                    }
+                                })
+                                .catch(error => {
+                                    // Errors when calling the service; such as network error, 
+                                    // service offline, etc
+                                    console.log(this.searchError + error);
+                                });
+            
+                                
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.log(this.message + error);
+                });
+        },
         getAllCourses: function () {
             const response =
             //sends an HTTP GET request from Vue to the npm api to search for all courses
@@ -309,6 +416,21 @@ var app = new Vue({
                     }
                 })
         },
+        storeCourseInfo: function (message) {
+            console.log(message);
+            localStorage.course_code = message;
+        },
+        getCourseInfo: function(){
+            console.log(localStorage.getItem("course_code"));
+            return localStorage.getItem("course_code")
+        },
+        pageRefresh: function () {
+            this.getEligibleCourses();
+            this.getCompletedCourses();
+            // this.getInprogressCourses();
+            this.searchError = "";
+            this.searchStr = "";
+        },
     },
     created: function () {
         // on Vue instance created, load the course list
@@ -318,6 +440,10 @@ var app = new Vue({
         this.getQuizzes();
         // this.getQuizForm();
         this.getQuizQuestions();
+        this.getAllCourses();
+        this.getEligibleCourses();
+        this.getCompletedCourses();
+        // this.getInprogressCourses();
     }
 
 });
