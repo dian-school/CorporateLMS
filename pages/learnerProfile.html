@@ -50,7 +50,7 @@
             </div>
         </div>
 
-        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="overflow-y: scroll;">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
 
@@ -63,24 +63,15 @@
 
                 <div class="modal-body">
                 <!-- Default checkbox -->
-                    <div class="form-check" v-for="course in eligibleCourses">
-                        <!-- <div v-for="code in courseWithSections[course.course_code]"> -->
-                        <input  type="checkbox" value="{{course.course_code}}" id="{{course.course_code}}" v-model="checkedCourses" @click="courseSections(course.course_code)"/>
+                    <div class="form-check" v-for="section in sectionsVacancies">
+                        <input type="checkbox" value="{{section.course_code}}:{{section.class_section}}" id="{{section.course_code}}" v-model="checkedCourseSections" />
                         <label for="{{course.course_code}}" style="white-space:nowrap;">
-                            {{course.course_code}} : {{course.course_title}}
+                            {{section.course_code}} : <span v-for="course in eligibleCourses" v-if="section.course_code == course.course_code"> {{course.course_title}} </span>  ({{ section.class_section }}) </span>
                         </label>
 
-                        <!-- <div v-for="section in eligibleCourseSections">
-                            <template v-if = "section.code == course.course_code" >
-                                <fieldset v-for="let i=1; i < eligibleCourseSections.count(section.code); i++"> 
-                                    <input type="radio" id="{{section.class}}" value="{{section.code}}:{{section.class}}" v-model="picked" @click="assignCourses(section.class)">
-                                    <label for="{{section.class}}">{{section.class}}</label>
-                                </fieldset>
-                            </template>
-                        </div> -->
 
                     </div>
-                    <span>Checked courses: {{ checkedCourses }}</span>
+                    <span>Checked Course Sections: {{ checkedCourseSections }}</span>
                         
                     
                 </div>
@@ -93,12 +84,6 @@
                         </div>
                     </div>
                     
-                    <div class="justify-content-left;">
-                        <div class="text-danger" v-if="msg != ''">
-                        {{ msg }} <br>
-                        </div>
-                    </div>
-        
                     <div class="justify-content-left;">
                         <div class="text-danger" v-if="assignCourseError!=''">
                         {{ assignCourseError }}
