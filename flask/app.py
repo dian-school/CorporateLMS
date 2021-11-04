@@ -225,8 +225,19 @@ def courses():
         }
     ), 200
 
+#get in progress courses
+@app.route("/courses/<int:learners_eid>/inprogress")
+def inprogress_courses(learners_eid):
+    inprogress_courses = Progress.query.filter_by(learners_eid=learners_eid).all()
+    return jsonify(
+        {
+            "data": [courses.to_dict()
+                     for courses in inprogress_courses]
+        }
+    ), 200
+
 #get eligible courses
-@app.route("/<int:learners_eid>/courses")
+@app.route("/courses/<int:learners_eid>/eligible")
 def eligible_courses(learners_eid):
     eligible_courses = []
     course_list = Courses.query.all()
@@ -261,7 +272,7 @@ def eligible_courses(learners_eid):
     )
 
 #get learners completed courses 
-@app.route("/<int:learners_eid>/completed")
+@app.route("/courses/<int:learners_eid>/completed")
 def completed_courses(learners_eid):
     learner = Learners.query.filter_by(learners_eid=learners_eid).first()
     if learner:
