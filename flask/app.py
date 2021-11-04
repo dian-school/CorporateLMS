@@ -678,6 +678,18 @@ def get_Allsections():
         }
     ), 200
 
+#get section by course code and course section
+@app.route("/sections/<string:class_section>/<int:course_code>", methods=['GET'])
+@cross_origin()
+def oneSection(course_code,class_section):
+    section = Sections.query.filter_by(course_code=course_code,class_section=class_section).all()
+    return jsonify(
+        {
+            "data": [eachSection.to_dict()
+                     for eachSection in section]
+        }
+    ), 200
+    
 #assign trainer a to section of a course -> update to section
 @app.route("/sections/<string:class_section>/<int:course_code>", methods=['PUT'])
 def update_section(class_section, course_code):
@@ -685,6 +697,9 @@ def update_section(class_section, course_code):
     if sections:
         data = request.get_json()
         sections.trainers_eid = data['trainers_eid']
+        sections.trainers_name = data['trainers_name']
+        sections.vacancies = data['vacancies']
+
         db.session.commit()
         return jsonify(
             {

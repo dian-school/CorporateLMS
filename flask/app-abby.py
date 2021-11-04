@@ -664,6 +664,17 @@ def get_Allsections():
         }
     ), 200
 
+#get section by course code and course section
+@app.route("/sections/<string:class_section>/<int:course_code>", methods=['GET'])
+def oneSection(course_code,class_section):
+    section = Sections.query.filter_by(course_code=course_code,class_section=class_section).all()
+    return jsonify(
+        {
+            "data": [eachSection.to_dict()
+                     for eachSection in section]
+        }
+    ), 200
+    
 #assign trainer a to section of a course -> update to section
 @app.route("/sections/<string:class_section>/<int:course_code>", methods=['PUT'])
 def update_section(class_section, course_code):
@@ -672,6 +683,7 @@ def update_section(class_section, course_code):
         data = request.get_json()
         sections.trainers_eid = data['trainers_eid']
         sections.trainers_name = data['trainers_name']
+        sections.vacancies = data['vacancies']
         
         db.session.commit()
         return jsonify(
@@ -709,23 +721,7 @@ def getSectionsWithNoTrainer():
         }
     ), 404
 
-#get sections with vacancies
-@app.route("/sections/vacancies", methods=['GET'])
-def getSectionsWithVacancies():
-    sectionsVacancies = Sections.query.filter_by(vacancies!= 0).all()
-    if sectionsVacancies:
-       return jsonify(
-            {
-                "code": 200,
-                "data": [section.to_dict() for section in sectionsVacancies]
-            }
-        ), 200
-    return jsonify(
-        {
-            "code": 404,
-            "message": "No sections without trainers."
-        }
-    ), 404
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

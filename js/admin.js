@@ -22,16 +22,18 @@ var app = new Vue({
         assignTrainerError: "",
         assignSuccess: false,
 
-
         "learners_all": [],
         "eligibleCourses": [],
-        "eligibleCourseSections": [],
-        checkedCourses: [],
-        "classSections": [],
-        picked: [],
+        "sections": [],
+        "sectionsVacancies": [],
+        checkedCourseSections: [],
         searchError: "",
-
-        courseWithSection: {},
+        courseAssigned: false,
+        assignCourseError: "",
+        vacancyUpdated: false,
+        statusMsg: "",
+        updateVacancyError: "",
+        oneSection: [],
 
         newCourseTitle: "",
         newCode: "",
@@ -47,13 +49,12 @@ var app = new Vue({
         editSuccessful: false,
         editCourseError: "",
 
-        // learnerId: 0,
         learner: {},
         trainer: {},
-        // trackSection = 0
         
     },
     methods: {
+        //courses
         getAllCourses: function () {
             // on Vue instance created, load the course list
             const response =
@@ -392,6 +393,7 @@ var app = new Vue({
                 idx++
             }
         },
+        // trainers
         getAllTrainers: function () {
             // on Vue instance created, load the trainer list
             const response =
@@ -491,6 +493,7 @@ var app = new Vue({
                     console.log(this.searchError + error);
                 });
         },
+        // sections
         sectionsWithNoTrainer: function () {
             const response =
                     fetch(`${section_url}/noTrainers`)
@@ -581,6 +584,7 @@ var app = new Vue({
                     })
             }
         },
+        // learner
         getAllLearners: function () {
             // on Vue instance created, load the trainer list
             const response =
@@ -677,57 +681,8 @@ var app = new Vue({
                 });        
         },
          
-        //get eligible courses that have sections to assign learners to the course section
-        courseSections: function(id) {
-            // console.log(courseId)
-            // if (courseId_list != []) {
-            // for (let id of this.checkedCourses) {
-            const response =
-                fetch(`${section_url}/${id}`)
-                .then(response => response.json())
-                .then(data => {
-                    console.log(response);
-                    if (data.code === 404) {
-                        // no eligible courses
-                        this.searchError = data.message;
-                    } else {
-                        // console.log(data.data)
-                        for (let section of data.data) {
-                            this.eligibleCourseSections.push({
-                                code: section.course_code,
-                                class: section.class_section
-                            });
-                        }
-                        console.log(this.eligibleCourseSections)
-                        
-                    }  
-                    
-                })
-                .catch(error => {
-                    // Errors when calling the service; such as network error, 
-                    // service offline, etc
-                    console.log(this.searchError + error);
-                });     
-            
-        },
-
-        assignCourses: function() {
-            //each time i click a section, I want to append the course code and class section to and array
-            //for section in eligible course sections, if section.course_code in checkedCourses and section.class_section in picked, append the course code and class section to an array. 
-            for (section in eligibleCourseSections) {
-                if (section.class_section in picked && (document.getElementsByName("group[i]") == document.getElementById("group[i]")) ) {
-                    this.classSections.push({
-                        code: section.code,
-                        class: section.class_section
-                    });
-                }
-            }
-            console.log(this.classSections);
-        },
-        randomFunc: function(code) {
-            return this.courseWithSection[code]
-        },
         
+        // assign learner to course sections with vacancies
         // get eligible courses for learner
         getEligibleCourses: function (learner_eid) {
             const response = 
@@ -741,10 +696,32 @@ var app = new Vue({
                     } else {
                         this.eligibleCourses = data.data.eligible_courses;
                         console.log(this.eligibleCourses);
-                        // this.courseSections(this.checkedCourses)
-
-                        for (let course of this.eligibleCourses) {
-                            this.courseWithSection[course.course_code] = []
+                        for (course of this.eligibleCourses) {
+                            const response = 
+                                fetch(`${section_url}/${course.course_code}`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    console.log(response);
+                                    if (data.code === 404) {
+                                        // no sections with vacancies
+                                        this.searchError = data.message;
+                                    } else {
+                                        this.sections = data.data;
+                                        console.log(this.sections);
+                                        for (section of this.sections) {
+                                            //console.log(section);
+                                            if (section.vacancies != 0) {  
+                                                this.sectionsVacancies.push(section);
+                                            }  
+                                        }
+                                        console.log(this.sectionsVacancies);
+                                    }
+                                })
+                                .catch(error => {
+                                    // Errors when calling the service; such as network error, 
+                                    // service offline, etc
+                                    console.log(this.searchError + error);
+                                });
                         }
                     }
                 })
@@ -762,54 +739,124 @@ var app = new Vue({
             this.courseAssigned = false;
             this.assignCourseError = "";
             this.statusMessage = "";
-            this.msg = "";
 
-            let jsonData = JSON.stringify({
-                learners_eid: learnerId,
-                course_code: this.course_code,
-                class_section: this.class_section,
-                chapter_completed: this.chapter_completed
-            });
+            this.vacancyUpdated = false;
+            this.statusMsg = ""; 
+            this.updateVacancyError = "";
 
-        
-            fetch(`${progress_url}`, {
-                    method: "POST",
-                    headers: {
-                        "Content-type": "application/json"
-                    },
-                    body: jsonData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    // console.log(data);
-                    result = data.data;
-                    //console.log(result);
-                    // 3 cases
-                    switch (data.code) {
-                        case 201:
-                            this.courseAssigned = true;
-                            this.statusMessage = data.message
-                            
-                            // refresh page
-                            this.pageRefresh();
+            for (section of this.checkedCourseSections) {
+                splitCourseSection = section.split(':');
+                code = splitCourseSection[0];
+                console.log(code);
+                section = splitCourseSection[1];
+                console.log(section);
 
-                            break;
+                const response = 
+                    fetch(`${section_url}/${section}/${code}`, {
+                        method: "GET",
+                        headers: {
+                            "Content-type": "application/json"
+                        },
+                       
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(response);
+                        if (data.code === 404) {
+                            // no sections found
+                            this.searchError = data.message;
+                        } else {
+                            this.oneSection = data.data[0];
+                            // console.log(this.oneSection);
+                        }
+                    })
+                    .catch(error => {
+                        // Errors when calling the service; such as network error, 
+                        // service offline, etc
+                        console.log(this.searchError + error);
+                    });
+
+                let jsonData = JSON.stringify({
                     
-                        case 500:
-                            this.assignCourseError = data.message;
-                            break;
-                        default:
-                            throw `${data.code}: ${data.message}`;
-                    }
-                })
+                    vacancies: this.oneSection.vacancies - 1 
+                    
+                });
+    
+                fetch(`${section_url}/${section}/${code}`, {
+                        method: "PUT",
+                        headers: {
+                            "Content-type": "application/json"
+                        },
+                        body: jsonData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        result = data.data;
+                        console.log(result);
+                        
+                        switch (data.code) {
+                            case 200:
+                                this.vacancyUpdated = true;
+    
+                                this.statusMsg = 'Vacancy successfully updated.';
+    
+                                break;
+                            case 404:
+                                this.updateVacancyError = data.message;
+                            
+                            default:
+                                throw `${data.code}: ${data.message}`;
+                        }
+                    })
+
+                let jdata = JSON.stringify({
+                    learners_eid: learnerId,
+                    course_code: code,
+                    class_section: section,
+                    chapter_completed: 0
+                });
             
-            .catch(error => {
-                // Errors when calling the service; such as network error, 
-                // service offline, etc
-                this.assignCourseError = this.statusMessage
-                console.log(this.assignCourseError);
-            });
+                fetch(`${progress_url}`, {
+                        method: "POST",
+                        headers: {
+                            "Content-type": "application/json"
+                        },
+                        body: jdata
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // console.log(data);
+                        result = data.data;
+                        //console.log(result);
+                        // 3 cases
+                        switch (data.code) {
+                            case 201:
+                                this.courseAssigned = true;
+                                this.statusMessage = "Learner assigned to courses successfully!"
+                                // this.sectionsVacancies = think about how to remove section object after learner ha sbeen assigned to the class section
+                                // refresh page
+                                this.pageRefresh();
+
+                                break;
+                        
+                            case 500:
+                                this.assignCourseError = data.message;
+                                break;
+                            default:
+                                throw `${data.code}: ${data.message}`;
+                        }
+                    })
+                
+                .catch(error => {
+                    // Errors when calling the service; such as network error, 
+                    // service offline, etc
+                    this.assignCourseError = this.statusMessage
+                    console.log(this.assignCourseError);
+                });
+            }
         },
+
     
     pageRefresh: function () {
         this.getAllCourses();
@@ -825,6 +872,7 @@ var app = new Vue({
         this.getAllLearners();
         this.getLearnerInfo();
         this.getTrainerInfo();
+        this.assignCourse();
         // this.randomFunc(code);
         // this.getEligibleCourses();
         // this.courseSections(this.checkedCourses);
