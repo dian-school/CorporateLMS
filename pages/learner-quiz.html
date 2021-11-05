@@ -32,27 +32,28 @@
       Vue.component('b-form', BForm) -->
     <!-- </script> -->
     <!-- <template> -->
-      <div>
-        <h1>Quiz {{ quizquestions.quizid }}</h1> 
-        <form methods="POST" actions="/" v-for="question in quizquestions" id="question.questionid">
-          <!-- each question -->
-          <!-- <div v-for="question in quizquestions"> -->
-            <fieldset id="question.questionid">
-              <h3>{{ question.questiontext }}</h3>
-              <!-- options -->
-              <div v-for="option in (question.questionoptions.split(','))" >
-                <!-- same name, diff value and id -->
-                <input type="radio" value="option" name="question.questionid"> {{option}} </input>
+      <!-- <template> -->
+        <div>
+          <h1 v-if="quiz !== 0">Quiz {{ quiz }}</h1> 
+          <h1 v-else>Final Quiz</h1>
+          <div id="app">{{ time }}</div>
+          <form v-for="question in quizquestions" id="question.questionid">
+              <div id="question.questionid">
+                <h3>{{ question.questiontext }}</h3>
+                <div v-for="option in (question.questionoptions.split(', '))" >
+                  <input type="radio" value="option" name="question.questiontext" id="option" @change="storeAnswer(question.questionid, option)"> {{option}} 
+                </div>
               </div>
-            </fieldset>
-          <!-- </div> -->
-          <!-- submit button -->     
-        </form> 
-        <button class="btn btn-outline-primary" type="submit" @click="checkAnswer()">Submit</button>
-        <button class="btn btn-outline-primary" @click="updateCompleteChapter()">Exit Quiz</button>
-         
-      </div>
-    <!-- </template> -->
+          </form> 
+          <br>
+          <button class="btn btn-outline-primary" type="submit" @click="checkAnswer()">Submit Quiz</button><br><br>
+          <template v-if = "answerChecked===true">
+            <button class="btn btn-outline-primary" @click="getMarks()">Get Quiz Marks</button>
+            <button class="btn btn-outline-primary" @click="updateCompleteChapter()">Exit Quiz</button>
+          </template>
+           
+        </div>
+      <!-- </template> -->
   </div>
 
   <script type="text/javascript" src="../js/learner.js">

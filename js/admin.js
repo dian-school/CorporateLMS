@@ -33,7 +33,7 @@ var app = new Vue({
         vacancyUpdated: false,
         statusMsg: "",
         updateVacancyError: "",
-        oneSection: [],
+        oneSection: {},
 
         newCourseTitle: "",
         newCode: "",
@@ -311,80 +311,29 @@ var app = new Vue({
                             break;
                         default:
                             throw `${data.code}: ${data.message}`;
-                    }
-                })
-            }
-        },
-        // STOPPED REFACTORING HERE
-        del: function (course_code) {
-            //reset all data to original setting
-            this.course_code = course_code;
-            this.courseDeleted = false;
-
-            this.courseAdded = false;
-            this.addCourseError = "";
-            this.statusMessage = "";
-
-            const response =
-                fetch(`${get_all_URL}/${this.course_code}`, {
-                    method: "DELETE",
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log(response);
-                    if (data.code === 404) {
-                        // no course in db
-                        this.message = data.message;
-                        this.courses = [];
-                    } else {
-                        this.courseDeleted = true;
-                        this.statusMessage = "The course has been successfully deleted!";
-                    }
-                })
-                .catch(error => {
-                    // Errors when calling the service; such as network error,
-                    // service offline, etc
-                    console.log(this.message + error);
-
-                });
-
-            //Front end Vue
-            var idx = 0
-            for (course of this.courses) {
-                if (course.course_code == course_code) {
-                    this.courses.splice(idx, 1) // remove this element
-                    break
+                        }
+                    })
                 }
-                idx++
-            }
-        },
-        // trainers
+            },
         getAllTrainers: function () {
-            // on Vue instance created, load the trainer list
+            // display all trainers on admin trainer page
             const response =
                 fetch(get_all_trainers)
                 .then(response => response.json())
                 .then(data => {
                     console.log(response);
                     if (data.code === 404) {
-                        // no trainers in db
                         this.message = data.message;
                     } else {
                         this.trainers = data.data;
-                        // console.log(this.trainers);
                     }
                 })
                 .catch(error => {
-                    // Errors when calling the service; such as network error, 
-                    // service offline, etc
                     console.log(this.message + error);
-
                 });
-
-        },
+            },
         findTrainer: function () { 
             this.searchError = "";
-
             if (isNaN(this.searchStr)) {
                 const response =
                     fetch(`${get_all_trainers}/${this.searchStr}`)
@@ -392,73 +341,54 @@ var app = new Vue({
                     .then(data => {
                         console.log(response);
                         if (data.code === 404) {
-                            // no trainer found in db
                             this.searchError = data.message;
                         } else {
                             this.trainers = data.data;
-                            // console.log(this.trainers);
                         }
                     })
                     .catch(error => {
-                        // Errors when calling the service; such as network error, 
-                        // service offline, etc
                         console.log(this.searchError + error);
                     });
-                
-            } else {
+                } 
+            else{
                 const response =
                     fetch(`${get_all_trainers}/eid/${this.searchStr}`)
                     .then(response => response.json())
                     .then(data => {
                         console.log(response);
                         if (data.code === 404) {
-                            // no trainer found in db
                             this.searchError = data.message;
                         } else {
                             this.trainers = data.data;
-                            // console.log(this.trainers);
                             this.searchError = "";
                         }
                     })
                     .catch(error => {
-                        // Errors when calling the service; such as network error, 
-                        // service offline, etc
                         console.log(this.searchError + error);
                     });
-            }
-        },
-        trainerProfile: function(trainers_eid) {
-            this.searchError = "";
-            localStorage.trainerId = trainers_eid;
-            console.log(localStorage.getItem("trainerId"));     
+                }
         },
         getTrainerInfo: function() {
             trainerId = localStorage.getItem("trainerId");
             console.log(trainerId);
-
             const response =
                 fetch(`${get_all_trainers}/eid/${trainerId}`)
                 .then(response => response.json())
                 .then(data => {
                     console.log(response);
                     if (data.code === 404) {
-                        // no trainer found in db
                         this.searchError = data.message;
                     } else {
                         this.trainer = data.data[0];
                         console.log(this.trainer);
                         localStorage.trainerName = this.trainer.trainers_name;
-                        console.log(localStorage.getItem("trainerName"));
                         this.searchError = "";
                     }
                 })
                 .catch(error => {
-                    // Errors when calling the service; such as network error, 
-                    // service offline, etc
                     console.log(this.searchError + error);
                 });
         },
-        // sections
         sectionsWithNoTrainer: function () {
             const response =
                     fetch(`${section_url}/noTrainers`)
@@ -466,11 +396,9 @@ var app = new Vue({
                     .then(data => {
                         console.log(response);
                         if (data.code === 404) {
-                            // no sections without trainers found in db
                             this.searchError = data.message;
                         } else {
                             this.sectionsNoTrainers = data.data;
-                            console.log(this.sectionsNoTrainers);
                             for (let i = 0; i < this.sectionsNoTrainers.length; i++) {
                                 const response =
                                 fetch(`${get_all_URL}/search/${this.sectionsNoTrainers[i].course_code}`)
@@ -478,46 +406,32 @@ var app = new Vue({
                                 .then(data => {
                                     console.log(response);
                                     if (data.code === 404) {
-                                        // no course found in db
                                         this.searchError = data.message;
                                     } else {
                                         this.course = data.data[0];
-                                        console.log(this.course);
                                         this.sectionCourseTitle.push(this.course);
-                                        console.log(this.sectionCourseTitle); //currently showing the last course title only because section course title is stored as a str and keeps changing. Must think about how to display the titles according to course code
-                                        
-                                         
                                     }
                                 })
                                 .catch(error => {
-                                    // Errors when calling the service; such as network error, 
-                                    // service offline, etc
                                     console.log(this.searchError + error);
                                 });
                             }
                         }
                     })
                     .catch(error => {
-                        // Errors when calling the service; such as network error, 
-                        // service offline, etc
                         console.log(this.searchError + error);
                     });
         },
         assignSections: function () {
+            // for assign trainer to section
             for (courseSection of this.checkedSections) {
-                console.log(courseSection);
                 splitCourseSection = courseSection.split(':');
                 courseCode = splitCourseSection[0];
-                console.log(courseCode);
                 courseSection = splitCourseSection[1];
-                console.log(courseSection);
-
                 this.assignTrainerError = "";
-
                 let jsonData = JSON.stringify({
                     trainers_eid: trainerId,
                     trainers_name: localStorage.getItem("trainerName"),
-                    
                 });
     
                 fetch(`${section_url}/${courseSection}/${courseCode}`, {
@@ -529,25 +443,19 @@ var app = new Vue({
                     })
                     .then(response => response.json())
                     .then(data => {
-                        console.log(data);
                         result = data.data;
-                        console.log(result);
-                        
                         switch (data.code) {
                             case 200:
                                 this.assignSuccess = true;
-    
                                 this.assignTrainerError = 'Trainer successfully assigned.';
-    
                                 break;
                             case 404:
                                 this.assignTrainerError = data.message;
-                            
                             default:
                                 throw `${data.code}: ${data.message}`;
                         }
                     })
-            }
+                }
         },
         // learner
         getAllLearners: function () {
@@ -651,7 +559,7 @@ var app = new Vue({
         // get eligible courses for learner
         getEligibleCourses: function (learner_eid) {
             const response = 
-                fetch(`http://localhost:5000/${learner_eid}/courses`)
+                fetch(`${get_all_URL}/${learner_eid}/eligible`)
                 .then(response => response.json())
                 .then(data => {
                     console.log(response);
@@ -731,8 +639,84 @@ var app = new Vue({
                             // no sections found
                             this.searchError = data.message;
                         } else {
+                            console.log(data.data)
                             this.oneSection = data.data[0];
-                            // console.log(this.oneSection);
+                            console.log(this.oneSection);
+                            console.log(this.oneSection.vacancies)
+                            var jsonData = JSON.stringify({
+                                vacancies: this.oneSection.vacancies - 1 
+                            });
+                            console.log(jsonData)
+                            fetch(`${section_url}/learner/${section}/${code}`, {
+                                method: "PUT",
+                                headers: {
+                                    "Content-type": "application/json"
+                                },
+                                body: jsonData
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                console.log(data);
+                                result = data.data;
+                                console.log(result);
+                                
+                                switch (data.code) {
+                                    case 200:
+                                        this.vacancyUpdated = true;
+            
+                                        this.statusMsg = 'Vacancy successfully updated.';
+            
+                                        break;
+                                    case 404:
+                                        this.updateVacancyError = data.message;
+                                    
+                                    default:
+                                        throw `${data.code}: ${data.message}`;
+                                }
+                            })
+        
+                        let jdata = JSON.stringify({
+                            learners_eid: learnerId,
+                            course_code: code,
+                            class_section: section,
+                            chapter_completed: 0
+                        });
+                    
+                        fetch(`${progress_url}`, {
+                                method: "POST",
+                                headers: {
+                                    "Content-type": "application/json"
+                                },
+                                body: jdata
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                // console.log(data);
+                                result = data.data;
+                                //console.log(result);
+                                // 3 cases
+                                switch (data.code) {
+                                    case 201:
+                                        this.courseAssigned = true;
+                                        this.statusMessage = "Learner assigned to courses successfully!"
+                                        // this.sectionsVacancies = think about how to remove section object after learner ha sbeen assigned to the class section
+                                        // refresh page
+                                        this.pageRefresh();
+        
+                                        break;
+                                
+                                    case 500:
+                                        this.assignCourseError = data.message;
+                                        break;
+                                    default:
+                                        throw `${data.code}: ${data.message}`;
+                                }
+                            })
+                        .catch(error => {
+                            this.assignCourseError = this.statusMessage
+                            console.log(this.assignCourseError);
+                        });
+
                         }
                     })
                     .catch(error => {
@@ -740,85 +724,6 @@ var app = new Vue({
                         // service offline, etc
                         console.log(this.searchError + error);
                     });
-
-                let jsonData = JSON.stringify({
-                    
-                    vacancies: this.oneSection.vacancies - 1 
-                    
-                });
-    
-                fetch(`${section_url}/${section}/${code}`, {
-                        method: "PUT",
-                        headers: {
-                            "Content-type": "application/json"
-                        },
-                        body: jsonData
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log(data);
-                        result = data.data;
-                        console.log(result);
-                        
-                        switch (data.code) {
-                            case 200:
-                                this.vacancyUpdated = true;
-    
-                                this.statusMsg = 'Vacancy successfully updated.';
-    
-                                break;
-                            case 404:
-                                this.updateVacancyError = data.message;
-                            
-                            default:
-                                throw `${data.code}: ${data.message}`;
-                        }
-                    })
-
-                let jdata = JSON.stringify({
-                    learners_eid: learnerId,
-                    course_code: code,
-                    class_section: section,
-                    chapter_completed: 0
-                });
-            
-                fetch(`${progress_url}`, {
-                        method: "POST",
-                        headers: {
-                            "Content-type": "application/json"
-                        },
-                        body: jdata
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        // console.log(data);
-                        result = data.data;
-                        //console.log(result);
-                        // 3 cases
-                        switch (data.code) {
-                            case 201:
-                                this.courseAssigned = true;
-                                this.statusMessage = "Learner assigned to courses successfully!"
-                                // this.sectionsVacancies = think about how to remove section object after learner ha sbeen assigned to the class section
-                                // refresh page
-                                this.pageRefresh();
-
-                                break;
-                        
-                            case 500:
-                                this.assignCourseError = data.message;
-                                break;
-                            default:
-                                throw `${data.code}: ${data.message}`;
-                        }
-                    })
-                
-                .catch(error => {
-                    // Errors when calling the service; such as network error, 
-                    // service offline, etc
-                    this.assignCourseError = this.statusMessage
-                    console.log(this.assignCourseError);
-                });
             }
         },
         courseProfile: function(course_code) {
@@ -828,6 +733,10 @@ var app = new Vue({
         storeCourseSection: function (sectionInfo) {
             // Used in course profile to send section info to course Section page
             localStorage.clickedSection = sectionInfo;
+        },
+        trainerProfile: function(trainers_eid) {
+            // used in admin trainers to send trainer eid info to trainer Profile page
+            localStorage.trainerId = trainers_eid;    
         },
     pageRefresh: function () {
         this.getAllCourses();
@@ -841,8 +750,8 @@ var app = new Vue({
         this.getAllCourses();
         this.getAllTrainers();
         this.getAllLearners();
-        this.getLearnerInfo();
-        this.getTrainerInfo();
+        // this.getLearnerInfo();
+        // this.getTrainerInfo();
         this.assignCourse();
         // this.randomFunc(code);
         // this.getEligibleCourses();

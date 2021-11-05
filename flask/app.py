@@ -4,11 +4,11 @@ from flask_cors import CORS, cross_origin
 from sqlalchemy.exc import SQLAlchemyError
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = \
-    'mysql+mysqlconnector://root@localhost:3306/lms_database'
+# app.config['SQLALCHEMY_DATABASE_URI'] = \
+#     'mysql+mysqlconnector://root@localhost:3306/lms_database'
 # Mac config
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root' + \
-#                                         '@localhost:8889/lms_database'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root' + \
+                                        '@localhost:8889/lms_database'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_size': 100,
                                            'pool_recycle': 280}
@@ -120,7 +120,7 @@ class Admins(db.Model):
         for column in columns:
             result[column] = getattr(self, column)
         return result
-#farah tdd
+
 class Progress(db.Model):
     __tablename__ = 'progress'
 
@@ -297,6 +297,31 @@ def completed_courses(learners_eid):
             }
         )
 
+#add course to completed course once  
+@app.route("/courses/<int:learners_eid>", method=['PUT'])
+@cross_origin()
+def update_completed_course(learners_eid):
+    learner = Learners.query.filter_by(learners_eid=learners_eid).first()
+    if learner:
+        data = request.get_json()
+        learner.courses_completed = data['courses_completed']
+        db.session.commit()
+        return jsonify(
+            {
+                "code": 200,
+                "data": learner.to_dict()
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "data": {
+                "learners_eid": learners_eid
+            },
+            "message": "Learner not found."
+        }
+    ), 404
+
 #get course prerequisites 
 @app.route("/courses/<int:course_code>/prerequisites")
 def course_prerequisites(course_code):
@@ -426,33 +451,6 @@ def learner_by_course(course_code):
 
 
 ## NEED CHANGE ##
-# add learner to course 
-@app.route("/enrols", methods=['POST'])
-@cross_origin()
-def add_learner():
-    data = request.get_json()
-    print(data)
-    if not all(key in data.keys() for
-               key in ('learners_eid', 'course_code',
-                       'class_section')):
-        return jsonify({
-            "message": "Incorrect JSON object provided."
-        }), 500
-    learner = Enrols(**data)
-    print(learner)
-    try:
-        db.session.add(learner)
-        db.session.commit()
-        return jsonify(learner.to_dict()), 201
-    except SQLAlchemyError as e:
-        print(str(e))
-        db.session.rollback()
-        return jsonify({
-            "message": "Unable to commit to database."
-        }), 500
-
-
-## NEED CHANGE ##
 # remove learner from course
 @app.route("/enrols/<int:course_code>/<string:learners_eid>", methods=['DELETE'])
 def delete_book(course_code, learners_eid):
@@ -554,6 +552,32 @@ def update_section(class_section, course_code):
         data = request.get_json()
         sections.trainers_eid = data['trainers_eid']
         sections.trainers_name = data['trainers_name']
+        # sections.vacancies = data['vacancies']
+
+        db.session.commit()
+        return jsonify(
+            {
+                "code": 200,
+                "data": sections.to_dict()
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "data": {
+                "class_section": class_section,
+                "course_code": course_code
+            },
+            "message": "Class not found."
+        }
+    ), 404
+
+#assign learner a to section of a course -> update to vacancy
+@app.route("/sections/learner/<string:class_section>/<int:course_code>", methods=['PUT'])
+def update_section_vacancy(class_section, course_code):
+    sections = Sections.query.filter_by(class_section=class_section, course_code=course_code).first()
+    if sections:
+        data = request.get_json()
         sections.vacancies = data['vacancies']
 
         db.session.commit()
@@ -652,6 +676,16 @@ def get_questions(class_section, course_code, quizid):
         {
             "data": [question.to_dict()
                      for question in question_list]
+        }
+    ), 200
+
+#get one of the questions from a specific quiz to check the answer
+@app.route("/questions/<string:class_section>/<int:course_code>/<int:quizid>/<int:questionid>")
+def get_one_question(class_section, course_code, quizid, questionid):
+    question = Quizquestions.query.filter_by(class_section=class_section, course_code=course_code, quizid=quizid, questionid=questionid).first()
+    return jsonify(
+        {
+            "data": question.to_dict()
         }
     ), 200
 
@@ -892,7 +926,75 @@ def update_course(course_code):
         }
     ), 404
 
+#search course by course title
+@app.route("/trainers/<string:trainers_name>")
+def find_by_trainer_name(trainers_name):
+    trainerbyname = Trainers.query.filter_by(trainers_name=trainers_name).first()
+    if trainerbyname:
+        return jsonify(
+            {
+                "code": 200,
+                "data": [trainerbyname.to_dict()]
+            }
+        ), 200
+    return jsonify(
+        {
+            "code": 404,
+            "message": "Trainer name not found."
+        }
+    ), 404
 
+#get sections with no trainers
+@app.route("/sections/noTrainers", methods=['GET'])
+def getSectionsWithNoTrainer():
+    sectionsNoTrainer = Sections.query.filter_by(trainers_eid=None).all()
+    if sectionsNoTrainer:
+       return jsonify(
+            {
+                "code": 200,
+                "data": [trainer.to_dict() for trainer in sectionsNoTrainer]
+            }
+        ), 200
+    return jsonify(
+        {
+            "code": 404,
+            "message": "No sections without trainers."
+        }
+    ), 404
+
+@app.route("/progress", methods=['POST'])
+@cross_origin()
+def add_learner():
+    data = request.get_json()
+    print(data)
+    if not all(key in data.keys() for
+               key in ('learners_eid', 'course_code',
+                       'class_section', 'chapter_completed')):
+        return jsonify({
+            "message": "Incorrect JSON object provided."
+        }), 500
+    learner = Progress(**data)
+    print(learner)
+    try:
+        db.session.add(learner)
+        db.session.commit()
+        return jsonify(
+            {
+                "code": 201,
+                "message": "Learner has been assigned successfully.",
+                "data": [learner.to_dict()]
+            }
+        ), 201 
+
+    except SQLAlchemyError as e:
+        print(str(e))
+        db.session.rollback()
+        return jsonify(
+            
+            {
+            "code":500,
+            "message": "Unable to commit to database."
+        }), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
