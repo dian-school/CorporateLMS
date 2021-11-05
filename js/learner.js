@@ -41,6 +41,7 @@ var app = new Vue({
         quiz: 0,
         userans: {},
         answerChecked:false,
+        course_title= "",
 
         marks: 0,
 
