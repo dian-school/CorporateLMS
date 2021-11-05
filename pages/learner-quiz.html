@@ -36,20 +36,13 @@
         <h1>Quiz {{ quizid }}</h1> 
         <div id="app">{{ time }}</div>
         <form v-for="question in quizquestions" id="question.questionid">
-          <!-- each question -->
-          <!-- <div v-for="question in quizquestions"> -->
             <div id="question.questionid">
               <h3>{{ question.questiontext }}</h3>
-              <!-- options -->
               <div v-for="option in (question.questionoptions.split(','))" >
-                <!-- same name, diff value and id -->
                 <input type="radio" value="option" name="question.questiontext" id="option" onchange="checkAnswers()"> {{option}} 
               </div>
               <!-- <button class="btn btn-outline-primary" @click="checkAnswers()">Check Answer</button> -->
             </div>
-            <!-- <div><span id="feedback"></span></div> -->
-          <!-- </div> -->
-          <!-- submit button -->     
         </form> 
         <br>
         <button class="btn btn-outline-primary" @click="updateCompleteChapter()">Exit Quiz</button>
