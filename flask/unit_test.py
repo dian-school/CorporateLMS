@@ -99,32 +99,5 @@ class TestLearners(unittest.TestCase):
         )
 
 
-
-
-# Grace Charlotte Lui, gracelui.2019, G1T6
-class TestAdmins(unittest.TestCase):
-    def test_admins_to_dict(self):
-        admin1 = Admins(admins_eid=1, admins_name="Phris Coskitt", admins_email="pcoskitt@smu.edu.sg")
-        self.assertEqual(admin1.to_dict(), {
-            'admins_eid': 1,
-            'admins_name':"Phris Coskitt",
-            'admins_email': "pcoskitt@smu.edu.sg"
-            }
-        )
-
-
-class TestLearners(unittest.TestCase):
-    def test_learners_to_dict(self):
-        learner1 = Learners(learners_eid=1, learners_name="Chris Poskitt", learners_email="cposkitt@smu.edu.sg", learners_qualifications="Software Project Management", courses_completed="Enterprise Solution Development")
-        self.assertEqual(learner1.to_dict(), {
-            'learners_eid': 1,
-            'learners_name':"Chris Poskitt",
-            'learners_email':"cposkitt@smu.edu.sg",
-            'learners_qualifications':"Software Project Management",
-            'courses_completed':"Enterprise Solution Development"
-            }
-        )
-
-
 if __name__ == "__main__":
     unittest.main()
