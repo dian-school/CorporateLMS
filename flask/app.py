@@ -214,7 +214,6 @@ class Materials(db.Model):
 
 db.create_all()
 
-###courses###
 #get all courses
 @app.route("/courses")
 def courses():
@@ -226,8 +225,19 @@ def courses():
         }
     ), 200
 
+#get in progress courses
+@app.route("/courses/<int:learners_eid>/inprogress")
+def inprogress_courses(learners_eid):
+    inprogress_courses = Progress.query.filter_by(learners_eid=learners_eid).all()
+    return jsonify(
+        {
+            "data": [courses.to_dict()
+                     for courses in inprogress_courses]
+        }
+    ), 200
+
 #get eligible courses
-@app.route("/<int:learners_eid>/courses")
+@app.route("/courses/<int:learners_eid>/eligible")
 def eligible_courses(learners_eid):
     eligible_courses = []
     course_list = Courses.query.all()
@@ -261,207 +271,8 @@ def eligible_courses(learners_eid):
         }
     )
 
-#search course by course code
-@app.route("/courses/search/<int:course_code>")
-def find_by_course_code(course_code):
-    courseByCourseCode = Courses.query.filter_by(course_code=course_code).first()
-    if courseByCourseCode:
-        return jsonify(
-            {
-                "code": 200,
-                "data": [courseByCourseCode.to_dict()]
-            }
-        ), 200
-    return jsonify(
-        {
-            "code": 404,
-            "message": "Course code not found."
-        }
-    ), 404
-
-#search course by course title
-@app.route("/courses/searchTitle/<string:course_title>")
-def find_by_course_title(course_title):
-    coursebyTitle = Courses.query.filter_by(course_title=course_title).first()
-    if coursebyTitle:
-        return jsonify(
-            {
-                "code": 200,
-                "data": [coursebyTitle.to_dict()]
-            }
-        ), 200
-    return jsonify(
-        {
-            "code": 404,
-            "message": "Course title not found."
-        }
-    ), 404
-
-#course creation
-@app.route("/courses", methods=['POST'])
-@cross_origin()
-def addCourse():
-    data = request.get_json()
-    print(data)
-    if not all(key in data.keys() for
-               key in ('course_title', 'course_code',
-                       'description', 'prerequisites')):
-        return jsonify({
-            "code": 500,
-            "message": "Required fields not provided."
-        }), 500
-    course = Courses(**data)
-    print(course)
-    try:
-        db.session.add(course)
-        db.session.commit()
-        return jsonify(
-            {
-                "code": 201,
-                "message": "Course has been added successfully.",
-                "data": [course.to_dict()]
-            }
-            ), 201
-
-    except SQLAlchemyError as e:
-        print(str(e))
-        db.session.rollback()
-        return jsonify(
-            {
-            "code": 500,
-            "message": "Unable to add course to database."
-        }), 500
-
-#Update course
-@app.route("/courses", methods=['PATCH'])
-def updateCourse():
-    if request:
-        data = request.get_json()
-
-        course_code = data['course_code']
-        course = Courses.query.filter_by(course_code=course_code).first()
-
-        if course:
-
-            if data['course_title']:
-                course.course_title = data['course_title']
-            if data['course_code']:
-                course.course_code = data['course_code']
-            if data['description']:
-                course.description = data['description']
-            if data['prerequisites']:
-                course.prerequisites = data['prerequisites']
-            db.session.commit()
-            return jsonify(
-                {
-                    "code": 200,
-                    "data": [course.to_dict()]
-                }
-            ), 200
-    return jsonify(
-        {
-            "code": 404,
-            "data": {
-                "course_code": course_code
-            },
-            "message": "Course not found."
-        }
-    ), 404
-
-#Delete course
-@app.route("/courses/<int:course_code>", methods=['DELETE'])
-def deleteCourse(course_code):
-    course = Courses.query.filter_by(course_code=course_code).first()
-    if course:
-        db.session.delete(course)
-        db.session.commit()
-        return jsonify(
-            {
-                "code": 200,
-                "data": {
-                    "course_code": course_code,
-                    "message": "Course deleted successfully"
-                }
-            }
-        )
-    return jsonify(
-        {
-            "code": 404,
-            "data": {
-                "course_code": course_code
-            },
-            "message": "Course not found."
-        }
-    ), 404
-
-###learners###
-#get all learners
-@app.route("/learners")
-def learners():
-    learners_list = Learners.query.all()
-    return jsonify(
-        {
-            "data": [learners.to_dict()
-                     for learners in learners_list]
-        }
-    ), 200
-
-#find by learner name
-@app.route("/learners/<string:learners_name>")
-def find_by_learnerName(learners_name):
-    learnerName = Learners.query.filter_by(learners_name=learners_name).first()
-    if learnerName:
-        return jsonify(
-            {
-                "code": 200,
-                "data": [learnerName.to_dict()]
-            }
-        ), 200
-    return jsonify(
-        {
-            "code": 404,
-            "message": "Learner not found."
-        }
-    ), 404
-
-#find by learner Eid
-@app.route("/learners/eid/<int:learners_eid>")
-def find_by_learnerEid(learners_eid):
-    learnerEid = Learners.query.filter_by(learners_eid=learners_eid).first()
-    if learnerEid:
-        return jsonify(
-            {
-                "code": 200,
-                "data": [learnerEid.to_dict()]
-            }
-        ), 200
-    return jsonify(
-        {
-            "code": 404,
-            "message": "Learner not found."
-        }
-    ), 404
-
-# get learners by course 
-@app.route("/courses/<int:course_code>")
-def learner_by_course(course_code):
-    learners = Learners.query.filter_by(course_code=course_code).all()
-    if learners:
-        return jsonify({
-            "data": [learner.to_dict() for learner in learners]
-        }), 200
-    else:
-        course_list = Courses.query.all()
-        if course_code not in course_list:
-            return jsonify({
-                "message": "Course does not exist"
-            }), 404
-        return jsonify({
-            "message": "No learners in this course."
-        }), 404
-
 #get learners completed courses 
-@app.route("/<int:learners_eid>/completed")
+@app.route("/courses/<int:learners_eid>/completed")
 def completed_courses(learners_eid):
     learner = Learners.query.filter_by(learners_eid=learners_eid).first()
     if learner:
@@ -512,7 +323,54 @@ def course_prerequisites(course_code):
             }
         )
 
+#get all learners
+@app.route("/learners")
+def learners():
+    learners_list = Learners.query.all()
+    return jsonify(
+        {
+            "data": [learners.to_dict()
+                     for learners in learners_list]
+        }
+    ), 200
 
+#find by learner name
+@app.route("/learners/<string:learners_name>")
+def find_by_learnerName(learners_name):
+    learnerName = Learners.query.filter_by(learners_name=learners_name).first()
+    if learnerName:
+        return jsonify(
+            {
+                "code": 200,
+                "data": [learnerName.to_dict()]
+            }
+        ), 200
+    return jsonify(
+        {
+            "code": 404,
+            "message": "Learner not found."
+        }
+    ), 404
+
+
+#find by learner Eid
+@app.route("/learners/eid/<int:learners_eid>")
+def find_by_learnerEid(learners_eid):
+    learnerEid = Learners.query.filter_by(learners_eid=learners_eid).first()
+    if learnerEid:
+        return jsonify(
+            {
+                "code": 200,
+                "data": [learnerEid.to_dict()]
+            }
+        ), 200
+    return jsonify(
+        {
+            "code": 404,
+            "message": "Learner not found."
+        }
+    ), 404
+    
 #self enrol - add learner to course
 @app.route("/selfenrol", methods=['POST'])
 @cross_origin()
@@ -547,58 +405,58 @@ def self_enrol():
             }
         ), 500
 
-#Progress##
-#Get Progress
-@app.route("/progress")
-def progress():
-    progress_list = Progress.query.all()
-    return jsonify(
-        {
-            "data": [progress.to_dict()
-                     for progress in progress_list]
-        }
-    ), 200
+## NEED CHANGE ##
+# get learners by course 
+@app.route("/learners/<int:course_code>")
+def learner_by_course(course_code):
+    learners = Learners.query.filter_by(course_code=course_code).all()
+    if learners:
+        return jsonify({
+            "data": [learner.to_dict() for learner in learners]
+        }), 200
+    else:
+        course_list = Courses.query.all()
+        if course_code not in course_list:
+            return jsonify({
+                "message": "Course does not exist"
+            }), 404
+        return jsonify({
+            "message": "No learners in this course."
+        }), 404
 
 
+## NEED CHANGE ##
 # add learner to course 
-@app.route("/progress", methods=['POST'])
+@app.route("/enrols", methods=['POST'])
 @cross_origin()
 def add_learner():
     data = request.get_json()
     print(data)
     if not all(key in data.keys() for
                key in ('learners_eid', 'course_code',
-                       'class_section', 'chapter_completed')):
+                       'class_section')):
         return jsonify({
             "message": "Incorrect JSON object provided."
         }), 500
-    learner = Progress(**data)
+    learner = Enrols(**data)
     print(learner)
     try:
         db.session.add(learner)
         db.session.commit()
-        return jsonify(
-            {
-                "code": 201,
-                "message": "Learner has been assigned successfully.",
-                "data": [learner.to_dict()]
-            }
-        ), 201 
-
+        return jsonify(learner.to_dict()), 201
     except SQLAlchemyError as e:
         print(str(e))
         db.session.rollback()
-        return jsonify(
-            
-            {
-            "code":500,
+        return jsonify({
             "message": "Unable to commit to database."
         }), 500
 
+
+## NEED CHANGE ##
 # remove learner from course
-@app.route("/progress/<int:course_code>/<string:learners_eid>", methods=['DELETE'])
+@app.route("/enrols/<int:course_code>/<string:learners_eid>", methods=['DELETE'])
 def delete_book(course_code, learners_eid):
-    learnertoremove = Progress.query.filter_by(course_code=course_code , learners_eid=learners_eid).first()
+    learnertoremove = Enrols.query.filter_by(course_code=course_code , learners_eid=learners_eid).first()
     if learnertoremove:
         db.session.delete(learnertoremove)
         db.session.commit()
@@ -622,7 +480,6 @@ def delete_book(course_code, learners_eid):
         }
     ), 404
 
-###trainers###
 #get all trainers
 @app.route("/trainers")
 def get_trainers():
@@ -655,8 +512,7 @@ def find_by_trainerEid(trainers_eid):
         }
     ), 404
 
-#sections#
-#get all section by course code
+#get all section by course
 @app.route("/sections/<int:course_code>")
 def get_sections(course_code):
     section_list = Sections.query.filter_by(course_code=course_code).all()
@@ -678,6 +534,18 @@ def get_Allsections():
         }
     ), 200
 
+#get section by course code and course section
+@app.route("/sections/<string:class_section>/<int:course_code>", methods=['GET'])
+@cross_origin()
+def oneSection(course_code,class_section):
+    section = Sections.query.filter_by(course_code=course_code,class_section=class_section).all()
+    return jsonify(
+        {
+            "data": [eachSection.to_dict()
+                     for eachSection in section]
+        }
+    ), 200
+    
 #assign trainer a to section of a course -> update to section
 @app.route("/sections/<string:class_section>/<int:course_code>", methods=['PUT'])
 def update_section(class_section, course_code):
@@ -685,6 +553,9 @@ def update_section(class_section, course_code):
     if sections:
         data = request.get_json()
         sections.trainers_eid = data['trainers_eid']
+        sections.trainers_name = data['trainers_name']
+        sections.vacancies = data['vacancies']
+
         db.session.commit()
         return jsonify(
             {
@@ -699,29 +570,10 @@ def update_section(class_section, course_code):
                 "class_section": class_section,
                 "course_code": course_code
             },
-            "message": "Unable to assign trainer."
+            "message": "Class not found."
         }
     ), 404
 
-#get sections with no trainers
-@app.route("/sections/noTrainers", methods=['GET'])
-def getSectionsWithNoTrainer():
-    sectionsNoTrainer = Sections.query.filter_by(trainers_eid=None).all()
-    if sectionsNoTrainer:
-       return jsonify(
-            {
-                "code": 200,
-                "data": [trainer.to_dict() for trainer in sectionsNoTrainer]
-            }
-        ), 200
-    return jsonify(
-        {
-            "code": 404,
-            "message": "No sections without trainers."
-        }
-    ), 404
-    
-#quizzes#
 #add quiz
 #step 1 create quiz 
 @app.route("/quizzes", methods=['POST'])
@@ -813,7 +665,6 @@ def get_questions(class_section, course_code, quizid):
         }
     ), 200
 
-#chapters#
 #get chapter(s) completed by learner in a course
 @app.route("/progress/<int:learners_eid>/<string:class_section>/<int:course_code>")
 @cross_origin()
@@ -853,7 +704,6 @@ def update_chapter_completed(learners_eid,class_section, course_code):
         }
     ), 404
 
-#materials#
 #get all class materials related to the course
 @app.route("/materials/<string:class_section>/<int:course_code>")
 @cross_origin()
@@ -903,5 +753,157 @@ def add_material():
             "message": "Unable to add material to database."
         }), 500
 
+#search course by course code
+@app.route("/courses/search/<int:course_code>")
+def find_by_course_code(course_code):
+    courseByCourseCode = Courses.query.filter_by(course_code=course_code).first()
+    if courseByCourseCode:
+        return jsonify(
+            {
+                "code": 200,
+                "data": [courseByCourseCode.to_dict()]
+            }
+        ), 200
+    return jsonify(
+        {
+            "code": 404,
+            "message": "Course code not found."
+        }
+    ), 404
+
+#search course by course title
+@app.route("/courses/searchTitle/<string:course_title>")
+def find_by_course_title(course_title):
+    coursebyTitle = Courses.query.filter_by(course_title=course_title).first()
+    if coursebyTitle:
+        return jsonify(
+            {
+                "code": 200,
+                "data": [coursebyTitle.to_dict()]
+            }
+        ), 200
+    return jsonify(
+        {
+            "code": 404,
+            "message": "Course title not found."
+        }
+    ), 404
+
+#get courses by course code
+@app.route("/courses/<int:course_code>")
+def courses_by_code(course_code):
+    course_by_code = Courses.query.filter_by(course_code=course_code).first()
+    if course_by_code:
+        return jsonify(
+            {
+                "data": [course_by_code.to_dict()]
+            }
+        ), 200
+    else: 
+        return jsonify(
+            {
+                "code": 404,
+                "message": "Course code not found."
+            }
+        ), 404
+
+#course creation
+@app.route("/courses", methods=['POST'])
+@cross_origin()
+def addCourse():
+    data = request.get_json()
+    print(data)
+    if not all(key in data.keys() for
+               key in ('course_title', 'course_code',
+                       'description', 'prerequisites')):
+        return jsonify({
+            "code": 500,
+            "message": "Required fields not provided."
+        }), 500
+    course = Courses(**data)
+    print(course)
+    try:
+        db.session.add(course)
+        db.session.commit()
+        return jsonify(
+            {
+                "code": 201,
+                "message": "Course has been added successfully.",
+                "data": [course.to_dict()]
+            }
+            ), 201
+
+    except SQLAlchemyError as e:
+        print(str(e))
+        db.session.rollback()
+        return jsonify(
+            {
+            "code": 500,
+            "message": "Unable to add course to database."
+        }), 500
+
+@app.route("/sections", methods=['POST'])
+@cross_origin()
+def addSection():
+    data = request.get_json()
+    print(data)
+    if not all(key in data.keys() for
+               key in ('class_section', 'course_code','class_size', 'start_date',
+               'end_date','start_time','end_time','vacancies', 'duration')):
+        return jsonify({
+            "code": 500,
+            "message": "Required fields not provided."
+        }), 500
+    section = Sections(**data)
+    try:
+        db.session.add(section)
+        db.session.commit()
+        return jsonify(
+            {
+                "code": 201,
+                "message": "Section has been added successfully.",
+                "data": [section.to_dict()]
+            }
+            ), 201
+
+    except SQLAlchemyError as e:
+        print(str(e))
+        db.session.rollback()
+        return jsonify(
+            {
+            "code": 500,
+            "message": "Unable to add course to database."
+        }), 500
+
+@app.route("/courses/<int:course_code>", methods=['PUT'])
+@cross_origin()
+def update_course(course_code):
+    course = Courses.query.filter_by(course_code=course_code).first()
+    if course:
+        data = request.get_json()
+        course.course_code = data['course_code']
+        course.course_title= data['course_title']
+        course.description = data['description']
+        course.prerequisites = data['prerequisites']
+        db.session.commit()
+        return jsonify(
+            {
+                "code": 200,
+                "data": course.to_dict()
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "data": {
+                "course_code": course_code
+            },
+            "message": "Course not found."
+        }
+    ), 404
+
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+
