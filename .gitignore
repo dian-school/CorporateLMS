@@ -18,3 +18,5 @@ bin-release/
 # information for Eclipse / Flash Builder.
 flask/__pycache__/app.cpython-38.pyc
 flask/__pycache__/unit_test.cpython-38.pyc
+*.pyc
+*.pyc

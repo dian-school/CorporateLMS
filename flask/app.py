@@ -120,7 +120,7 @@ class Admins(db.Model):
         for column in columns:
             result[column] = getattr(self, column)
         return result
-#farah tdd
+
 class Progress(db.Model):
     __tablename__ = 'progress'
 
@@ -296,6 +296,31 @@ def completed_courses(learners_eid):
                 }
             }
         )
+
+#add course to completed course once  
+@app.route("/courses/<int:learners_eid>", method=['PUT'])
+@cross_origin()
+def update_completed_course(learners_eid):
+    learner = Learners.query.filter_by(learners_eid=learners_eid).first()
+    if learner:
+        data = request.get_json()
+        learner.courses_completed = data['courses_completed']
+        db.session.commit()
+        return jsonify(
+            {
+                "code": 200,
+                "data": learner.to_dict()
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "data": {
+                "learners_eid": learners_eid
+            },
+            "message": "Learner not found."
+        }
+    ), 404
 
 #get course prerequisites 
 @app.route("/courses/<int:course_code>/prerequisites")
@@ -651,6 +676,16 @@ def get_questions(class_section, course_code, quizid):
         {
             "data": [question.to_dict()
                      for question in question_list]
+        }
+    ), 200
+
+#get one of the questions from a specific quiz to check the answer
+@app.route("/questions/<string:class_section>/<int:course_code>/<int:quizid>/<int:questionid>")
+def get_one_question(class_section, course_code, quizid, questionid):
+    question = Quizquestions.query.filter_by(class_section=class_section, course_code=course_code, quizid=quizid, questionid=questionid).first()
+    return jsonify(
+        {
+            "data": question.to_dict()
         }
     ), 200
 
