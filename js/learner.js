@@ -3,7 +3,7 @@ var materials_url = "http://localhost:5000/materials";
 var quiz_url = "http://localhost:5000/quizzes";
 var questions_url = "http://localhost:5000/questions";
 var progress_url = "http://localhost:5000/progress"
-
+var section_url = "http://localhost:5000/sections";
 
 var app = new Vue({
     // binds the new Vue object to the HTML element with id="app".
@@ -26,6 +26,9 @@ var app = new Vue({
         // courseAdded: false,
         // addCourseError: "",
 
+        "sections":[],
+        class_section:"",
+
         "materials": [],
         "material_chapters": [],
         chapter_completed: 0,
@@ -36,13 +39,14 @@ var app = new Vue({
         course_code: 0, 
         class_section: "",
         quizid: 0,
+        course_title: "",
 
         marks: 85, //hardcoded - should be updated using checkanswer() later
 
         "eligibleCourses": [],
         "completedCoursesArr": [],
         "completedCoursesObjectArr": [],
-        // "inprogressCourses": [],
+        "inprogressCourses": [],
 
         learners_eid: 0,        
     },
@@ -69,27 +73,27 @@ var app = new Vue({
                 });
         },
 
-        // getInprogressCourses: function() {
-        //     this.learners_eid = 1
+        getInprogressCourses: function() {
+            this.learners_eid = 1
 
-        //     const response = 
-        //         fetch(`${get_all_URL}/${this.learners_eid}/inprogress`)
-        //         .then(response => response.json())
-        //         .then(data => {
-        //             console.log(response);
-        //             if (data.code === 404) {
-        //                 this.message = data.message;
-        //                 console.log(this.message);
-        //             } else {
-        //                 console.log(data.data);
-        //                 this.inprogressCourses = data.data;
-        //                 console.log(this.inprogressCourses);
-        //             }
-        //         })
-        //         .catch(error => {
-        //             console.log(this.message + error);
-        //         });
-        // },
+            const response = 
+                fetch(`${get_all_URL}/${this.learners_eid}/inprogress`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(response);
+                    if (data.code === 404) {
+                        this.message = data.message;
+                        console.log(this.message);
+                    } else {
+                        console.log(data.data);
+                        this.inprogressCourses = data.data;
+                        console.log(this.inprogressCourses);
+                    }
+                })
+                .catch(error => {
+                    console.log(this.message + error);
+                });
+        },
         
         getCompletedCourses: function() {
             this.learners_eid = 1 
@@ -416,6 +420,31 @@ var app = new Vue({
                     }
                 })
         },
+        getSection: function () {
+            // on Vue instance created, load the course list
+            this.course_code = localStorage.getItem("course_code");
+            console.log(this.course_code)
+
+            const response =
+                fetch(`${section_url}/${this.course_code}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(response);
+                    if (data.code === 404) {
+                        // no courses in db
+                        this.message = data.message;
+                    } else {
+                        this.sections = data.data;
+                        console.log(this.sections);
+                    }
+                })
+                .catch(error => {
+                    // Errors when calling the service; such as network error, 
+                    // service offline, etc
+                    console.log(this.message + error);
+
+                });
+        },
         storeCourseInfo: function (message) {
             console.log(message);
             localStorage.course_code = message;
@@ -424,10 +453,19 @@ var app = new Vue({
             console.log(localStorage.getItem("course_code"));
             return localStorage.getItem("course_code")
         },
+        storeSectionInfo: function (message) {
+            console.log(message);
+            localStorage.class_section = message;
+        },
+        getSectionInfo: function(){
+            console.log(localStorage.getItem("class_section"));
+            return localStorage.getItem("class_section")
+        },
         pageRefresh: function () {
             this.getEligibleCourses();
             this.getCompletedCourses();
-            // this.getInprogressCourses();
+            this.getInprogressCourses();
+            this.getSection();
             this.searchError = "";
             this.searchStr = "";
         },
@@ -443,7 +481,8 @@ var app = new Vue({
         this.getAllCourses();
         this.getEligibleCourses();
         this.getCompletedCourses();
-        // this.getInprogressCourses();
+        this.getInprogressCourses();
+        this.getSection();
     }
 
 });
