@@ -20,12 +20,13 @@
 <body>
     <div id = "app" >
         {{getCourseinfo()}}
-        {{getCourseSection()}}
-        
         <div class="container" style="margin: 30px;">
-            <div id="sectionNumber">  </div>
-           
-            <div id = "courseDetails" > </div>
+            <h1 id="sectionNumber"> Section: {{getCourseSection()}} </h1>
+            <div v-for="course in selected_course">
+                <h2>{{course.course_title}}</h1>
+                <h3> Course code: {{course.course_code}}</h2>
+                <h4> Course description: {{course.description}}</h3>
+            </div>
             
             <div id="trainer"></div>
         </div>

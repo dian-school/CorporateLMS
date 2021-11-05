@@ -241,7 +241,7 @@
 						{{course.description}}
 					</p>
                 	<a href="courseProfile.html"><button @click= "courseProfile(course.course_code)" type="button" class="read_more_btn">View </button></a>
-                    <button @click= "editCourseForm(course)" type="button" style="color: white; background-color:#f0ad4e; overflow-wrap: break-word" data-toggle="modal" data-target="#editCourseModal">
+                    <button @click= "courseProfile(course.course_code)" type="button" style="color: white; background-color:#f0ad4e; overflow-wrap: break-word" data-toggle="modal" data-target="#editCourseModal">
                         Update
                     </button>
                     <button @click= "del(course.course_code)" type="button" style="color: white; background-color:red; word-wrap: break-word">Delete</button>
@@ -286,28 +286,28 @@
                     <tr>
                         <td class="form-group">
                             <label for="courseTitle" class="cta-text">Course Title</label> 
-                            <input required name="newCname" v-model="editCurrentCourse.course_title" type="text" class="form-control" id="editCourseTitle"> 
+                            <input required name="newCname" v-model="editCurrentCoursecourse_title" type="text" class="form-control" id="editCourseTitle"> 
                         </td>
                     </tr>
 
                     <tr>
                         <td class="form-group">
                             <label for="courseCode" class="cta-text">Course Code</label> 
-                            <input required name="newCcode" v-model="editCurrentCourse.course_code" type="text" class="form-control" id="editCourseCode"> 
+                            <input required name="newCcode" v-model="editCurrentCoursecourse_code" type="text" class="form-control" id="editCourseCode"> 
                         </td>
                     </tr>
 
                     <tr>
                         <td class="form-group">
                             <label for="description" class="cta-text">Description</label>
-                            <textarea rows="5" cols="50"  required name="description" v-model="editCurrentCourse.description" type="text" class="form-control" id="editDescription"> </textarea>
+                            <textarea rows="5" cols="50"  required name="description" v-model="editCurrentCoursedescription" type="text" class="form-control" id="editDescription"> </textarea>
                         </td>
                     </tr>
 
                     <tr>
                         <td class="form-group">
                             <label for="prerequisites" class="cta-text">Prerequisites</label>
-                            <textarea rows="5" cols="50" v-model="editCurrentCourse.prerequisites" type="text" class="form-control" id="editPrerequisites" >  </textarea>
+                            <textarea rows="5" cols="50" v-model="editCurrentCourseprerequisites" type="text" class="form-control" id="editPrerequisites" >  </textarea>
                         </td>
                     </tr>
                 </thead>
@@ -337,7 +337,7 @@
                 
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 
-                <button @click="editCourse(course)" class="btn btn-primary" v-on:submit.prevent="onSubmit"  >Update Course</button>
+                <button @click="editCourse()" class="btn btn-primary" v-on:submit.prevent="onSubmit"  >Update Course</button>
             
             </div>
             

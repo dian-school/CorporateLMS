@@ -50,6 +50,11 @@ var app = new Vue({
         newend_time:"23:59:00",
         new_duration:"",
 
+        editCurrentCoursecourse_code:0,
+        editCurrentCoursecourse_title: "",
+        editCurrentCoursedescription:"",
+        editCurrentCourseprerequisites:"",
+
 
         courseDeleted: false,
 
@@ -65,7 +70,7 @@ var app = new Vue({
     methods: {
         //courses
         getAllCourses: function () {
-            // on Vue instance created, load the course list
+            // displays all courses 
             const response =
                 fetch(get_all_URL)
                 .then(response => response.json())
@@ -76,21 +81,18 @@ var app = new Vue({
                         this.message = data.message;
                     } else {
                         this.courses = data.data;
-                        // console.log(this.courses);
                     }
                 })
                 .catch(error => {
-                    // Errors when calling the service; such as network error, 
-                    // service offline, etc
                     console.log(this.message + error);
 
                 });
 
         },
-        findCourse: function () { 
-            // this.searchError = "";
 
+        findCourse: function () { 
             if (isNaN(this.searchStr)) {
+                // searches by course title 
                 const response =
                     fetch(`${get_all_URL}/searchTitle/${this.searchStr}`)
                     .then(response => response.json())
@@ -101,16 +103,14 @@ var app = new Vue({
                             this.searchError = data.message;
                         } else {
                             this.courses = data.data;
-                            // console.log(this.courses);
                         }
                     })
                     .catch(error => {
-                        // Errors when calling the service; such as network error, 
-                        // service offline, etc
                         console.log(this.searchError + error);
                     });
                 
             } else {
+                // searches by course_code 
                 const response =
                     fetch(`${get_all_URL}/search/${this.searchStr}`)
                     .then(response => response.json())
@@ -121,21 +121,17 @@ var app = new Vue({
                             this.searchError = data.message;
                         } else {
                             this.courses = data.data;
-                            // console.log(this.courses);
                             this.searchError = "";
                         }
                     })
                     .catch(error => {
-                        // Errors when calling the service; such as network error, 
-                        // service offline, etc
                         console.log(this.searchError + error);
                     });
             }
         },
-        courseProfile: function(course_code) {
-            localStorage.clickedCourse = course_code                       
-        },
+
         getCourseSectioninfo: function(){
+            // Used for course profile when click View
             clickedCourse = localStorage.getItem("clickedCourse");
             console.log(clickedCourse);
 
@@ -145,7 +141,6 @@ var app = new Vue({
                 .then(data => {
                     console.log(response);
                     if (data.code === 404) {
-                        // course has no section
                         this.message = data.message;
                     } else {
                         this.sections = data.data;
@@ -153,59 +148,48 @@ var app = new Vue({
                         }
                     })
                     .catch(error => {
-                        // Errors when calling the service; such as network error, 
-                        // service offline, etc
                         console.log(this.message + error);
                     });
         },
-        getCourseinfo: function(){
-            clickedCourse = localStorage.getItem("clickedCourse");
-            console.log(clickedCourse);
 
+        getCourseinfo: function(){
+            // Used for course profile when click View
+            clickedCourse = localStorage.getItem("clickedCourse");
             const response =
                 fetch(`${get_all_URL}/${clickedCourse}`)
                 .then(response => response.json())
                 .then(data => {
                     console.log(response);
                     if (data.code === 404) {
-                        // course has no section
                         this.message = data.message;
                     } else {
                         this.selected_course = data.data;
-                        console.log(this.selected_course);
                         }
                     })
                     .catch(error => {
-                        // Errors when calling the service; such as network error, 
-                        // service offline, etc
                         console.log(this.message + error);
                     });
            
         },
-        storeCourseSection: function (sectionInfo) {
-            // console.log(sectionInfo);
-            localStorage.clickedSection = sectionInfo;
-        },
         getCourseSection: function(){
-            // console.log(localStorage.getItem("clickedSection"));
-            sectionData = localStorage.getItem("clickedSection");
-            document.getElementById("sectionNumber").innerHTML = `${sectionData}`;
-            // document.getElementById("trainer").innerHTML = `${sectionData[sectionTrainer]}`;
+            // Used to display section in course section after clicking in course Profile page
+            return localStorage.getItem("clickedSection")
         },
         addCourse: function () {
-            // reset data to original setting
+            // Used in admin to add new course and automatically generate the 1st section
+            // initialize set up
             this.courseAdded = false;
             this.addCourseError = "";
             this.statusMessage = "";
             this.msg = "";
-
-            let jsonData = JSON.stringify({
+            // Data for Post to Add Course
+            let courseData = JSON.stringify({
                 course_title: this.newCourseTitle,
                 course_code: this.newCode,
                 description: this.newDescription,
                 prerequisites: this.newPrerequisites,
             });
-
+            // Data for Post to add 1st Section
             let sectionData = JSON.stringify({
                 class_section: this.class_section,
                 course_code: this.newCode,
@@ -217,35 +201,29 @@ var app = new Vue({
                 vacancies: this.new_size,
                 duration: this.new_duration,
             })
-
+            //Checks if form is filled
             if (this.newCourseTitle === "" || this.newCode === "" || this.newDescription === ""
             || this.new_size==="" || this.newstart_date==="" || this.newend_date ==="" || this.new_duration === "" ) {
                 this.msg = "Please fill in required fields.";
                 }
             else {
+                //Post course
                 fetch(`${get_all_URL}`, {
                         method: "POST",
                         headers: {
                             "Content-type": "application/json"
                         },
-                        body: jsonData
+                        body: courseData
                     })
                     .then(response => response.json())
                     .then(data => {
-                        // console.log(data);
                         result = data.data;
-                        //console.log(result);
-                        // 3 cases
                         switch (data.code) {
                             case 201:
                                 this.courseAdded = true;
                                 this.statusMessage = data.message
-                                
-                                // refresh page
                                 this.pageRefresh();
-
                                 break;
-                        
                             case 500:
                                 this.addCourseError = data.message;
                                 break;
@@ -254,11 +232,10 @@ var app = new Vue({
                         }
                     })
                 .catch(error => {
-                    // Errors when calling the service; such as network error, 
-                    // service offline, etc
                     this.addCourseError = this.statusMessage
                     console.log(this.addCourseError);
                 });
+                // Post 1st section
                 fetch(`${section_url}`, {
                     method: "POST",
                     headers: {
@@ -268,15 +245,11 @@ var app = new Vue({
                 })
                 .then(response => response.json())
                 .then(data => {
-                    // console.log(data);
                     result = data.data;
-                    //console.log(result);
-                    // 3 cases
                     switch (data.code) {
                         case 201:
                             this.sectionAdded = true;
                             this.statusMessage = data.message
-                            // refresh page
                             this.pageRefresh();
                             break;
                         case 500:
@@ -287,38 +260,32 @@ var app = new Vue({
                     }
                 })
                 .catch(error => {
-                    // Errors when calling the service; such as network error, 
-                    // service offline, etc
                     this.addSectionError = this.statusMessage
                     console.log(this.addSectionError);
                 });
             }
         },
-        editCourseForm: function (course) {
-            //resets the data setting
-            this.editSuccessful = false;
-            this.editCurrentCourse = course;
-            this.edit = true;
-
-        },
-        editCourse: function (course) {
+        editCourse: function () {
+            // Used to update course details in admin page
             // reset data
-
+            course_code = localStorage.getItem("clickedCourse")
+            this.editSuccessful = false;
+            this.edit = true;
             this.editCourseError = "";
             this.msg = "";
-
             let jsonData = JSON.stringify({
-                course_code: this.editCurrentCourse.course_code,
-                course_title: this.editCurrentCourse.course_title,
-                description: this.editCurrentCourse.description,
-                prerequisites: this.editCurrentCourse.prerequisites
+                course_code: this.editCurrentCoursecourse_code,
+                course_title: this.editCurrentCoursecourse_title,
+                description: this.editCurrentCoursedescription,
+                prerequisites: this.editCurrentCourseprerequisites,
             });
-            if (this.editCurrentCourse.course_title === "" || this.editCurrentCourse.course_code === "" || this.editCurrentCourse.description === "") {
+            console.log(jsonData)
+            if (this.editCurrentCoursecourse_title === "" || this.editCurrentCoursecourse_code === "" || this.editCurrentCoursedescription === "") {
                 this.msg = "Please fill in required fields.";
                 }
             else {
-            fetch(`${get_all_URL}`, {
-                    method: "PATCH",
+            fetch(`${get_all_URL}/${course_code}`, {
+                    method: "PUT",
                     headers: {
                         "Content-type": "application/json"
                     },
@@ -333,11 +300,9 @@ var app = new Vue({
                     switch (data.code) {
                         case 200:
                             this.editSuccessful = true;
-
+                            this.pageRefresh();
                             this.getAllCourses();
-
                             this.statusMessage = 'Successfully edited course details';
-
                             break;
                         case 404:
                             this.editCourseError = data.message;
@@ -350,6 +315,7 @@ var app = new Vue({
                 })
             }
         },
+        // STOPPED REFACTORING HERE
         del: function (course_code) {
             //reset all data to original setting
             this.course_code = course_code;
@@ -855,8 +821,14 @@ var app = new Vue({
                 });
             }
         },
-
-    
+        courseProfile: function(course_code) {
+            // Used in admin page to send course code info to course Profile page
+            localStorage.clickedCourse = course_code                       
+        },
+        storeCourseSection: function (sectionInfo) {
+            // Used in course profile to send section info to course Section page
+            localStorage.clickedSection = sectionInfo;
+        },
     pageRefresh: function () {
         this.getAllCourses();
         this.getAllTrainers();
