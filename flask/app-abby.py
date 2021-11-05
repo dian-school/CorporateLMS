@@ -227,7 +227,7 @@ def courses():
     ), 200
 
 #get eligible courses
-@app.route("/<int:learners_eid>/courses")
+@app.route("/courses/<int:learners_eid>/eligible")
 def eligible_courses(learners_eid):
     eligible_courses = []
     course_list = Courses.query.all()

@@ -34,6 +34,11 @@ var app = new Vue({
         statusMsg: "",
         updateVacancyError: "",
         oneSection: [],
+        newVacancy: 0,
+
+        completedCourses: [],
+        inProgress: [],
+        codeInProgress: [],
 
         newCourseTitle: "",
         newCode: "",
@@ -518,9 +523,8 @@ var app = new Vue({
                                         this.course = data.data[0];
                                         console.log(this.course);
                                         this.sectionCourseTitle.push(this.course);
-                                        console.log(this.sectionCourseTitle); //currently showing the last course title only because section course title is stored as a str and keeps changing. Must think about how to display the titles according to course code
-                                        
-                                         
+                                        console.log(this.sectionCourseTitle);
+
                                     }
                                 })
                                 .catch(error => {
@@ -671,6 +675,30 @@ var app = new Vue({
                     } else {
                         this.learner = data.data[0];
                         console.log(this.learner);
+                        this.completedCourses.push(this.learner.courses_completed);
+                        //console.log(this.completedCourses);
+                        const response =
+                            fetch(`${get_all_URL}/${learnerId}/inprogress`)
+                            .then(response => response.json())
+                            .then(data => {
+                                console.log(response);
+                                if (data.code === 404) {
+                                    // no in progress courses found in db
+                                    this.searchError = data.message;
+                                } else {
+                                    this.inProgress = data.data;
+                                    console.log(this.inProgress);
+                                    for (eachProgress of this.inProgress) {
+                                        this.codeInProgress.push(eachProgress.course_code);
+                                    }
+                                    console.log(this.codeInProgress);
+                                }
+                            })
+                            .catch(error => {
+                                // Errors when calling the service; such as network error, 
+                                // service offline, etc
+                                console.log(this.searchError + error);
+                            });    
                     }
                 })
                 .catch(error => {
@@ -680,12 +708,11 @@ var app = new Vue({
                 });        
         },
          
-        
         // assign learner to course sections with vacancies
         // get eligible courses for learner
         getEligibleCourses: function (learner_eid) {
             const response = 
-                fetch(`http://localhost:5000/${learner_eid}/courses`)
+                fetch(`${get_all_URL}/${learner_eid}/eligible`)
                 .then(response => response.json())
                 .then(data => {
                     console.log(response);
@@ -694,8 +721,9 @@ var app = new Vue({
                         this.searchError = data.message;
                     } else {
                         this.eligibleCourses = data.data.eligible_courses;
-                        console.log(this.eligibleCourses);
+                        // console.log(this.eligibleCourses);
                         for (course of this.eligibleCourses) {
+                            if (this.completedCourses.indexOf(course.course_title) == -1) { //yes working! Hong Seng completed 1002 so sections with course code 1002 are not showing
                             const response = 
                                 fetch(`${section_url}/${course.course_code}`)
                                 .then(response => response.json())
@@ -706,31 +734,37 @@ var app = new Vue({
                                         this.searchError = data.message;
                                     } else {
                                         this.sections = data.data;
-                                        console.log(this.sections);
+                                        // console.log(this.sections);
                                         for (section of this.sections) {
-                                            //console.log(section);
-                                            if (section.vacancies != 0) {  
+                                            // console.log(section);
+                                            //console.log(this.codeInProgress.indexOf(section.course_code));  
+                                            if ( (this.codeInProgress.indexOf(section.course_code) == -1) && (section.vacancies != 0) ) {
                                                 this.sectionsVacancies.push(section);
-                                            }  
-                                        }
-                                        console.log(this.sectionsVacancies);
-                                    }
+                                                console.log(this.sectionsVacancies);
+                                            }
+                                        }  
+                                                                    
+                                    }                                        
                                 })
                                 .catch(error => {
                                     // Errors when calling the service; such as network error, 
                                     // service offline, etc
                                     console.log(this.searchError + error);
                                 });
+                            }
                         }
                     }
+                    
+                    this.sectionsVacancies = this.sectionsVacancies.sort(function(a, b){
+                        return a.course_code-b.course_code
+                    })
+                    console.log(this.sectionsVacancies);
                 })
                 .catch(error => {
                     // Errors when calling the service; such as network error, 
                     // service offline, etc
                     console.log(this.searchError + error);
-                });
-
-            
+                });           
         },    
         
         assignCourse: function(learnerId) {
@@ -751,13 +785,7 @@ var app = new Vue({
                 console.log(section);
 
                 const response = 
-                    fetch(`${section_url}/${section}/${code}`, {
-                        method: "GET",
-                        headers: {
-                            "Content-type": "application/json"
-                        },
-                       
-                    })
+                    fetch(`${section_url}/${section}/${code}`)
                     .then(response => response.json())
                     .then(data => {
                         console.log(response);
@@ -766,7 +794,9 @@ var app = new Vue({
                             this.searchError = data.message;
                         } else {
                             this.oneSection = data.data[0];
-                            // console.log(this.oneSection);
+                            console.log(this.oneSection);
+                            this.newVacancy = this.oneSection.vacancies - 1
+                            console.log(this.newVacancy);
                         }
                     })
                     .catch(error => {
@@ -776,8 +806,9 @@ var app = new Vue({
                     });
 
                 let jsonData = JSON.stringify({
-                    
-                    vacancies: this.oneSection.vacancies - 1 
+                    trainers_eid : this.oneSection.trainers_eid,
+                    trainers_name : this.oneSection.trainers_name,
+                    vacancies: this.newVacancy
                     
                 });
     
@@ -832,13 +863,10 @@ var app = new Vue({
                         switch (data.code) {
                             case 201:
                                 this.courseAssigned = true;
-                                this.statusMessage = "Learner assigned to courses successfully!"
-                                // this.sectionsVacancies = think about how to remove section object after learner ha sbeen assigned to the class section
+                                this.statusMessage = "Learner assigned to courses successfully!";
                                 // refresh page
                                 this.pageRefresh();
-
                                 break;
-                        
                             case 500:
                                 this.assignCourseError = data.message;
                                 break;
@@ -872,9 +900,6 @@ var app = new Vue({
         this.getLearnerInfo();
         this.getTrainerInfo();
         this.assignCourse();
-        // this.randomFunc(code);
-        // this.getEligibleCourses();
-        // this.courseSections(this.checkedCourses);
         this.searchError = "";
         this.searchStr = "";
      

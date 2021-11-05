@@ -4,11 +4,11 @@ from flask_cors import CORS, cross_origin
 from sqlalchemy.exc import SQLAlchemyError
 
 app = Flask(__name__)
-# app.config['SQLALCHEMY_DATABASE_URI'] = \
-#     'mysql+mysqlconnector://root@localhost:3306/lms_database'
+app.config['SQLALCHEMY_DATABASE_URI'] = \
+    'mysql+mysqlconnector://root@localhost:3306/lms_database'
 # Mac config
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root' + \
-                                        '@localhost:8889/lms_database'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root' + \
+#                                         '@localhost:8889/lms_database'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_size': 100,
                                            'pool_recycle': 280}
@@ -21,7 +21,7 @@ class Courses(db.Model):
     __tablename__ = 'courses'
 
     course_code = db.Column(db.Integer, primary_key=True)
-    course_title = db.Column(db.String(26))
+    course_title = db.Column(db.String(1000))
     description = db.Column(db.String(1000))
     prerequisites = db.Column(db.String(1000))
 
@@ -225,6 +225,52 @@ def courses():
         }
     ), 200
 
+#Get Progress
+@app.route("/progress")
+def progress():
+    progress_list = Progress.query.all()
+    return jsonify(
+        {
+            "data": [progress.to_dict()
+                     for progress in progress_list]
+        }
+    ), 200
+    
+# add learner to course 
+@app.route("/progress", methods=['POST'])
+@cross_origin()
+def add_learner():
+    data = request.get_json()
+    print(data)
+    if not all(key in data.keys() for
+               key in ('learners_eid', 'course_code',
+                       'class_section', 'chapter_completed')):
+        return jsonify({
+            "message": "Incorrect JSON object provided."
+        }), 500
+    learner = Progress(**data)
+    print(learner)
+    try:
+        db.session.add(learner)
+        db.session.commit()
+        return jsonify(
+            {
+                "code": 201,
+                "message": "Learner has been assigned successfully.",
+                "data": [learner.to_dict()]
+            }
+        ), 201 
+
+    except SQLAlchemyError as e:
+        print(str(e))
+        db.session.rollback()
+        return jsonify(
+            
+            {
+            "code":500,
+            "message": "Unable to commit to database."
+        }), 500
+
 #get in progress courses
 @app.route("/courses/<int:learners_eid>/inprogress")
 def inprogress_courses(learners_eid):
@@ -425,31 +471,31 @@ def learner_by_course(course_code):
         }), 404
 
 
-## NEED CHANGE ##
-# add learner to course 
-@app.route("/enrols", methods=['POST'])
-@cross_origin()
-def add_learner():
-    data = request.get_json()
-    print(data)
-    if not all(key in data.keys() for
-               key in ('learners_eid', 'course_code',
-                       'class_section')):
-        return jsonify({
-            "message": "Incorrect JSON object provided."
-        }), 500
-    learner = Enrols(**data)
-    print(learner)
-    try:
-        db.session.add(learner)
-        db.session.commit()
-        return jsonify(learner.to_dict()), 201
-    except SQLAlchemyError as e:
-        print(str(e))
-        db.session.rollback()
-        return jsonify({
-            "message": "Unable to commit to database."
-        }), 500
+# ## NEED CHANGE ##
+# # add learner to course 
+# @app.route("/enrols", methods=['POST'])
+# @cross_origin()
+# def add_learner():
+#     data = request.get_json()
+#     print(data)
+#     if not all(key in data.keys() for
+#                key in ('learners_eid', 'course_code',
+#                        'class_section')):
+#         return jsonify({
+#             "message": "Incorrect JSON object provided."
+#         }), 500
+#     learner = Enrols(**data)
+#     print(learner)
+#     try:
+#         db.session.add(learner)
+#         db.session.commit()
+#         return jsonify(learner.to_dict()), 201
+#     except SQLAlchemyError as e:
+#         print(str(e))
+#         db.session.rollback()
+#         return jsonify({
+#             "message": "Unable to commit to database."
+#         }), 500
 
 
 ## NEED CHANGE ##

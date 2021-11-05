@@ -1,6 +1,6 @@
 import unittest
 
-from app import Progress, Materials, Quizquestions, Quizzes
+from app import Progress, Materials, Quizquestions, Quizzes, Courses
 
 # Dian Farah Binte Riduan, dianfarahr.2019, G1T6
 class TestProgress(unittest.TestCase):
@@ -74,6 +74,18 @@ class TestQuizzes(unittest.TestCase):
             }
         )
 
+# Abigail Christabelle Lee Yuyun, abigail.lee.2019, G1T6
+class TestCourse(unittest.TestCase):
+    def test_to_dict(self):
+        #Testing Course to_dict function
+        courseDict = Courses(course_code=1020, course_title="Learning about Printers", description="Printers, more about them", prerequisites="Foundations of Copier Repair")
+        self.assertEqual(courseDict.to_dict(), {
+            'course_code': 1020,
+            'course_title':"Learning about Printers",
+            'description':"Printers, more about them",
+            'prerequisites':"Foundations of Copier Repair"
+            }
+        )
 
 if __name__ == "__main__":
     unittest.main()
