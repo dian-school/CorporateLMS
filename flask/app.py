@@ -350,7 +350,10 @@ def update_completed_course(learners_eid):
     learner = Learners.query.filter_by(learners_eid=learners_eid).first()
     if learner:
         data = request.get_json()
-        learner.courses_completed = learner.courses_completed +', '+ data['courses_completed']
+        if learner.courses_completed == "":
+            learner.courses_completed = data['courses_completed']
+        else:
+            learner.courses_completed = learner.courses_completed +', '+ data['courses_completed']
         db.session.commit()
         return jsonify(
             {
