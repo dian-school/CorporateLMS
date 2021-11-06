@@ -52,8 +52,8 @@ var app = new Vue({
         new_size:0,
         newstart_date:"",
         newend_date:"",
-        newstart_time: "08:00",
-        newend_time:"23:59",
+        newstart_time: "08:00:00",
+        newend_time:"23:59:00",
         new_duration:"",
 
         editCurrentCoursecourse_code:0,
