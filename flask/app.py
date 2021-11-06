@@ -141,12 +141,6 @@ class Progress(db.Model):
             result[column] = getattr(self, column)
         return result
 
-    # def __init__(self, course_code, learners_eid, class_section, chapter_completed):
-    #     self.course_code = course_code
-    #     self.learners_eid = learners_eid
-    #     self.class_section = class_section
-    #     self.chapter_completed = chapter_completed
-
 class Quizzes(db.Model):
     __tablename__ = 'quizzes'
     quizid= db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -212,7 +206,37 @@ class Materials(db.Model):
             result[column] = getattr(self, column)
         return result
 
+class Enrol(db.Model):
+    __tablename__ = 'enrol'
+
+    learners_eid = db.Column(db.Integer, db.ForeignKey(Learners.learners_eid), primary_key=True)
+    course_code = db.Column(db.Integer, db.ForeignKey(Courses.course_code), primary_key=True)
+    class_section = db.Column(db.Integer, db.ForeignKey(Sections.class_section), primary_key=True)
+    course_title = db.Column(db.String(26))
+   
+    def to_dict(self):
+        """
+        'to_dict' converts the object into a dictionary,
+        in which the keys correspond to database columns
+        """
+        columns = self.__mapper__.column_attrs.keys()
+        result = {}
+        for column in columns:
+            result[column] = getattr(self, column)
+        return result
+
 db.create_all()
+
+#get enroled learners
+@app.route("/enrol")
+def enroled_learners():
+    learners_list = Enrol.query.all()
+    return jsonify(
+        {
+            "data": [learners.to_dict()
+                     for learners in learners_list]
+        }
+    ), 200
 
 #get all courses
 @app.route("/courses")
@@ -446,26 +470,26 @@ def find_by_learnerEid(learners_eid):
     ), 404
     
 #self enrol - add learner to course
-@app.route("/selfenrol", methods=['POST'])
+@app.route("/enrol/selfenrol", methods=['POST'])
 @cross_origin()
 def self_enrol():
     data = request.get_json()
     if not all(key in data.keys() for
                key in ('learners_eid', 'course_code',
-                       'class_section', 'chapter_completed')):
+                       'class_section', 'course_title')):
         return jsonify(
             {
             "message": "Incorrect JSON object provided."
             }
         ), 500
-    learner = Progress(**data)
+    learner = Enrol(**data)
     try:
         db.session.add(learner)
         db.session.commit()
         return jsonify(
             {
                 "code": 200,
-                "message": "Learner has been successfully added to course",
+                "message": "Learner has been successfully enroled to course",
                 "data": [learner.to_dict()]
             }
         ), 200
@@ -475,7 +499,7 @@ def self_enrol():
         return jsonify(
             {
                 "code": 500,
-                "message": "Unable to add learner to course."
+                "message": "Unable to enrol learner to course."
             }
         ), 500
 

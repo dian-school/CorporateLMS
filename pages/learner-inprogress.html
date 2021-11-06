@@ -31,8 +31,8 @@
       <div class="container px-lg-5">
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
               <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                  <li class="nav-item"><a class="nav-link" @click="getEligibleCourses()" href="learner-eligible.html">All Courses</a></li>
-                  <li class="nav-item"><a class="nav-link active" href="">In-progress</a></li>
+                  <li class="nav-item"><a class="nav-link" href="learner-eligible.html">All Courses</a></li>
+                  <li class="nav-item"><a class="nav-link active" @click="getInprogressCourses()" href="">In-progress</a></li>
                   <li class="nav-item"><a class="nav-link" href="learner-completed.html">Completed</a></li>
               </ul>
           </div>
@@ -41,7 +41,7 @@
     <!-- <div> <button @click="testgetinfo"> test get info button</button> </div> -->
     <div class="container">
       <div class="row text-center">
-          <div v-for="course in eligibleCourses"  class="solution_card col-sm-3" style="margin:10px; width: 15rem;background-color: lavender;">
+          <div v-for="course in inprogressCourses"  class="solution_card col-sm-3" style="margin:10px; width: 15rem;background-color: lavender;">
             <!-- <img src="{{ courseImg }}" class="card-img-center"> -->
             <div class="card-body">
               <div class="hover_color_bubble"></div>
@@ -92,7 +92,7 @@
               </div>
               <h3 class="card-text"> {{ course.course_title }} </h3>
               <p class="card-text"> Course ID: {{ course.course_code }} </p> 
-              <a class="btn btn-primary" @click="storeCourseInfo(course.course_code)" href="learner-enrol.html" role="button">Read More<a>
+              <a class="btn btn-primary" @click="storeCourseInfo(course.course_code)" href="learner-section.html" role="button">Read More<a>
               </div>
           </div>
       </div>
