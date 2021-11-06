@@ -35,9 +35,11 @@ var app = new Vue({
         "quizquestions":[],
         course_code: 0, 
         class_section: "",
-        quizid: 0,
+        quiz: 0,
+        userans: {},
+        answerChecked:false,
 
-        marks: 85, //hardcoded - should be updated using checkanswer() later
+        marks: 0,
 
         "eligibleCourses": [],
         "completedCoursesArr": [],
@@ -260,15 +262,19 @@ var app = new Vue({
         getQuizQuestions: function () { 
             this.course_code = 1008;
             this.class_section = "G1";
-            this.quizid = 3
             // this.course_code = localStorage.getItem("course_code");
             // this.class_section = localStorage.getItem("class_section");
-            // this.quizid = localStorage.getItem("quizid");
+            quizid = localStorage.getItem("quizid");
 
-            console.log(this.class_section)
+            if (localStorage.getItem('graded')=='F'){
+                this.quiz = localStorage.getItem("quiz");
+            }
+            else{
+                this.quiz = 0;
+            }
 
             const response =
-                fetch(`${questions_url}/${this.class_section}/${this.course_code}/${this.quizid}`)
+                fetch(`${questions_url}/${this.class_section}/${this.course_code}/${quizid}`)
                 .then(response => response.json())
                 .then(data => {
                     console.log(response);
@@ -285,71 +291,72 @@ var app = new Vue({
                     console.log(this.searchError + error);
                 });
         },
-        // checkAnswers: function(){
-        //     this.course_code = 1008;
-        //     this.class_section = "G1";
-        //     this.quizid = 3
-        //     console.log(this.quizid)
-
-        //     const response =
-        //         fetch(`${questions_url}/${this.class_section}/${this.course_code}/${this.quizid}`)
-        //         .then(response => response.json())
-        //         .then(data => {
-        //             console.log(response);
-        //             if (data.code === 404) {
-        //                 // no course found in db
-        //                 this.searchError = data.message;
-        //             } else {
-        //                 this.quizquestions = data.data;
-        //                 console.log(this.quizquestions);
-
-        //                 var marks = 0;
-        //                 var form = document.getElementById(this.quizid);
-        //                 //for each question
-        //                 var qnNum = 0;
-        //                 for (qnNum = 0; qnNum < quizquestions.length; qnNum++) {
-        //                     qn = form[question.questionid];
-        //                     console.log(qn);
-
-        //                     var ansNum = 0;
-        //                     //check which option is selected
-        //                     for (ansNum = 0; ansNum < qn.length; ansNum++) {
-        //                         if (qn[ansNum].checked) {
-        //                             // get selected option.value
-        //                             var option= parse(qn[ansNum].value);
-        //                             console.log(option);
-        //                         }
-        //                     }
-        //                     // get correct answer
-        //                     this.answertext = question.answertext;
-        //                     console.log(this.answertext);
-
-        //                     // mark selected option with feedback
-        //                     if(option==this.answertext){ 
-        //                         marks += 1;
-        //                         document.writeln("Your answer is correct!"); 
-        //                     }
-        //                     else{
-        //                         document.writeln("The correct answer is '" + this.answertext + "'.");
-        //                     }
-        //                 }
-        //                 if (marks/this.quizquestions.count > 0.85) {
-        //                     document.writeln("Your total marks is" + marks); 
-        //                 }
-        //             }
-        //         })
-        //         .catch(error => {
-        //             // Errors when calling the service; such as network error, service offline, etc
-        //             console.log(this.searchError + error);
-        //         });
-        // },
-        storeQuizForm: function(quizid) {
-            localStorage.quizid = quizid
+        storeAnswer: function(questionid, ans){
+            this.userans[questionid] = ans
+            console.log(this.userans)
         },
-        // getQuizForm: function() {
-        //     console.log(localStorage.getItem("quizid"))
-        //     return localStorage.getItem("quizid")
-        // },
+        checkAnswer: function() {
+            this.answerChecked = true;
+            this.course_code = 1008;
+            this.class_section = "G1";
+            quizid = localStorage.getItem("quizid");
+
+            for (let questionid in this.userans) {
+                const response =
+                    fetch(`${questions_url}/${this.class_section}/${this.course_code}/${quizid}/${questionid}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(response);
+                        if (data.code === 404) {
+                            // no course found in db
+                            this.searchError = data.message;
+                        } else {
+                            this.question = data.data;
+                            if (this.userans[questionid] === this.question.answertext) {
+                                this.marks = (this.marks + 1)
+                            }
+                        }
+                        console.log(this.marks)
+                        localStorage.marks = this.marks
+                    })
+                    .catch(error => {
+                        // Errors when calling the service; such as network error, service offline, etc
+                        console.log(this.searchError + error);
+                    });
+            }
+        },
+        getMarks: function() {
+            percent = (localStorage.getItem('marks')/Object.keys(this.userans).length)*100
+            this.course_code = 1008;
+            // sessionStorage.percent = percent
+            // alert(percent)
+            if (localStorage.getItem('graded')=='F') {
+                alert(`Your got ${percent}%. You may click Exit to unlock your next lesson materials!`)
+            }
+            else{
+                if (percent >= 85) {
+                    const response =
+                    fetch(`${get_all_URL}/${clickedCourse}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(response);
+                        if (data.code === 404) {
+                            this.message = data.message;
+                        } else {
+                            this.selected_course = data.data;
+                            }
+                        })
+                        .catch(error => {
+                            console.log(this.message + error);
+                        });
+                }
+            }
+        },
+        storeQuizForm: function(quizid, chapter, graded) {
+            localStorage.quizid = quizid
+            localStorage.quiz = chapter
+            localStorage.graded = graded
+        },
         getCompleteChapter: function() {
             learners_eid = 1
             courseCode = 1008;
@@ -438,7 +445,6 @@ var app = new Vue({
         this.getCompleteChapter();
         this.getMaterials();
         this.getQuizzes();
-        // this.getQuizForm();
         this.getQuizQuestions();
         this.getAllCourses();
         this.getEligibleCourses();

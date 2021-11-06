@@ -370,6 +370,7 @@ def updateCourse():
 
 #Delete course
 @app.route("/courses/<int:course_code>", methods=['DELETE'])
+@cross_origin()
 def deleteCourse(course_code):
     course = Courses.query.filter_by(course_code=course_code).first()
     if course:

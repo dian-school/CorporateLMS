@@ -34,8 +34,7 @@
                 </div>
             </div>
         </nav>
-
-
+        {{getTrainerInfo()}}
         <div class="container">
             <div class="row" style="margin:30px;" >
                 <H1> {{ trainer.trainers_name }}</H1>
@@ -43,7 +42,6 @@
                 <h4> Trainer's Email: {{ trainer.trainers_email }} </h4>
                 <h4> Trainer's Qualifications: {{ trainer.qualifications }} </h4>
                 <h4> Trainer's Specialisations: {{ trainer.specialisation }} </h4>
-
                 <br> <br>
 
                 <button type="button" class="btn btn-primary" @click="sectionsWithNoTrainer()" data-toggle="modal" data-target="#sectionsWithNoTrainer">
@@ -66,16 +64,12 @@
                 <div class="modal-body">
                 <!-- Default checkbox -->
                     <div class="form-check" v-for="section in sectionsNoTrainers">
-                        
                         <input type="checkbox" value="{{section.course_code}}:{{section.class_section}}"  id="{{section.course_code}}" v-model="checkedSections" />
                         <label for="{{section.course_code}}" style="white-space:nowrap;">
                             {{section.course_code}} : <span v-for="course in sectionCourseTitle" v-if = "course.course_code == section.course_code">{{course.course_title}}</span> ({{ section.class_section }})
                         </label>
-
                     </div>
                     <span>Checked Sections: {{ checkedSections }}</span>
-                      
-                    
                 </div>
 
                 <div class="modal-footer">
@@ -92,7 +86,7 @@
                         </div>
                     </div>
 
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" {{pagerefresh()}}>Close</button>
                     
                     <button @click="assignSections()" class="btn btn-primary" v-on:submit.prevent="onSubmit">Assign Course Sections</button>
                 

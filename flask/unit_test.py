@@ -1,6 +1,6 @@
 import unittest
 
-from app import Progress, Materials, Quizquestions, Quizzes, Courses
+from app import Progress, Materials, Quizquestions, Quizzes, Admins, Learners, Sections, Trainers,Courses
 
 # Dian Farah Binte Riduan, dianfarahr.2019, G1T6
 class TestProgress(unittest.TestCase):
@@ -86,6 +86,62 @@ class TestCourse(unittest.TestCase):
             'prerequisites':"Foundations of Copier Repair"
             }
         )
+
+# Grace Charlotte Lui, gracelui.2019, G1T6
+class TestAdmins(unittest.TestCase):
+    def test_admins_to_dict(self):
+        admin1 = Admins(admins_eid=1, admins_name="Phris Coskitt", admins_email="pcoskitt@smu.edu.sg")
+        self.assertEqual(admin1.to_dict(), {
+            'admins_eid': 1,
+            'admins_name':"Phris Coskitt",
+            'admins_email': "pcoskitt@smu.edu.sg"
+            }
+        )
+
+
+class TestLearners(unittest.TestCase):
+    def test_learners_to_dict(self):
+        learner1 = Learners(learners_eid=1, learners_name="Chris Poskitt", learners_email="cposkitt@smu.edu.sg", learners_qualifications="Software Project Management", courses_completed="Enterprise Solution Development")
+        self.assertEqual(learner1.to_dict(), {
+            'learners_eid': 1,
+            'learners_name':"Chris Poskitt",
+            'learners_email':"cposkitt@smu.edu.sg",
+            'learners_qualifications':"Software Project Management",
+            'courses_completed':"Enterprise Solution Development"
+            }
+        )
+
+# Nur Khalisah Binti Ohrallayali, khalisaho.2019, G1T6
+class TestSections(unittest.TestCase):
+    def test_sections_to_dict(self):
+        section1 = Sections(class_section="G2", course_code=1001, class_size=40, start_date="2021-08-05", end_date="2021-12-10", start_time="08:00:00", end_time="23:59:00", trainers_eid=1, vacancies=20, trainers_name="Kim Son Ho", duration=30)
+        self.assertEqual(section1.to_dict(), {
+            'class_section': "G2",
+            'course_code': 1001,
+            'class_size': 40,
+            'start_date': '2021-08-05',
+            'end_date': '2021-12-10',
+            'start_time': '08:00:00',
+            'end_time': '23:59:00',
+            'trainers_eid': 1,
+            'vacancies': 20,
+            'trainers_name': 'Kim Son Ho',
+            'duration': 30
+            }
+        )   
+
+# Nur Khalisah Binti Ohrallayali, khalisaho.2019, G1T6
+class TestTrainers(unittest.TestCase):
+    def test_trainers_to_dict(self):
+        trainer1 = Trainers(trainers_eid=1, trainers_name="Kim Son Ho", trainers_email="kimsonho@gmail.com", qualifications="Bachelor's Degree in Mechanical Engineering", specialisation="Conduct of Maintenance for Printers/Copiers")
+        self.assertEqual(trainer1.to_dict(), {
+            'trainers_eid': 1,
+            'trainers_name': 'Kim Son Ho',
+            'trainers_email': 'kimsonho@gmail.com',
+            'qualifications': "Bachelor's Degree in Mechanical Engineering",
+            'specialisation': 'Conduct of Maintenance for Printers/Copiers'
+            }
+        )   
 
 if __name__ == "__main__":
     unittest.main()
