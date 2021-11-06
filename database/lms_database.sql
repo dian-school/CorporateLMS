@@ -252,6 +252,9 @@ CREATE TABLE IF NOT EXISTS `enrol` (
 
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
+INSERT INTO `progress` (`learners_eid`, `course_code`, `class_section`, `chapter_completed`) VALUES
+(1, 1001, 'G1', 2),
+(1, 1002, 'G1', 4);
 -- --------------------------------------------------------
 
 --
