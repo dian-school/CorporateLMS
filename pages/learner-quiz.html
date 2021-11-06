@@ -34,9 +34,9 @@
     <!-- <template> -->
       <!-- <template> -->
         <div>
+          <div><b>Time Remaining: {{timer | minutesAndSeconds}}</b></div>
           <h1 v-if="quiz !== 0">Quiz {{ quiz }}</h1> 
           <h1 v-else>Final Quiz</h1>
-          <div id="app">{{ time }}</div>
           <form v-for="question in quizquestions" id="question.questionid">
               <div id="question.questionid">
                 <h3>{{ question.questiontext }}</h3>
@@ -46,21 +46,23 @@
               </div>
           </form> 
           <br>
-          <button class="btn btn-outline-primary" type="submit" @click="checkAnswer()">Submit Quiz</button><br><br>
+          <button class="btn btn-outline-primary" type="submit" @click="checkAnswer()">Submit Quiz</button>
           <template v-if = "answerChecked===true">
+            <br><br>
             <button class="btn btn-outline-primary" @click="getMarks()">Get Quiz Marks</button>
             <button class="btn btn-outline-primary" @click="updateCompleteChapter()">Exit Quiz</button>
+          </template>
+
+          <template v-if="submitMsg != ''">
+            <button class="btn btn-outline-primary" @click="updateCompleteChapter()">Exit Quiz</button><br>
+            <b style="color: red;">{{submitMsg}}</b>
           </template>
            
         </div>
       <!-- </template> -->
   </div>
 
-  <script type="text/javascript" src="../js/learner.js">
-  // <script type="module" src="../js/learner.js">
-  //   import { BForm } from 'bootstrap-vue'
-  //   Vue.component('b-form', BForm)  
-  // </script>
+  <script type="text/javascript" src="../js/learner.js"></script>
 
   <!-- Optional JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->

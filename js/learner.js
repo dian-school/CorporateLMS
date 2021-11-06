@@ -56,7 +56,17 @@ var app = new Vue({
 
         learnerEnroled: false,
 
-        checkedSection: ""
+        learners_eid: 0,  
+        
+        timer: 1, //needs to be initialized as 1 i not the timer won't start
+        submitMsg: "",
+    },
+    filters: {
+        minutesAndSeconds (value) {
+          var minutes = Math.floor(parseInt(value, 10) / 60)
+          var seconds = parseInt(value, 10) - minutes * 60
+          return `${minutes}:${seconds}`
+        }
     },
     methods: {
         getEligibleCourses: function() {
@@ -435,7 +445,7 @@ var app = new Vue({
         updateCompleteChapter: function() {
             learners_eid = 1
             courseCode = 1008;
-            classSection = "G1"
+            classSection = "G1";
 
             if (localStorage.getItem('graded')=='F') {
                 this.chapter_completed += 1
@@ -582,13 +592,39 @@ var app = new Vue({
             console.log(localStorage.getItem("course_code"));
             return localStorage.getItem("course_code")
         },
-        storeSectionInfo: function (message) {
-            console.log(message);
-            localStorage.class_section = message;
+        getTime: function(){
+            courseCode = 1008;
+            classSection = "G1";
+            quizid = localStorage.getItem('quizid');
+            // this.time = True;
+
+            const response = 
+                fetch(`${quiz_url}/${classSection}/${courseCode}/${quizid}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(response);
+                    if (data.code === 404) {
+                        this.message = data.message;
+                        console.log(this.message);
+                    } else {
+                        this.timer = data.data.time * 60
+                        console.log(this.timer);
+                    }
+                })
+                .catch(error => {
+                    console.log(this.message + error);
+                });
         },
-        getSectionInfo: function(){
-            console.log(localStorage.getItem("class_section"));
-            return localStorage.getItem("class_section")
+        countDown: function() {
+            if(this.timer > 0) {
+                setTimeout(() => {
+                    this.timer -= 1
+                    this.countDown()
+                }, 1000)
+            }
+            else if (this.timer == 0) {
+                this.submitMsg = "Time is up! Please press Exit and try again next time."
+            }
         },
         pageRefresh: function () {
             this.getEligibleCourses();
@@ -608,7 +644,8 @@ var app = new Vue({
         this.getAllCourses();
         this.getEligibleCourses();
         this.getCompletedCourses();
-        this.getInprogressCourses();
-    }
-
+        this.getTime();
+        this.countDown();
+        // this.getInprogressCourses();
+    },
 });

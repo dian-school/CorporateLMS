@@ -768,6 +768,16 @@ def get_quizzes(class_section, course_code):
         }
     ), 200
 
+#get one quiz
+@app.route("/quizzes/<string:class_section>/<int:course_code>/<int:quizid>")
+def get_quiz(class_section, course_code, quizid):
+    quiz = Quizzes.query.filter_by(quizid=quizid,class_section=class_section, course_code=course_code).first()
+    return jsonify(
+        {
+            "data": quiz.to_dict()
+        }
+    ), 200
+
 #get quiz questions
 @app.route("/questions/<string:class_section>/<int:course_code>/<int:quizid>")
 def get_questions(class_section, course_code, quizid):
