@@ -343,30 +343,30 @@ def completed_courses(learners_eid):
             }
         )
 
-#add course to completed course once  
-# @app.route("/courses/<int:learners_eid>", method=['PUT'])
-# @cross_origin()
-# def update_completed_course(learners_eid):
-#     learner = Learners.query.filter_by(learners_eid=learners_eid).first()
-#     if learner:
-#         data = request.get_json()
-#         learner.courses_completed = data['courses_completed']
-#         db.session.commit()
-#         return jsonify(
-#             {
-#                 "code": 200,
-#                 "data": learner.to_dict()
-#             }
-#         )
-#     return jsonify(
-#         {
-#             "code": 404,
-#             "data": {
-#                 "learners_eid": learners_eid
-#             },
-#             "message": "Learner not found."
-#         }
-#     ), 404
+#update learner's table after completing final quiz
+@app.route("/learners/<int:learners_eid>", methods=['PUT'])
+@cross_origin()
+def update_completed_course(learners_eid):
+    learner = Learners.query.filter_by(learners_eid=learners_eid).first()
+    if learner:
+        data = request.get_json()
+        learner.courses_completed = learner.courses_completed +', '+ data['courses_completed']
+        db.session.commit()
+        return jsonify(
+            {
+                "code": 200,
+                "data": learner.to_dict()
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "data": {
+                "learners_eid": learners_eid
+            },
+            "message": "Learner not found."
+        }
+    ), 404
 
 #get course prerequisites 
 @app.route("/courses/<int:course_code>/prerequisites")
