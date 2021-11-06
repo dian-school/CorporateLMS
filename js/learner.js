@@ -125,7 +125,7 @@ var app = new Vue({
         },
         
         getCompletedCourses: function() {
-            this.learners_eid = 2 
+            this.learners_eid = 1 
 
             const response = 
                 fetch(`${get_all_URL}/${this.learners_eid}/completed`)
@@ -234,8 +234,8 @@ var app = new Vue({
                 });
         },
         getMaterials: function () { 
-            this.courseCode = 1008;
-            this.classSection = "G1";
+            this.courseCode = localStorage.getItem('course_code');
+            this.classSection = localStorage.getItem('class_section');
 
             console.log(this.courseCode)
 
@@ -266,8 +266,8 @@ var app = new Vue({
                 });
         },
         getQuizzes: function () { 
-            this.courseCode = 1008;
-            this.classSection = "G1";
+            this.courseCode = localStorage.getItem('course_code');
+            this.classSection = localStorage.getItem('class_section');
 
             console.log(this.courseCode)
 
@@ -291,8 +291,8 @@ var app = new Vue({
                 });
         },
         getQuizQuestions: function () { 
-            this.courseCode = 1008;
-            this.classSection = "G1";
+            this.courseCode = localStorage.getItem('course_code');
+            this.classSection = localStorage.getItem('class_section');
             // this.course_code = localStorage.getItem("course_code");
             // this.class_section = localStorage.getItem("class_section");
             quizid = localStorage.getItem("quizid");
@@ -328,8 +328,8 @@ var app = new Vue({
         },
         checkAnswer: function() {
             this.answerChecked = true;
-            this.course_code = 1008;
-            this.class_section = "G1";
+            this.course_code = localStorage.getItem('course_code');
+            this.class_section = localStorage.getItem('class_section');
             quizid = localStorage.getItem("quizid");
 
             for (let questionid in this.userans) {
@@ -358,7 +358,7 @@ var app = new Vue({
         },
         getMarks: function() {
             percent = (localStorage.getItem('marks')/Object.keys(this.userans).length)*100
-            this.course_code = 1008;
+            this.course_code = localStorage.getItem('course_code');
             // sessionStorage.percent = percent
             // alert(percent)
             if (localStorage.getItem('graded')=='F') {
@@ -421,8 +421,8 @@ var app = new Vue({
         },
         getCompleteChapter: function() {
             learners_eid = 1
-            courseCode = 1008;
-            classSection = "G1"
+            courseCode = localStorage.getItem('course_code');
+            classSection = localStorage.getItem('class_section')
 
             // console.log(this.courseCode)
 
@@ -444,8 +444,8 @@ var app = new Vue({
         },
         updateCompleteChapter: function() {
             learners_eid = 1
-            courseCode = 1008;
-            classSection = "G1";
+            courseCode = localStorage.getItem('course_code');
+            classSection = localStorage.getItem('class_section');
 
             if (localStorage.getItem('graded')=='F') {
                 this.chapter_completed += 1
@@ -588,13 +588,16 @@ var app = new Vue({
             console.log(message);
             localStorage.course_code = message;
         },
+        storeSectionInfo: function (class_section) {
+            localStorage.class_section = class_section;
+        },
         getCourseInfo: function(){
             console.log(localStorage.getItem("course_code"));
             return localStorage.getItem("course_code")
         },
         getTime: function(){
-            courseCode = 1008;
-            classSection = "G1";
+            courseCode = localStorage.getItem("course_code");
+            classSection = localStorage.getItem('class_section');
             quizid = localStorage.getItem('quizid');
             // this.time = True;
 

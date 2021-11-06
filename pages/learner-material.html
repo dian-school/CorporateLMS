@@ -85,7 +85,7 @@
                 </template>
 
                 <!-- Final Quiz -->
-                <template v-if ="chapter_completed >= material_chapters[material_chapters.length-1]">
+                <template v-if ="chapter_completed >= material_chapters[material_chapters.length-1] & quizzes[quizzes.length-1].graded == 'T'">
 
                     <h1>Final Quiz</h1>
 
