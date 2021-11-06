@@ -684,8 +684,9 @@ def update_section_vacancy(class_section, course_code):
         return jsonify(
             {
                 "code": 200,
+                "message": "Vacancy has been sucessfully updated",
                 "data": sections.to_dict()
-            }
+            },
         )
     return jsonify(
         {

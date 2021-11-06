@@ -36,6 +36,7 @@ var app = new Vue({
         oneSection: [],
         checkedSectionsArray: [],
         newVacancy: 0,
+        arr_val:0,
 
         completedCourses: [],
         inProgress: [],
@@ -654,6 +655,7 @@ var app = new Vue({
             this.vacancyUpdated = false;
             this.statusMsg = ""; 
             this.updateVacancyError = "";
+            this.arr_val = 0;
 
             for (eachSection of this.checkedCourseSections) {   
                 splitCourseSection = eachSection.split(':');
@@ -676,9 +678,9 @@ var app = new Vue({
                             this.checkedSectionsArray.push(data.data[0]);
                             console.log(this.checkedSectionsArray);
 
-                            for (var i = 0; i < this.checkedSectionsArray.length; i++) {
+                            // for (var i = 0; i < this.checkedSectionsArray.length; i++) {
                                 var jsonData = JSON.stringify({
-                                    vacancies: this.checkedSectionsArray[i].vacancies - 1 
+                                    vacancies: this.checkedSectionsArray[this.arr_val].vacancies - 1 
                                 });
             
                                 console.log(jsonData)
@@ -707,11 +709,17 @@ var app = new Vue({
                                             throw `${data.code}: ${data.message}`;
                                     }
                                 })
+                                .catch(error => {
+                                    // Errors when calling the service; such as network error, 
+                                    // service offline, etc
+                                    console.log(this.searchError + error);
+                                });
+
                                 
                                 var jdata = JSON.stringify({
                                     learners_eid: learnerId,
-                                    course_code: this.checkedSectionsArray[i].course_code,
-                                    class_section: this.checkedSectionsArray[i].class_section,
+                                    course_code: this.checkedSectionsArray[this.arr_val].course_code,
+                                    class_section: this.checkedSectionsArray[this.arr_val].class_section,
                                     chapter_completed: 0
                                 });
                         
@@ -732,8 +740,6 @@ var app = new Vue({
                                             case 201:
                                                 this.courseAssigned = true;
                                                 this.statusMessage = "Learner assigned to courses successfully!";
-
-                                                
                                             case 500:
                                                 this.assignCourseError = data.message;
                                                 break;
@@ -741,7 +747,8 @@ var app = new Vue({
                                                 throw `${data.code}: ${data.message}`;
                                         }
                                     })   
-                            }
+                            //}
+                            this.arr_val = this.arr_val + 1;
                         }
                     
                     })
@@ -750,7 +757,6 @@ var app = new Vue({
                     // service offline, etc
                     console.log(this.searchError + error);
                     });
-
             }
                 
         },
