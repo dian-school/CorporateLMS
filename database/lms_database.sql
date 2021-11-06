@@ -224,13 +224,31 @@ CREATE TABLE IF NOT EXISTS `progress` (
   `course_code` int(11) NOT NULL,
   `class_section` varchar(2) NOT NULL,
   `chapter_completed` int(100) NOT NULL,
-  `course_title` varchar(1000) NOT NULL,
 
   PRIMARY KEY (`learners_eid`, `course_code`, `class_section`),
   CONSTRAINT `enroling_ibfk_1` FOREIGN KEY (`learners_eid`) REFERENCES `learners` (`learners_eid`),
   CONSTRAINT `enroling_ibfk_2` FOREIGN KEY (`course_code`) REFERENCES `courses` (`course_code`),
   CONSTRAINT `enroling_ibfk_3` FOREIGN KEY (`class_section`) REFERENCES `sections` (`class_section`)
-  CONSTRAINT `enroling_ibfk_4` FOREIGN KEY (`course_title`) REFERENCES `courses` (`course_title`)
+
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `enrol`
+--
+
+DROP TABLE IF EXISTS `enrol`;
+CREATE TABLE IF NOT EXISTS `enrol` (
+  `learners_eid` int(11) NOT NULL,
+  `course_code` int(11) NOT NULL,
+  `class_section` varchar(2) NOT NULL,
+  `course_title` varchar(1000) NOT NULL,
+
+  PRIMARY KEY (`learners_eid`, `course_code`, `class_section`),
+  CONSTRAINT `enrol_ibfk_1` FOREIGN KEY (`learners_eid`) REFERENCES `learners` (`learners_eid`),
+  CONSTRAINT `enrol_ibfk_2` FOREIGN KEY (`course_code`) REFERENCES `courses` (`course_code`),
+  CONSTRAINT `enrol_ibfk_3` FOREIGN KEY (`class_section`) REFERENCES `sections` (`class_section`)
 
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 

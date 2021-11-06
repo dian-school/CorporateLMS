@@ -21,6 +21,8 @@
 
 <body>
   <div id = "app">
+      {{ getCourseinfo() }}
+      {{ getSection() }}
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="container px-lg-5">
           <a class="navbar-brand" href="#!">G1T6 LMS</a>
@@ -47,12 +49,12 @@
                 <div class="p-4 p-lg-5 bg-light rounded-3 text-left">
                     <div class="m-4 m-lg-5">
                         <div class="p-4 p-lg-5 bg-light rounded-3 text-right">
-                            <a class="btn btn-primary btn-lg" href="#!" onclick="">Enrol</a>
+                            <a class="btn btn-primary btn-lg" href="#!" @click="selfEnrol()">Enrol</a>
                         </div>
-                        <h1 class="display-5 fw-bold">{{ course.course_code }} {{ course.course_title }}</h1>
+                        <h1 class="display-5 fw-bold">{{ selected_course.course_code }} {{ selected_course.course_title }}</h1>
                         <br>
-                        <p class="">Course Description:</p>
-                        <p class="">{{ course.description }}</p>
+                        <p class=""><b>Course Description:</b></p>
+                        <p class="">{{ selected_course.description }}</p>
                         <br>
 
                         <!-- source code: https://stackoverflow.com/questions/32941631/radio-button-inside-table/32941720 -->
@@ -64,34 +66,38 @@
                                     <tr>
                                     <th>Section</th>
                                     <th>Trainer</th>
-                                    <th>Date</th>
-                                    <th>Time</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Start Time</th>
+                                    <th>End Time</th>
                                     <th>Class Size</th>
                                     <th>Vacancies</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="">
+                                    <tr v-for="section in sections">
                                     <td>
-                                        <input type="radio" name="radios" id="radio" v-model="picked"/>
-                                        <label for="radio">{{class_section}}</label>
+                                        <input type="radio" name="radios" id="radio" v-model="checkedSection" value="{{ section.class_section }}"/>
+                                        <label for="radio">{{ section.class_section }}</label>
                                     </td>
-                                    <td>{{trainers_name}}</td>
-                                    <td>{{date}}</td>
-                                    <td>{{time}}</td>
-                                    <td>{{class_size}}</td>
-                                    <td>{{vacancies}}</td>
+                                    <td>{{ section.trainers_name }}</td>
+                                    <td>{{ start_date }}</td>
+                                    <td>{{ end_date }}</td>
+                                    <td>{{ section.start_time }}</td>
+                                    <td>{{ section.end_time }}</td>
+                                    <td>{{ section.class_size }}</td>
+                                    <td>{{ section.vacancies }}</td>
                                     </tr>
                                 </tbody>
                                 </table>
+                                <span>Checked Section: {{ checkedSection }} </span>
+                                <div class="justify-content-left;">
+                                    <div class="text-success" v-if="learnerEnroled = true">
+                                    {{ statusMessage }} <br>
+                                    </div>
+                                </div>
                             </div>
-                            <script>
-                                function showData() {
-                                    confirm("Confirm?", document.forms["enrolCourse"]["radios"].value);
-                                    alert("Successful Submission");
-                                    return false;
-                                }
-                            </script>
+                            
                          </form>  
                 </div> 
             </div>

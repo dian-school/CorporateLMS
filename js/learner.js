@@ -4,6 +4,7 @@ var quiz_url = "http://localhost:5000/quizzes";
 var questions_url = "http://localhost:5000/questions";
 var progress_url = "http://localhost:5000/progress"
 var section_url = "http://localhost:5000/sections";
+var enrol_url = "http://localhost:5000/enrol";
 
 var app = new Vue({
     // binds the new Vue object to the HTML element with id="app".
@@ -41,7 +42,6 @@ var app = new Vue({
         quiz: 0,
         userans: {},
         answerChecked:false,
-        course_title= "",
 
         marks: 0,
 
@@ -50,7 +50,13 @@ var app = new Vue({
         "completedCoursesObjectArr": [],
         "inprogressCourses": [],
 
-        learners_eid: 0,        
+        learners_eid: 0,
+        
+        "selected_course": [],
+
+        learnerEnroled: false,
+
+        checkedSection: ""
     },
     methods: {
         getEligibleCourses: function() {
@@ -90,6 +96,17 @@ var app = new Vue({
                         console.log(data.data);
                         this.inprogressCourses = data.data;
                         console.log(this.inprogressCourses);
+                        
+                        //help: need to fetch course title from Course db
+                        for (course of this.inprogressCourses); {
+                            const response = fetch(`${get_all_URL}/${course.course_code}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                console.log(data.data);
+                                this.inprogressCourses = data.data;
+                                console.log(this.inprogressCourses);
+                            });
+                        }
                     }
                 })
                 .catch(error => {
@@ -207,8 +224,8 @@ var app = new Vue({
                 });
         },
         getMaterials: function () { 
-            this.courseCode = 1008;
-            this.classSection = "G1"
+            this.courseCode = clickedCourse;
+            this.classSection = localStorage.getItem("class_section");
 
             console.log(this.courseCode)
 
@@ -239,8 +256,8 @@ var app = new Vue({
                 });
         },
         getQuizzes: function () { 
-            this.courseCode = 1008;
-            this.classSection = "G1"
+            this.courseCode = clickedCourse;
+            this.classSection = localStorage.getItem("class_section");
 
             console.log(this.courseCode)
 
@@ -264,8 +281,8 @@ var app = new Vue({
                 });
         },
         getQuizQuestions: function () { 
-            this.course_code = 1008;
-            this.class_section = "G1";
+            this.courseCode = clickedCourse;
+            this.classSection = localStorage.getItem("class_section");
             // this.course_code = localStorage.getItem("course_code");
             // this.class_section = localStorage.getItem("class_section");
             quizid = localStorage.getItem("quizid");
@@ -427,13 +444,34 @@ var app = new Vue({
                     }
                 })
         },
+        getCourseinfo: function(){
+            // Used for course profile when click View
+            clickedCourse = localStorage.getItem("course_code");
+            console.log(clickedCourse)
+            const response =
+                fetch(`${get_all_URL}/${clickedCourse}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(response);
+                    if (data.code === 404) {
+                        this.message = data.message;
+                    } else {
+                        this.selected_course = data.data[0];
+                        console.log(this.selected_course);
+                        localStorage.course_title = this.selected_course.course_title;
+                        title = localStorage.getItem("course_title");
+                        console.log(title);
+                        }
+                    })
+                    .catch(error => {
+                        console.log(this.message + error);
+                    });
+           
+        },
         getSection: function () {
             // on Vue instance created, load the course list
-            this.course_code = localStorage.getItem("course_code");
-            console.log(this.course_code)
-
             const response =
-                fetch(`${section_url}/${this.course_code}`)
+                fetch(`${section_url}/${clickedCourse}`)
                 .then(response => response.json())
                 .then(data => {
                     console.log(response);
@@ -443,6 +481,16 @@ var app = new Vue({
                     } else {
                         this.sections = data.data;
                         console.log(this.sections);
+
+                        for (section of this.sections) {
+                            start_date = section.start_date.split(' ');
+                            console.log(start_date);
+                            start_date = start_date.slice(0,4).join(' ');
+                            console.log(start_date);
+
+                            end_date = section.end_date.split(' ');
+                            
+                        }
                     }
                 })
                 .catch(error => {
@@ -451,6 +499,50 @@ var app = new Vue({
                     console.log(this.message + error);
 
                 });
+        },
+        selfEnrol: function() {
+            let jdata = JSON.stringify({
+                learners_eid: 1,
+                course_code: parseInt(clickedCourse),
+                class_section: this.checkedSection,
+                course_title: title
+            });
+            console.log(jdata);
+            fetch(`${enrol_url}/selfenrol`, {
+                method: "POST",
+                headers: {
+                    "Content-type": "application/json"
+                },
+                body: jdata
+            })
+            .then(response => response.json())
+            .then(data => {
+                // console.log(data);
+                result = data.data;
+                //console.log(result);
+                // 3 cases
+                switch (data.code) {
+                    case 200:
+                        this.learnerEnroled = true;
+                        this.statusMessage = "Learner enroled to course successfully!"
+                        this.pageRefresh();
+
+                        break;
+                
+                    case 500:
+                        //if cannot enrol
+                        this.enrolCourseError = data.message;
+                        break;
+                    default:
+                        throw `${data.code}: ${data.message}`;
+                }
+            })
+            .catch(error => {
+                // Errors when calling the service; such as network error, 
+                // service offline, etc
+                console.log(this.message + error);
+
+            });
         },
         storeCourseInfo: function (message) {
             console.log(message);
@@ -481,14 +573,12 @@ var app = new Vue({
         // on Vue instance created, load the course list
         // this.getAllCourses();
         this.getCompleteChapter();
-        this.getMaterials();
         this.getQuizzes();
         this.getQuizQuestions();
         this.getAllCourses();
         this.getEligibleCourses();
         this.getCompletedCourses();
         this.getInprogressCourses();
-        this.getSection();
     }
 
 });
