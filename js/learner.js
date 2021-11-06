@@ -224,8 +224,8 @@ var app = new Vue({
                 });
         },
         getMaterials: function () { 
-            this.courseCode = clickedCourse;
-            this.classSection = localStorage.getItem("class_section");
+            this.courseCode = 1008;
+            this.classSection = "G1";
 
             console.log(this.courseCode)
 
@@ -256,8 +256,8 @@ var app = new Vue({
                 });
         },
         getQuizzes: function () { 
-            this.courseCode = clickedCourse;
-            this.classSection = localStorage.getItem("class_section");
+            this.courseCode = 1008;
+            this.classSection = "G1";
 
             console.log(this.courseCode)
 
@@ -281,8 +281,8 @@ var app = new Vue({
                 });
         },
         getQuizQuestions: function () { 
-            this.courseCode = clickedCourse;
-            this.classSection = localStorage.getItem("class_section");
+            this.courseCode = 1008;
+            this.classSection = "G1";
             // this.course_code = localStorage.getItem("course_code");
             // this.class_section = localStorage.getItem("class_section");
             quizid = localStorage.getItem("quizid");
@@ -517,12 +517,8 @@ var app = new Vue({
                         console.log(this.sections);
 
                         for (section of this.sections) {
-                            start_date = section.start_date.split(' ');
-                            console.log(start_date);
-                            start_date = start_date.slice(0,4).join(' ');
-                            console.log(start_date);
-
-                            end_date = section.end_date.split(' ');
+                            start_date = section.start_date;
+                            end_date = section.end_date;
                             
                         }
                     }
