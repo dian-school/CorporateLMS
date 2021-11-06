@@ -357,19 +357,50 @@ var app = new Vue({
             else{
                 if (percent >= 85) {
                     const response =
-                    fetch(`${get_all_URL}/${clickedCourse}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log(response);
-                        if (data.code === 404) {
-                            this.message = data.message;
-                        } else {
-                            this.selected_course = data.data;
+                        fetch(`${get_all_URL}/${this.course_code}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            // console.log(response);
+                            if (data.code === 404) {
+                                this.message = data.message;
+                            } else {
+                                // console.log(data.data[0]["course_title"])
+
+                                var jsonData = JSON.stringify({
+                                    courses_completed: data.data[0]["course_title"] 
+                                });
+            
+                                // console.log(jsonData)
+                                fetch(`${learner_url}/${this.learners_eid}`, {
+                                    method: "PUT",
+                                    headers: {
+                                        "Content-type": "application/json"
+                                    },
+                                    body: jsonData
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    console.log(data);
+                                    result = data.data;
+                                    console.log(result);
+                                    
+                                    switch (data.code) {
+                                        case 200:
+                                            console.log('success') 
+                                                                                     
+                                        case 404:
+                                            console.log(data.message);
+                                    }
+                                })
                             }
                         })
                         .catch(error => {
                             console.log(this.message + error);
                         });
+                    alert(`Your got ${percent}%. Congratulations! You have completed the course.`)
+                }
+                else{
+                    alert(`Your got ${percent}%. Try again to complete this course!`)
                 }
             }
         },
@@ -405,7 +436,10 @@ var app = new Vue({
             learners_eid = 1
             courseCode = 1008;
             classSection = "G1"
-            this.chapter_completed += 1
+
+            if (localStorage.getItem('graded')=='F') {
+                this.chapter_completed += 1
+            }
 
             console.log(this.chapter_completed)
 

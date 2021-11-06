@@ -33,7 +33,13 @@ var app = new Vue({
         vacancyUpdated: false,
         statusMsg: "",
         updateVacancyError: "",
-        oneSection: {},
+        oneSection: [],
+        checkedSectionsArray: [],
+        newVacancy: 0,
+
+        completedCourses: [],
+        inProgress: [],
+        codeInProgress: [],
 
         newCourseTitle: "",
         newCode: "",
@@ -410,6 +416,8 @@ var app = new Vue({
                                     } else {
                                         this.course = data.data[0];
                                         this.sectionCourseTitle.push(this.course);
+                                        console.log(this.sectionCourseTitle);
+
                                     }
                                 })
                                 .catch(error => {
@@ -545,6 +553,30 @@ var app = new Vue({
                     } else {
                         this.learner = data.data[0];
                         console.log(this.learner);
+                        this.completedCourses.push(this.learner.courses_completed);
+                        //console.log(this.completedCourses);
+                        const response =
+                            fetch(`${get_all_URL}/${learnerId}/inprogress`)
+                            .then(response => response.json())
+                            .then(data => {
+                                console.log(response);
+                                if (data.code === 404) {
+                                    // no in progress courses found in db
+                                    this.searchError = data.message;
+                                } else {
+                                    this.inProgress = data.data;
+                                    console.log(this.inProgress);
+                                    for (eachProgress of this.inProgress) {
+                                        this.codeInProgress.push(eachProgress.course_code);
+                                    }
+                                    console.log(this.codeInProgress);
+                                }
+                            })
+                            .catch(error => {
+                                // Errors when calling the service; such as network error, 
+                                // service offline, etc
+                                console.log(this.searchError + error);
+                            });    
                     }
                 })
                 .catch(error => {
@@ -554,7 +586,6 @@ var app = new Vue({
                 });        
         },
          
-        
         // assign learner to course sections with vacancies
         // get eligible courses for learner
         getEligibleCourses: function (learner_eid) {
@@ -568,8 +599,9 @@ var app = new Vue({
                         this.searchError = data.message;
                     } else {
                         this.eligibleCourses = data.data.eligible_courses;
-                        console.log(this.eligibleCourses);
+                        // console.log(this.eligibleCourses);
                         for (course of this.eligibleCourses) {
+                            if (this.completedCourses.indexOf(course.course_title) == -1) { //yes working! Hong Seng completed 1002 so sections with course code 1002 are not showing
                             const response = 
                                 fetch(`${section_url}/${course.course_code}`)
                                 .then(response => response.json())
@@ -580,31 +612,37 @@ var app = new Vue({
                                         this.searchError = data.message;
                                     } else {
                                         this.sections = data.data;
-                                        console.log(this.sections);
+                                        // console.log(this.sections);
                                         for (section of this.sections) {
-                                            //console.log(section);
-                                            if (section.vacancies != 0) {  
+                                            // console.log(section);
+                                            //console.log(this.codeInProgress.indexOf(section.course_code));  
+                                            if ( (this.codeInProgress.indexOf(section.course_code) == -1) && (section.vacancies != 0) ) {
                                                 this.sectionsVacancies.push(section);
-                                            }  
-                                        }
-                                        console.log(this.sectionsVacancies);
-                                    }
+                                                console.log(this.sectionsVacancies);
+                                            }
+                                        }  
+                                                                    
+                                    }                                        
                                 })
                                 .catch(error => {
                                     // Errors when calling the service; such as network error, 
                                     // service offline, etc
                                     console.log(this.searchError + error);
                                 });
+                            }
                         }
                     }
+                    
+                    this.sectionsVacancies = this.sectionsVacancies.sort(function(a, b){
+                        return a.course_code-b.course_code
+                    })
+                    console.log(this.sectionsVacancies);
                 })
                 .catch(error => {
                     // Errors when calling the service; such as network error, 
                     // service offline, etc
                     console.log(this.searchError + error);
-                });
-
-            
+                });           
         },    
         
         assignCourse: function(learnerId) {
@@ -617,21 +655,15 @@ var app = new Vue({
             this.statusMsg = ""; 
             this.updateVacancyError = "";
 
-            for (section of this.checkedCourseSections) {
-                splitCourseSection = section.split(':');
+            for (eachSection of this.checkedCourseSections) {   
+                splitCourseSection = eachSection.split(':');
                 code = splitCourseSection[0];
                 console.log(code);
                 section = splitCourseSection[1];
                 console.log(section);
 
                 const response = 
-                    fetch(`${section_url}/${section}/${code}`, {
-                        method: "GET",
-                        headers: {
-                            "Content-type": "application/json"
-                        },
-                       
-                    })
+                    fetch(`${section_url}/${section}/${code}`)
                     .then(response => response.json())
                     .then(data => {
                         console.log(response);
@@ -639,92 +671,88 @@ var app = new Vue({
                             // no sections found
                             this.searchError = data.message;
                         } else {
+                        
                             console.log(data.data)
-                            this.oneSection = data.data[0];
-                            console.log(this.oneSection);
-                            console.log(this.oneSection.vacancies)
-                            var jsonData = JSON.stringify({
-                                vacancies: this.oneSection.vacancies - 1 
-                            });
-                            console.log(jsonData)
-                            fetch(`${section_url}/learner/${section}/${code}`, {
-                                method: "PUT",
-                                headers: {
-                                    "Content-type": "application/json"
-                                },
-                                body: jsonData
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                console.log(data);
-                                result = data.data;
-                                console.log(result);
-                                
-                                switch (data.code) {
-                                    case 200:
-                                        this.vacancyUpdated = true;
-            
-                                        this.statusMsg = 'Vacancy successfully updated.';
-            
-                                        break;
-                                    case 404:
-                                        this.updateVacancyError = data.message;
-                                    
-                                    default:
-                                        throw `${data.code}: ${data.message}`;
-                                }
-                            })
-        
-                        let jdata = JSON.stringify({
-                            learners_eid: learnerId,
-                            course_code: code,
-                            class_section: section,
-                            chapter_completed: 0
-                        });
-                    
-                        fetch(`${progress_url}`, {
-                                method: "POST",
-                                headers: {
-                                    "Content-type": "application/json"
-                                },
-                                body: jdata
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                // console.log(data);
-                                result = data.data;
-                                //console.log(result);
-                                // 3 cases
-                                switch (data.code) {
-                                    case 201:
-                                        this.courseAssigned = true;
-                                        this.statusMessage = "Learner assigned to courses successfully!"
-                                        // this.sectionsVacancies = think about how to remove section object after learner ha sbeen assigned to the class section
-                                        // refresh page
-                                        this.pageRefresh();
-        
-                                        break;
-                                
-                                    case 500:
-                                        this.assignCourseError = data.message;
-                                        break;
-                                    default:
-                                        throw `${data.code}: ${data.message}`;
-                                }
-                            })
-                        .catch(error => {
-                            this.assignCourseError = this.statusMessage
-                            console.log(this.assignCourseError);
-                        });
+                            this.checkedSectionsArray.push(data.data[0]);
+                            console.log(this.checkedSectionsArray);
 
+                            for (var i = 0; i < this.checkedSectionsArray.length; i++) {
+                                var jsonData = JSON.stringify({
+                                    vacancies: this.checkedSectionsArray[i].vacancies - 1 
+                                });
+            
+                                console.log(jsonData)
+                                fetch(`${section_url}/learner/${section}/${code}`, {
+                                    method: "PUT",
+                                    headers: {
+                                        "Content-type": "application/json"
+                                    },
+                                    body: jsonData
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    console.log(data);
+                                    result = data.data;
+                                    console.log(result);
+                                    
+                                    switch (data.code) {
+                                        case 200:
+                                            this.vacancyUpdated = true;               
+                                            this.statusMsg = 'Vacancy successfully updated.'; 
+                                                                                     
+                                        case 404:
+                                            this.updateVacancyError = data.message;
+                                        
+                                        default:
+                                            throw `${data.code}: ${data.message}`;
+                                    }
+                                })
+                                
+                                var jdata = JSON.stringify({
+                                    learners_eid: learnerId,
+                                    course_code: this.checkedSectionsArray[i].course_code,
+                                    class_section: this.checkedSectionsArray[i].class_section,
+                                    chapter_completed: 0
+                                });
+                        
+                                fetch(`${progress_url}`, {
+                                        method: "POST",
+                                        headers: {
+                                            "Content-type": "application/json"
+                                        },
+                                        body: jdata
+                                    })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        // console.log(data);
+                                        result = data.data;
+                                        //console.log(result);
+                                        // 3 cases
+                                        switch (data.code) {
+                                            case 201:
+                                                this.courseAssigned = true;
+                                                this.statusMessage = "Learner assigned to courses successfully!";
+
+                                                
+                                            case 500:
+                                                this.assignCourseError = data.message;
+                                                break;
+                                            default:
+                                                throw `${data.code}: ${data.message}`;
+                                        }
+                                    })   
+                            }
                         }
+                    
                     })
                     .catch(error => {
-                        // Errors when calling the service; such as network error, 
-                        // service offline, etc
-                        console.log(this.searchError + error);
+                    // Errors when calling the service; such as network error, 
+                    // service offline, etc
+                    console.log(this.searchError + error);
                     });
+
             }
+                
         },
         courseProfile: function(course_code) {
             // Used in admin page to send course code info to course Profile page
@@ -742,6 +770,7 @@ var app = new Vue({
         this.getAllCourses();
         this.getAllTrainers();
         this.getAllLearners();
+        
         this.searchStr = "";
         }
     },
@@ -753,9 +782,6 @@ var app = new Vue({
         // this.getLearnerInfo();
         // this.getTrainerInfo();
         this.assignCourse();
-        // this.randomFunc(code);
-        // this.getEligibleCourses();
-        // this.courseSections(this.checkedCourses);
         this.searchError = "";
         this.searchStr = "";
      
