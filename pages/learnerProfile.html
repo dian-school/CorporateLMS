@@ -91,7 +91,7 @@
                         </div>
                     </div> 
 
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" @click="pageRefresh()" data-dismiss="modal">Close</button>
                     
                     <button @click="assignCourse(learner.learners_eid)" class="btn btn-primary" v-on:submit.prevent="onSubmit">Assign Course</button>
                 

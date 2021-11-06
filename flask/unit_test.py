@@ -78,8 +78,8 @@ class TestQuizzes(unittest.TestCase):
 class TestCourse(unittest.TestCase):
     def test_to_dict(self):
         #Testing Course to_dict function
-        courseDict = Courses(course_code=1020, course_title="Learning about Printers", description="Printers, more about them", prerequisites="Foundations of Copier Repair")
-        self.assertEqual(courseDict.to_dict(), {
+        course1 = Courses(course_code=1020, course_title="Learning about Printers", description="Printers, more about them", prerequisites="Foundations of Copier Repair")
+        self.assertEqual(course1.to_dict(), {
             'course_code': 1020,
             'course_title':"Learning about Printers",
             'description':"Printers, more about them",

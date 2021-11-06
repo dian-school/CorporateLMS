@@ -34,6 +34,7 @@ var app = new Vue({
         statusMsg: "",
         updateVacancyError: "",
         oneSection: [],
+        checkedSectionsArray: [],
         newVacancy: 0,
 
         completedCourses: [],
@@ -654,8 +655,8 @@ var app = new Vue({
             this.statusMsg = ""; 
             this.updateVacancyError = "";
 
-            for (section of this.checkedCourseSections) {
-                splitCourseSection = section.split(':');
+            for (eachSection of this.checkedCourseSections) {   
+                splitCourseSection = eachSection.split(':');
                 code = splitCourseSection[0];
                 console.log(code);
                 section = splitCourseSection[1];
@@ -670,169 +671,88 @@ var app = new Vue({
                             // no sections found
                             this.searchError = data.message;
                         } else {
+                        
                             console.log(data.data)
-                            this.oneSection = data.data[0];
-                            console.log(this.oneSection);
-                            console.log(this.oneSection.vacancies)
-                            var jsonData = JSON.stringify({
-                                vacancies: this.oneSection.vacancies - 1 
-                            });
-                            console.log(jsonData)
-                            fetch(`${section_url}/learner/${section}/${code}`, {
-                                method: "PUT",
-                                headers: {
-                                    "Content-type": "application/json"
-                                },
-                                body: jsonData
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                console.log(data);
-                                result = data.data;
-                                console.log(result);
-                                
-                                switch (data.code) {
-                                    case 200:
-                                        this.vacancyUpdated = true;
-            
-                                        this.statusMsg = 'Vacancy successfully updated.';
-            
-                                        break;
-                                    case 404:
-                                        this.updateVacancyError = data.message;
-                                    
-                                    default:
-                                        throw `${data.code}: ${data.message}`;
-                                }
-                            })
-        
-                        let jdata = JSON.stringify({
-                            learners_eid: learnerId,
-                            course_code: code,
-                            class_section: section,
-                            chapter_completed: 0
-                        });
-                    
-                        fetch(`${progress_url}`, {
-                                method: "POST",
-                                headers: {
-                                    "Content-type": "application/json"
-                                },
-                                body: jdata
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                // console.log(data);
-                                result = data.data;
-                                //console.log(result);
-                                // 3 cases
-                                switch (data.code) {
-                                    case 201:
-                                        this.courseAssigned = true;
-                                        this.statusMessage = "Learner assigned to courses successfully!"
-                                        // this.sectionsVacancies = think about how to remove section object after learner ha sbeen assigned to the class section
-                                        // refresh page
-                                        this.pageRefresh();
-        
-                                        break;
-                                
-                                    case 500:
-                                        this.assignCourseError = data.message;
-                                        break;
-                                    default:
-                                        throw `${data.code}: ${data.message}`;
-                                }
-                            })
-                        .catch(error => {
-                            this.assignCourseError = this.statusMessage
-                            console.log(this.assignCourseError);
-                        });
+                            this.checkedSectionsArray.push(data.data[0]);
+                            console.log(this.checkedSectionsArray);
 
+                            for (var i = 0; i < this.checkedSectionsArray.length; i++) {
+                                var jsonData = JSON.stringify({
+                                    vacancies: this.checkedSectionsArray[i].vacancies - 1 
+                                });
+            
+                                console.log(jsonData)
+                                fetch(`${section_url}/learner/${section}/${code}`, {
+                                    method: "PUT",
+                                    headers: {
+                                        "Content-type": "application/json"
+                                    },
+                                    body: jsonData
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    console.log(data);
+                                    result = data.data;
+                                    console.log(result);
+                                    
+                                    switch (data.code) {
+                                        case 200:
+                                            this.vacancyUpdated = true;               
+                                            this.statusMsg = 'Vacancy successfully updated.'; 
+                                                                                     
+                                        case 404:
+                                            this.updateVacancyError = data.message;
+                                        
+                                        default:
+                                            throw `${data.code}: ${data.message}`;
+                                    }
+                                })
+                                
+                                var jdata = JSON.stringify({
+                                    learners_eid: learnerId,
+                                    course_code: this.checkedSectionsArray[i].course_code,
+                                    class_section: this.checkedSectionsArray[i].class_section,
+                                    chapter_completed: 0
+                                });
+                        
+                                fetch(`${progress_url}`, {
+                                        method: "POST",
+                                        headers: {
+                                            "Content-type": "application/json"
+                                        },
+                                        body: jdata
+                                    })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        // console.log(data);
+                                        result = data.data;
+                                        //console.log(result);
+                                        // 3 cases
+                                        switch (data.code) {
+                                            case 201:
+                                                this.courseAssigned = true;
+                                                this.statusMessage = "Learner assigned to courses successfully!";
+
+                                                
+                                            case 500:
+                                                this.assignCourseError = data.message;
+                                                break;
+                                            default:
+                                                throw `${data.code}: ${data.message}`;
+                                        }
+                                    })   
+                            }
                         }
+                    
                     })
                     .catch(error => {
-                        // Errors when calling the service; such as network error, 
-                        // service offline, etc
-                        console.log(this.searchError + error);
-                    });
-
-                let jsonData = JSON.stringify({
-                    trainers_eid : this.oneSection.trainers_eid,
-                    trainers_name : this.oneSection.trainers_name,
-                    vacancies: this.newVacancy
-                    
-                });
-    
-                fetch(`${section_url}/${section}/${code}`, {
-                        method: "PUT",
-                        headers: {
-                            "Content-type": "application/json"
-                        },
-                        body: jsonData
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log(data);
-                        result = data.data;
-                        console.log(result);
-                        
-                        switch (data.code) {
-                            case 200:
-                                this.vacancyUpdated = true;
-    
-                                this.statusMsg = 'Vacancy successfully updated.';
-    
-                                break;
-                            case 404:
-                                this.updateVacancyError = data.message;
-                            
-                            default:
-                                throw `${data.code}: ${data.message}`;
-                        }
-                    })
-
-                let jdata = JSON.stringify({
-                    learners_eid: learnerId,
-                    course_code: code,
-                    class_section: section,
-                    chapter_completed: 0
-                });
-            
-                fetch(`${progress_url}`, {
-                        method: "POST",
-                        headers: {
-                            "Content-type": "application/json"
-                        },
-                        body: jdata
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        // console.log(data);
-                        result = data.data;
-                        //console.log(result);
-                        // 3 cases
-                        switch (data.code) {
-                            case 201:
-                                this.courseAssigned = true;
-                                this.statusMessage = "Learner assigned to courses successfully!";
-                                // refresh page
-                                this.pageRefresh();
-                                break;
-                            case 500:
-                                this.assignCourseError = data.message;
-                                break;
-                            default:
-                                throw `${data.code}: ${data.message}`;
-                        }
-                    })
-                
-                .catch(error => {
                     // Errors when calling the service; such as network error, 
                     // service offline, etc
-                    this.assignCourseError = this.statusMessage
-                    console.log(this.assignCourseError);
-                });
+                    console.log(this.searchError + error);
+                    });
+
             }
+                
         },
         courseProfile: function(course_code) {
             // Used in admin page to send course code info to course Profile page
@@ -850,6 +770,7 @@ var app = new Vue({
         this.getAllCourses();
         this.getAllTrainers();
         this.getAllLearners();
+        
         this.searchStr = "";
         }
     },
