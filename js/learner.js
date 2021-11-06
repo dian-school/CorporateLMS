@@ -125,7 +125,7 @@ var app = new Vue({
         },
         
         getCompletedCourses: function() {
-            this.learners_eid = 1 
+            this.learners_eid = 2 
 
             const response = 
                 fetch(`${get_all_URL}/${this.learners_eid}/completed`)
@@ -305,7 +305,7 @@ var app = new Vue({
             }
 
             const response =
-                fetch(`${questions_url}/${this.class_section}/${this.course_code}/${quizid}`)
+                fetch(`${questions_url}/${this.classSection}/${this.courseCode}/${quizid}`)
                 .then(response => response.json())
                 .then(data => {
                     console.log(response);
