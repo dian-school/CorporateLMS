@@ -522,62 +522,6 @@ def learner_by_course(course_code):
             "message": "No learners in this course."
         }), 404
 
-
-# ## NEED CHANGE ##
-# # add learner to course 
-# @app.route("/enrols", methods=['POST'])
-# @cross_origin()
-# def add_learner():
-#     data = request.get_json()
-#     print(data)
-#     if not all(key in data.keys() for
-#                key in ('learners_eid', 'course_code',
-#                        'class_section')):
-#         return jsonify({
-#             "message": "Incorrect JSON object provided."
-#         }), 500
-#     learner = Enrols(**data)
-#     print(learner)
-#     try:
-#         db.session.add(learner)
-#         db.session.commit()
-#         return jsonify(learner.to_dict()), 201
-#     except SQLAlchemyError as e:
-#         print(str(e))
-#         db.session.rollback()
-#         return jsonify({
-#             "message": "Unable to commit to database."
-#         }), 500
-
-
-## NEED CHANGE ##
-# remove learner from course
-@app.route("/enrols/<int:course_code>/<string:learners_eid>", methods=['DELETE'])
-def delete_book(course_code, learners_eid):
-    learnertoremove = Enrols.query.filter_by(course_code=course_code , learners_eid=learners_eid).first()
-    if learnertoremove:
-        db.session.delete(learnertoremove)
-        db.session.commit()
-        return jsonify(
-            {
-                "code": 200,
-                "data": {
-                    "course_code": course_code,
-                    "learners_eid" : learners_eid
-                }
-            }
-        )
-    return jsonify(
-        {
-            "code": 404,
-            "data": {
-                "course_code": course_code,
-                "learners_eid" : learners_eid
-            },
-            "message": "Learner in this course not found."
-        }
-    ), 404
-
 #get all trainers
 @app.route("/trainers")
 def get_trainers():
