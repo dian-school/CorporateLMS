@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS, cross_origin
 from sqlalchemy.exc import SQLAlchemyError
@@ -502,25 +502,6 @@ def self_enrol():
                 "message": "Unable to enrol learner to course."
             }
         ), 500
-
-## NEED CHANGE ##
-# get learners by course 
-@app.route("/learners/<int:course_code>")
-def learner_by_course(course_code):
-    learners = Learners.query.filter_by(course_code=course_code).all()
-    if learners:
-        return jsonify({
-            "data": [learner.to_dict() for learner in learners]
-        }), 200
-    else:
-        course_list = Courses.query.all()
-        if course_code not in course_list:
-            return jsonify({
-                "message": "Course does not exist"
-            }), 404
-        return jsonify({
-            "message": "No learners in this course."
-        }), 404
 
 #get all trainers
 @app.route("/trainers")
