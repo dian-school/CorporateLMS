@@ -27,7 +27,7 @@ pipeline {
         python3 -m venv env 
         source env/bin/activate 
         pip3 install flake8 
-        flake8 flask/app-combine.py
+        flake8 app.py
         '''
 
       }
