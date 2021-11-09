@@ -1,0 +1,400 @@
+ * Serving Flask app 'app' (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: on
+ * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+ * Running on http://172.31.24.222:5000/ (Press CTRL+C to quit)
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 387-794-050
+54.91.77.105 - - [09/Nov/2021 06:49:00] "GET /sections/1003 HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 06:49:00] "GET /courses HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 06:49:00] "GET /trainers HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 06:49:00] "GET /learners HTTP/1.1" 200 -
+34.238.120.222 - - [09/Nov/2021 06:49:05] "GET /sections/1015 HTTP/1.1" 200 -
+54.196.37.183 - - [09/Nov/2021 06:49:05] "GET /sections/1018 HTTP/1.1" 200 -
+54.166.90.97 - - [09/Nov/2021 06:49:05] "GET /sections/1019 HTTP/1.1" 200 -
+54.166.90.97 - - [09/Nov/2021 06:49:06] "GET /sections/1012 HTTP/1.1" 200 -
+100.26.184.252 - - [09/Nov/2021 06:49:07] "GET /sections/1006 HTTP/1.1" 200 -
+54.163.98.214 - - [09/Nov/2021 06:49:32] "GET /courses/1033 HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 06:49:42] "GET /courses HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 06:49:42] "GET /trainers HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 06:49:42] "GET /learners HTTP/1.1" 200 -
+100.26.184.252 - - [09/Nov/2021 06:49:45] "GET /sections/1002 HTTP/1.1" 200 -
+34.229.111.123 - - [09/Nov/2021 06:51:13] "GET /sections/1001 HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 06:51:18] "GET /courses HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 06:51:18] "GET /trainers HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 06:51:18] "GET /learners HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 06:51:20] "GET /trainers HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 06:51:20] "GET /courses HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 06:51:20] "GET /learners HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 06:51:21] "GET /trainers HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 06:51:21] "GET /courses HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 06:51:21] "GET /learners HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 06:51:22] "GET /trainers HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 06:51:22] "GET /courses HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 06:51:22] "GET /learners HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 06:51:22] "GET /trainers HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 06:51:22] "GET /courses HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 06:51:22] "GET /learners HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 06:51:23] "GET /courses HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 06:51:23] "GET /trainers HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 06:51:23] "GET /learners HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 06:51:23] "GET /trainers HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 06:51:23] "GET /courses HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 06:51:23] "GET /learners HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 06:52:49] "GET /trainers HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 06:52:49] "GET /courses HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 06:52:49] "GET /learners HTTP/1.1" 200 -
+54.165.65.149 - - [09/Nov/2021 06:53:13] "GET /courses HTTP/1.1" 200 -
+ * Serving Flask app 'app' (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: on
+ * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+ * Running on http://172.31.24.222:5000/ (Press CTRL+C to quit)
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 387-794-050
+39.109.183.131 - - [09/Nov/2021 07:50:00] "GET /courses HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 07:50:02] "GET /courses HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 07:50:15] "GET /sections/all HTTP/1.1" 200 -
+18.237.197.93 - - [09/Nov/2021 08:00:25] "GET /courses HTTP/1.1" 200 -
+18.237.51.138 - - [09/Nov/2021 08:10:26] "GET /sections/all HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 09:05:59] "GET /sections/all HTTP/1.1" 200 -
+222.164.169.39 - - [09/Nov/2021 09:07:12] "GET /courses HTTP/1.1" 200 -
+222.164.169.39 - - [09/Nov/2021 09:07:14] "GET /favicon.ico HTTP/1.1" 404 -
+222.164.169.39 - - [09/Nov/2021 09:07:38] "GET /progress HTTP/1.1" 200 -
+222.164.169.39 - - [09/Nov/2021 09:07:51] "GET /sections HTTP/1.1" 405 -
+ * Serving Flask app 'app' (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: on
+Traceback (most recent call last):
+  File "app.py", line 1008, in <module>
+    app.run(host='0.0.0.0', port=5000, debug=True)
+  File "/home/bitnami/.local/lib/python3.7/site-packages/flask/app.py", line 920, in run
+    run_simple(t.cast(str, host), port, self, **options)
+  File "/home/bitnami/.local/lib/python3.7/site-packages/werkzeug/serving.py", line 984, in run_simple
+    s.bind(server_address)
+OSError: [Errno 98] Address already in use
+39.109.183.131 - - [09/Nov/2021 09:09:41] "GET /courses HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 09:19:06] "GET /courses HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 09:19:06] "GET /favicon.ico HTTP/1.1" 404 -
+ * Serving Flask app 'app' (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: on
+ * Running on all addresses.
+   WARNING: This is a development server. Do not use it in a production deployment.
+ * Running on http://172.31.24.222:5000/ (Press CTRL+C to quit)
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 387-794-050
+39.109.183.131 - - [09/Nov/2021 10:59:27] "GET /courses HTTP/1.1" 200 -
+116.15.153.190 - - [09/Nov/2021 10:59:47] "GET /courses HTTP/1.1" 200 -
+116.15.153.190 - - [09/Nov/2021 10:59:48] "GET /favicon.ico HTTP/1.1" 404 -
+103.252.201.85 - - [09/Nov/2021 11:01:25] "GET /courses HTTP/1.1" 200 -
+116.15.153.190 - - [09/Nov/2021 11:01:29] "GET /courses HTTP/1.1" 200 -
+116.15.153.190 - - [09/Nov/2021 11:01:30] "GET /favicon.ico HTTP/1.1" 404 -
+103.252.201.85 - - [09/Nov/2021 11:02:09] "GET /courses HTTP/1.1" 200 -
+103.252.201.85 - - [09/Nov/2021 11:02:12] "GET /courses HTTP/1.1" 200 -
+103.252.201.85 - - [09/Nov/2021 11:02:20] "GET /courses HTTP/1.1" 200 -
+103.252.201.85 - - [09/Nov/2021 11:02:20] "GET /favicon.ico HTTP/1.1" 404 -
+39.109.183.131 - - [09/Nov/2021 11:02:25] "GET /courses HTTP/1.1" 200 -
+119.56.110.82 - - [09/Nov/2021 11:05:27] "GET /courses HTTP/1.1" 200 -
+119.56.110.82 - - [09/Nov/2021 11:05:27] "GET /favicon.ico HTTP/1.1" 404 -
+39.109.183.131 - - [09/Nov/2021 11:43:09] "GET /courses HTTP/1.1" 200 -
+ * Serving Flask app 'app' (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: on
+Traceback (most recent call last):
+  File "app.py", line 1008, in <module>
+    app.run(host='0.0.0.0', port=5000, debug=True)
+  File "/home/bitnami/.local/lib/python3.7/site-packages/flask/app.py", line 920, in run
+    run_simple(t.cast(str, host), port, self, **options)
+  File "/home/bitnami/.local/lib/python3.7/site-packages/werkzeug/serving.py", line 984, in run_simple
+    s.bind(server_address)
+OSError: [Errno 98] Address already in use
+39.109.183.131 - - [09/Nov/2021 14:23:28] "GET /courses HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:23:34] "GET /enrol HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:23:55] "GET /courses HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:24:09] "GET /progress HTTP/1.1" 200 -
+3.95.5.173 - - [09/Nov/2021 14:25:27] "GET /progress HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:25:29] "GET /courses/1/completed HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:27:08] "GET /learners/1 HTTP/1.1" 404 -
+54.91.77.105 - - [09/Nov/2021 14:28:17] "GET /learners/1 HTTP/1.1" 404 -
+39.109.183.131 - - [09/Nov/2021 14:30:22] "GET /progress HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:30:31] "GET /courses/1/inprogress HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:30:45] "GET /courses HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:30:56] "GET /courses/1/completed HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:31:07] "GET /learners/1 HTTP/1.1" 404 -
+34.229.223.30 - - [09/Nov/2021 14:31:31] "GET /progress HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:32:04] "GET /learners/1 HTTP/1.1" 404 -
+39.109.183.131 - - [09/Nov/2021 14:32:23] "GET /learners HTTP/1.1" 200 -
+54.166.90.97 - - [09/Nov/2021 14:32:50] "GET /courses/1/completed HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:32:52] "GET /learners/1 HTTP/1.1" 404 -
+39.109.183.131 - - [09/Nov/2021 14:32:58] "GET /courses HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:33:02] "GET /courses/1002 HTTP/1.1" 200 -
+54.165.136.60 - - [09/Nov/2021 14:33:25] "GET /courses HTTP/1.1" 200 -
+18.212.106.207 - - [09/Nov/2021 14:33:37] "GET /learners HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:33:52] "GET /learners/Marcus%Foo HTTP/1.1" 404 -
+39.109.183.131 - - [09/Nov/2021 14:34:10] "GET /learners/Marcus%Foo HTTP/1.1" 404 -
+39.109.183.131 - - [09/Nov/2021 14:34:14] "GET /learners HTTP/1.1" 200 -
+54.224.22.15 - - [09/Nov/2021 14:34:16] "GET /courses/1002 HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:34:45] "GET /learners/eid/1 HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:35:07] "GET /trainers HTTP/1.1" 200 -
+162.142.125.43 - - [09/Nov/2021 14:36:30] code 400, message Bad HTTP/0.9 request type ('\x16\x03\x01\x00{\x01\x00\x00w\x03\x03\x07þ\x8b+Jy@x\\\x87ë;ì*\x95÷\x9d\x96/\x02yg\x14|aÏ\x18¯×\x9a¢+\x00\x00\x1aÀ/À+À\x11À\x07À\x13À')
+162.142.125.43 - - [09/Nov/2021 14:36:30] " {  wþ+Jy@x\ë;ì*÷/yg|aÏ¯×¢+  À/À+ÀÀÀÀ	ÀÀ" HTTPStatus.BAD_REQUEST -
+35.161.234.150 - - [09/Nov/2021 14:36:30] "GET /courses HTTP/1.1" 200 -
+162.142.125.43 - - [09/Nov/2021 14:36:31] "GET / HTTP/1.1" 404 -
+162.142.125.43 - - [09/Nov/2021 14:36:32] "GET / HTTP/1.1" 404 -
+54.165.51.10 - - [09/Nov/2021 14:36:43] "GET /courses/1/inprogress HTTP/1.1" 200 -
+54.91.77.105 - - [09/Nov/2021 14:36:53] "GET /learners/Marcus%25Foo HTTP/1.1" 404 -
+39.109.183.131 - - [09/Nov/2021 14:36:54] "GET /trainers/eid/1 HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:37:22] "GET /sections/1002 HTTP/1.1" 200 -
+54.190.193.243 - - [09/Nov/2021 14:37:32] "GET /courses/1/completed HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:37:35] "GET /sections/all HTTP/1.1" 200 -
+100.26.184.252 - - [09/Nov/2021 14:37:48] "GET /learners/1 HTTP/1.1" 404 -
+184.72.193.254 - - [09/Nov/2021 14:37:49] "GET /trainers HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:38:07] "GET /sections/G1/1002 HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:38:43] "GET /quizzes/G1/1002 HTTP/1.1" 200 -
+54.198.95.169 - - [09/Nov/2021 14:39:28] "GET /trainers/eid/1 HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:39:35] "GET /quizzes/G1/1002/1 HTTP/1.1" 500 -
+Traceback (most recent call last):
+  File "/home/bitnami/.local/lib/python3.7/site-packages/flask/app.py", line 2091, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/home/bitnami/.local/lib/python3.7/site-packages/flask/app.py", line 2076, in wsgi_app
+    response = self.handle_exception(e)
+  File "/home/bitnami/.local/lib/python3.7/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/home/bitnami/.local/lib/python3.7/site-packages/flask/app.py", line 2073, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/bitnami/.local/lib/python3.7/site-packages/flask/app.py", line 1518, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/bitnami/.local/lib/python3.7/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/home/bitnami/.local/lib/python3.7/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/bitnami/.local/lib/python3.7/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/opt/bitnami/apache/htdocs/flask/app.py", line 707, in get_quiz
+    "data": quiz.to_dict()
+AttributeError: 'NoneType' object has no attribute 'to_dict'
+39.109.183.131 - - [09/Nov/2021 14:39:36] "GET /quizzes/G1/1002/1?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:39:36] "GET /quizzes/G1/1002/1?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:39:37] "GET /quizzes/G1/1002/1?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:39:37] "GET /quizzes/G1/1002/1?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+34.238.42.48 - - [09/Nov/2021 14:40:58] "GET /quizzes/G1/1002/1 HTTP/1.1" 500 -
+Traceback (most recent call last):
+  File "/home/bitnami/.local/lib/python3.7/site-packages/flask/app.py", line 2091, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/home/bitnami/.local/lib/python3.7/site-packages/flask/app.py", line 2076, in wsgi_app
+    response = self.handle_exception(e)
+  File "/home/bitnami/.local/lib/python3.7/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/home/bitnami/.local/lib/python3.7/site-packages/flask/app.py", line 2073, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/bitnami/.local/lib/python3.7/site-packages/flask/app.py", line 1518, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/bitnami/.local/lib/python3.7/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/home/bitnami/.local/lib/python3.7/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/bitnami/.local/lib/python3.7/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/opt/bitnami/apache/htdocs/flask/app.py", line 707, in get_quiz
+    "data": quiz.to_dict()
+AttributeError: 'NoneType' object has no attribute 'to_dict'
+54.163.98.214 - - [09/Nov/2021 14:42:25] "GET /quizzes/G1/1002/1?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+3.85.194.155 - - [09/Nov/2021 14:44:32] "GET /quizzes/G1/1002/1?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+18.206.223.160 - - [09/Nov/2021 14:45:39] "GET /courses/1002 HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:48:17] "GET /quizzes/G1/1002 HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:48:29] "GET /quizzes/G1/1002 HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:48:38] "GET /quizzes/G1/1002/1 HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:48:58] "GET /questions/G1/1001/1/1 HTTP/1.1" 500 -
+Traceback (most recent call last):
+  File "/home/bitnami/.local/lib/python3.7/site-packages/flask/app.py", line 2091, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/home/bitnami/.local/lib/python3.7/site-packages/flask/app.py", line 2076, in wsgi_app
+    response = self.handle_exception(e)
+  File "/home/bitnami/.local/lib/python3.7/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/home/bitnami/.local/lib/python3.7/site-packages/flask/app.py", line 2073, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/bitnami/.local/lib/python3.7/site-packages/flask/app.py", line 1518, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/bitnami/.local/lib/python3.7/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/home/bitnami/.local/lib/python3.7/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/bitnami/.local/lib/python3.7/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/opt/bitnami/apache/htdocs/flask/app.py", line 728, in get_one_question
+    "data": question.to_dict()
+AttributeError: 'NoneType' object has no attribute 'to_dict'
+39.109.183.131 - - [09/Nov/2021 14:48:59] "GET /questions/G1/1001/1/1?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:48:59] "GET /questions/G1/1001/1/1?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:48:59] "GET /questions/G1/1001/1/1?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:48:59] "GET /questions/G1/1001/1/1?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:49:20] "GET /quizzes/G1/1002/1/1 HTTP/1.1" 404 -
+118.200.112.106 - - [09/Nov/2021 14:49:25] "GET /sections/G1/1002%20 HTTP/1.1" 404 -
+39.109.183.131 - - [09/Nov/2021 14:49:30] "GET /questions/G1/1002/1/1 HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:49:32] "GET /sections/G1/1002%20 HTTP/1.1" 404 -
+34.211.54.10 - - [09/Nov/2021 14:49:56] "GET /sections/G1/1002 HTTP/1.1" 200 -
+23.23.15.94 - - [09/Nov/2021 14:50:02] "GET /learners/Marcus%25Foo HTTP/1.1" 404 -
+34.238.42.48 - - [09/Nov/2021 14:50:02] "GET /questions/G1/1001/1/1 HTTP/1.1" 500 -
+Traceback (most recent call last):
+  File "/home/bitnami/.local/lib/python3.7/site-packages/flask/app.py", line 2091, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/home/bitnami/.local/lib/python3.7/site-packages/flask/app.py", line 2076, in wsgi_app
+    response = self.handle_exception(e)
+  File "/home/bitnami/.local/lib/python3.7/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/home/bitnami/.local/lib/python3.7/site-packages/flask/app.py", line 2073, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/bitnami/.local/lib/python3.7/site-packages/flask/app.py", line 1518, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/bitnami/.local/lib/python3.7/site-packages/flask_cors/extension.py", line 165, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/home/bitnami/.local/lib/python3.7/site-packages/flask/app.py", line 1516, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/bitnami/.local/lib/python3.7/site-packages/flask/app.py", line 1502, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**req.view_args)
+  File "/opt/bitnami/apache/htdocs/flask/app.py", line 728, in get_one_question
+    "data": question.to_dict()
+AttributeError: 'NoneType' object has no attribute 'to_dict'
+39.109.183.131 - - [09/Nov/2021 14:50:15] "GET /progress/1/G1/1002 HTTP/1.1" 200 -
+34.211.54.10 - - [09/Nov/2021 14:51:09] "GET /quizzes/G1/1002 HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:52:39] "GET /materials/G1/1002 HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:52:43] "GET /sections/G1/1002 HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:52:43] "GET /favicon.ico HTTP/1.1" 404 -
+39.109.183.131 - - [09/Nov/2021 14:53:00] "GET /courses HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:53:09] "GET /courses/search/1002 HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:53:13] "GET /quizzes/G1/1002 HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:53:17] "GET /quizzes/G1/1002/1 HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:53:22] "GET /questions/G1/1001/1 HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:53:32] "GET /questions/G1/1001/1 HTTP/1.1" 200 -
+100.26.184.252 - - [09/Nov/2021 14:53:41] "GET /progress/1/G1/1002 HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:53:45] "GET /questions/G1/1001/1 HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:54:04] "GET /courses/searchTitle/Customer%20Service:Soft%20Skills%20Fundamentals HTTP/1.1" 200 -
+54.165.65.149 - - [09/Nov/2021 14:54:32] "GET /quizzes/G1/1002/1/1 HTTP/1.1" 404 -
+18.212.106.207 - - [09/Nov/2021 14:54:44] "GET /courses/searchTitle/Customer%20Service%3ASoft%20Skills%20Fundamentals HTTP/1.1" 200 -
+23.23.15.94 - - [09/Nov/2021 14:54:59] "GET /questions/G1/1001/1/1?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+34.213.123.233 - - [09/Nov/2021 14:55:14] "GET /learners/1 HTTP/1.1" 404 -
+118.200.112.106 - - [09/Nov/2021 14:55:46] "GET /quizzes/G1/1002/1 HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:55:52] "GET /questions/G1/1002/1/1 HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:55:59] "GET /questions/G1/1001/1 HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:56:02] "GET /questions/G1/1002/1/1 HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:56:03] "GET /courses/1001 HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:56:17] "GET /questions/G1/1001/1 HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:56:29] "GET /trainers/Laura%20Valdez HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:56:32] "GET /questions/G1/1001/1 HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:56:47] "GET /progress/1/G1/1002 HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:56:49] "GET /sections/noTrainer HTTP/1.1" 404 -
+118.200.112.106 - - [09/Nov/2021 14:56:53] "GET /materials/G1/1002 HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:56:55] "GET /sections/noTrainers HTTP/1.1" 404 -
+118.200.112.106 - - [09/Nov/2021 14:56:58] "GET /courses/search/1002 HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:57:04] "GET /courses/searchTitle/Customer%20Service:Soft%20Skills%20Fundamentals HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:57:08] "GET /courses/1001 HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:57:12] "GET /trainers/Laura%20Valdez HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:57:17] "GET /trainers/Laura%20Valdez HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:57:22] "GET /questions/G1/1001/1 HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:57:23] "GET /sections/noTrainers HTTP/1.1" 404 -
+118.200.112.106 - - [09/Nov/2021 14:57:36] "GET /enrol HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:57:40] "GET /enrol HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:57:54] "GET /enrol HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:58:05] "GET /enrol HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:58:09] "GET /courses HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:58:15] "GET /progress HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:58:18] "GET /courses/1/inprogress HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:58:27] "GET /courses HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:58:33] "GET /courses/1/completed HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:58:41] "GET /courses/1002 HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:58:46] "GET /learners HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:58:50] "GET /learners/eid/1 HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:58:53] "GET /trainers HTTP/1.1" 200 -
+52.55.246.161 - - [09/Nov/2021 14:58:55] "GET /materials/G1/1002 HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:58:57] "GET /trainers/eid/1 HTTP/1.1" 200 -
+52.32.247.184 - - [09/Nov/2021 14:59:00] "GET /quizzes/G1/1002 HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:59:02] "GET /sections/1002 HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:59:09] "GET /sections/all HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:59:13] "GET /sections/G1/1002 HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:59:15] "GET /questions/G1/1001/1 HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:59:18] "GET /quizzes/G1/1002 HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:59:24] "GET /quizzes/G1/1002/1 HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:59:29] "GET /questions/G1/1001/1 HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 14:59:48] "GET /questions/G1/1002/1 HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 14:59:48] "GET /courses/1002 HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 15:00:05] "GET /enrol HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 15:00:09] "GET /sections/noTrainers HTTP/1.1" 404 -
+103.252.201.85 - - [09/Nov/2021 15:00:20] "GET /sections/noTrainers HTTP/1.1" 404 -
+103.252.201.85 - - [09/Nov/2021 15:00:20] "GET /favicon.ico HTTP/1.1" 404 -
+39.109.183.131 - - [09/Nov/2021 15:00:21] "GET /sections/noTrainers HTTP/1.1" 404 -
+103.252.201.85 - - [09/Nov/2021 15:00:25] "GET /trainers/Laura%20Valdez HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 15:00:28] "GET /sections/noTrainers HTTP/1.1" 404 -
+54.202.190.110 - - [09/Nov/2021 15:00:33] "GET /questions/G1/1001/1/1?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+103.252.201.85 - - [09/Nov/2021 15:00:40] "GET /courses/1002 HTTP/1.1" 200 -
+103.252.201.85 - - [09/Nov/2021 15:00:45] "GET /courses/searchTitle/Customer%20Service:Soft%20Skills%20Fundamentals HTTP/1.1" 200 -
+103.252.201.85 - - [09/Nov/2021 15:00:49] "GET /courses/search/1002 HTTP/1.1" 200 -
+103.252.201.85 - - [09/Nov/2021 15:00:54] "GET /materials/G1/1002 HTTP/1.1" 200 -
+103.252.201.85 - - [09/Nov/2021 15:00:59] "GET /progress/1/G1/1002 HTTP/1.1" 200 -
+103.252.201.85 - - [09/Nov/2021 15:01:03] "GET /materials/G1/1002 HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 15:01:55] "GET /sections/noTrainers HTTP/1.1" 200 -
+103.252.201.85 - - [09/Nov/2021 15:01:55] "GET /sections/noTrainers HTTP/1.1" 200 -
+103.252.201.85 - - [09/Nov/2021 15:02:11] "GET /progress/1/G1/1002 HTTP/1.1" 200 -
+103.252.201.85 - - [09/Nov/2021 15:02:44] "GET /progress/1/G1/1002 HTTP/1.1" 200 -
+103.252.201.85 - - [09/Nov/2021 15:02:49] "GET /questions/G1/1002/1/1 HTTP/1.1" 200 -
+103.252.201.85 - - [09/Nov/2021 15:02:54] "GET /questions/G1/1002/1 HTTP/1.1" 200 -
+103.252.201.85 - - [09/Nov/2021 15:03:02] "GET /sections/G1/1002 HTTP/1.1" 200 -
+50.112.217.215 - - [09/Nov/2021 15:03:05] "GET /courses HTTP/1.1" 200 -
+103.252.201.85 - - [09/Nov/2021 15:03:07] "GET /sections/all HTTP/1.1" 200 -
+103.252.201.85 - - [09/Nov/2021 15:03:16] "GET /sections/1002 HTTP/1.1" 200 -
+103.252.201.85 - - [09/Nov/2021 15:03:22] "GET /trainers/eid/1 HTTP/1.1" 200 -
+103.252.201.85 - - [09/Nov/2021 15:03:29] "GET /trainers HTTP/1.1" 200 -
+103.252.201.85 - - [09/Nov/2021 15:03:39] "GET /learners/eid/1 HTTP/1.1" 200 -
+103.252.201.85 - - [09/Nov/2021 15:03:59] "GET /learners HTTP/1.1" 200 -
+103.252.201.85 - - [09/Nov/2021 15:04:06] "GET /courses/1002 HTTP/1.1" 200 -
+103.252.201.85 - - [09/Nov/2021 15:04:12] "GET /courses/1002 HTTP/1.1" 200 -
+103.252.201.85 - - [09/Nov/2021 15:04:17] "GET /courses/1/completed HTTP/1.1" 200 -
+103.252.201.85 - - [09/Nov/2021 15:04:24] "GET /courses HTTP/1.1" 200 -
+103.252.201.85 - - [09/Nov/2021 15:04:28] "GET /courses/1/inprogress HTTP/1.1" 200 -
+103.252.201.85 - - [09/Nov/2021 15:04:33] "GET /progress HTTP/1.1" 200 -
+103.252.201.85 - - [09/Nov/2021 15:04:43] "GET /courses HTTP/1.1" 200 -
+103.252.201.85 - - [09/Nov/2021 15:04:50] "GET /enrol HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 15:05:06] "GET /enrol HTTP/1.1" 200 -
+103.252.201.85 - - [09/Nov/2021 15:05:38] "GET /enrol HTTP/1.1" 200 -
+54.146.176.237 - - [09/Nov/2021 15:06:12] "GET /questions/G1/1002/1 HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 15:07:31] "GET /enrol HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 15:07:38] "GET /admin.html HTTP/1.1" 404 -
+118.200.112.106 - - [09/Nov/2021 15:07:51] code 400, message Bad request version ('úú\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x01\x93\x8a\x8a\x00\x00\x00\x17\x00\x00ÿ\x01\x00\x01\x00\x00')
+118.200.112.106 - - [09/Nov/2021 15:07:51] "  ü[â'	ST¿¾Y>O8´:¯VK}Ê~ »ÙÔU1Æwúð®>q¦ñ#®¶H(Hj£÷]Wb&  úúÀ+À/À,À0Ì©Ì¨ÀÀ   / 5      ÿ   " HTTPStatus.BAD_REQUEST -
+118.200.112.106 - - [09/Nov/2021 15:07:51] code 400, message Bad request version ('\x9a\x9a\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x01\x93\x8a\x8a\x00\x00\x00\x17\x00\x00ÿ\x01\x00\x01\x00\x00')
+118.200.112.106 - - [09/Nov/2021 15:07:51] "  üfañp¤QÏÜQÖ5üêóé§QÏQ[^»Ýð÷ò ØÂJàQTã&êÂºxG­å¯Á yD©'E¯Z  À+À/À,À0Ì©Ì¨ÀÀ   / 5      ÿ   " HTTPStatus.BAD_REQUEST -
+118.200.112.106 - - [09/Nov/2021 15:07:51] code 400, message Bad request syntax ('\x16\x03\x01\x02\x00\x01\x00\x01ü\x03\x03ªV_}{!\x01')
+118.200.112.106 - - [09/Nov/2021 15:07:51] "  üªV_}{!" HTTPStatus.BAD_REQUEST -
+118.200.112.106 - - [09/Nov/2021 15:07:51] code 400, message Bad request version ('êê\x13\x01\x13\x02\x13\x03À+À/À,À0Ì©Ì¨À\x13À\x14\x00\x9c\x00\x9d\x00/\x005\x01\x00\x01\x93êê\x00\x00\x00\x17\x00\x00ÿ\x01\x00\x01\x00\x00')
+118.200.112.106 - - [09/Nov/2021 15:07:51] "  ü±½Âà» ¶)wH'©+Ö î¦àV­I»ï <ïn¿¸këé!T"ã¹Ïd*}³U2­L+nHÚ  êêÀ+À/À,À0Ì©Ì¨ÀÀ   / 5 êê     ÿ   " HTTPStatus.BAD_REQUEST -
+103.252.201.85 - - [09/Nov/2021 15:08:18] "GET /questions/G1/1001/1 HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 15:09:11] "GET /enrol HTTP/1.1" 200 -
+184.72.193.254 - - [09/Nov/2021 15:09:13] "GET /enrol HTTP/1.1" 200 -
+118.200.112.106 - - [09/Nov/2021 15:09:24] "GET /enrol HTTP/1.1" 200 -
+52.11.96.132 - - [09/Nov/2021 15:11:07] "GET /questions/G1/1001/1 HTTP/1.1" 200 -
+34.213.114.230 - - [09/Nov/2021 15:12:39] "GET /sections/noTrainer HTTP/1.1" 404 -
+39.109.183.131 - - [09/Nov/2021 15:14:18] "GET /courses/searchTitle/Customer%20Service:Soft%20Skills%20Fundamentals HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 15:14:32] "GET /progress/1/G1/1002 HTTP/1.1" 200 -
+103.252.201.85 - - [09/Nov/2021 15:14:38] "GET /sections/noTrainers HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 15:15:27] "GET /courses/search/1002 HTTP/1.1" 200 -
+18.212.106.207 - - [09/Nov/2021 15:16:05] "GET /courses/searchTitle/Customer%20Service%3ASoft%20Skills%20Fundamentals HTTP/1.1" 200 -
+3.95.31.12 - - [09/Nov/2021 15:17:33] "GET /courses/search/1002 HTTP/1.1" 200 -
+18.237.51.138 - - [09/Nov/2021 15:21:59] "GET /courses/1001 HTTP/1.1" 200 -
+35.161.78.150 - - [09/Nov/2021 15:24:57] "GET /progress/1/G1/1002 HTTP/1.1" 200 -
+39.109.183.131 - - [09/Nov/2021 15:29:41] "GET /courses HTTP/1.1" 200 -

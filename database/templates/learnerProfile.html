@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrators Portal </title>
+
+    <link rel="icon" type="image/x-icon" href="../assets/favicon.ico" />
+    <!-- Bootstrap icons-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="../css/styles.css" rel="stylesheet" />
+
+  <!-- Vue JS-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.18/vue.min.js"></script>
+
+</head>
+
+<body>
+    <div id = "app" >
+
+        <!-- Responsive navbar-->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container px-lg-5">
+                <a class="navbar-brand" href="admin.html">G1T6 Learning Management System</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link "  href="admin.html">Courses</a></li>
+                        <li class="nav-item"><a class="nav-link" href="admin-trainers.html">Trainers</a></li>
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="admin-learners.html">Learners</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- {{courseSections()}} -->
+        {{getLearnerInfo()}}
+        <div class="container">
+            <div class="row" style="margin:30px;" >
+                <h1> {{ learner.learners_name }}</h1>
+                <h3> Learner ID: {{ learner.learners_eid }} </h3>
+                <h3> Learner's Email: {{ learner.learners_email }}</h3>
+                <h3> Courses Completed: {{ learner.courses_completed }} </h3>
+                <h3> Qualifications: {{ learner.learners_qualifications }} </h3>
+                <br> <br>
+                <button type="button" class="btn btn-primary" @click="getEligibleCourses(learner.learners_eid)" data-toggle="modal" data-target="#exampleModalCenter">
+                Assign Courses
+                </button>
+            </div>
+        </div>
+
+        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="overflow-y: scroll;">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Assign Course</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                <!-- Default checkbox -->
+                    <div class="form-check" v-for="section in sectionsVacancies">
+                        <input type="checkbox" value="{{section.course_code}}:{{section.class_section}}" id="{{section.course_code}}" v-model="checkedCourseSections" />
+                        <label for="{{course.course_code}}" style="white-space:nowrap;">
+                            {{section.course_code}} : <span v-for="course in eligibleCourses" v-if="section.course_code == course.course_code"> {{course.course_title}} </span>  ({{ section.class_section }}) </span>
+                        </label>
+
+
+                    </div>
+                    <span>Checked Course Sections: {{ checkedCourseSections }}</span>
+                        
+                    
+                </div>
+
+                <div class="modal-footer">
+
+                    <div class="justify-content-left;">
+                        <div class="text-success" v-if="courseAssigned">
+                        {{ statusMessage }} <br>
+                        </div>
+                    </div>
+                    
+                    <div class="justify-content-left;">
+                        <div class="text-danger" v-if="!courseAssigned">
+                        {{ assignCourseError }}
+                        </div>
+                    </div> 
+
+                    <button type="button" class="btn btn-secondary" @click="pageRefresh()" data-dismiss="modal">Close</button>
+                    
+                    <button @click="assignCourse(learner.learners_eid)" class="btn btn-primary" v-on:submit.prevent="onSubmit">Assign Course</button>
+                
+                </div>
+                
+                </div>
+                
+            </div>
+        </div>
+            
+    </div>
+    
+
+    <script type="text/javascript" src="../js/admin.js"></script>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+    </script>
+</body>
